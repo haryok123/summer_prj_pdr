@@ -10,15 +10,21 @@ import { TheoryItemType } from './entities/theory-item-type.entity';
 import { User } from './entities/user.entity';
 import { MainService } from './modules/main/main.service';
 
+// console.log('DB_HOST:', process.env.DB_HOST);
+// console.log('DB_PORT:', process.env.DB_PORT);
+// console.log('DB_USER:', process.env.DB_USER);
+// console.log('DB_PASSWORD:', process.env.DB_PASSWORD);
+// console.log('DB_NAME:', process.env.DB_NAME);
+
 @Module({
   imports: [
     TypeOrmModule.forRoot({
       type: 'mysql',
-      host: process.env.DB_HOST,
-      port: parseInt(process.env.DB_PORT),
-      username: process.env.DB_USER,
-      password: process.env.DB_PASSWORD,
-      database: process.env.DB_NAME,
+      host: 'mysql-pdr-denis29shw-4aa7.h.aivencloud.com',
+      port: 17597, //parseInt(process.env.DB_PORT),
+      username: 'avnadmin', //process.env.DB_USER,
+      password: 'AVNS_6gaMsnsMRw1q7WVrMfi', //process.env.DB_PASSWORD,
+      database: 'pdr', //process.env.DB_NAME,
       entities: [
         Chapter,
         Question,
@@ -29,6 +35,15 @@ import { MainService } from './modules/main/main.service';
         User,
       ],
     }),
+    TypeOrmModule.forFeature([
+      Chapter,
+      Question,
+      QuestionTheme,
+      Subchapter,
+      TheoryItem,
+      TheoryItemType,
+      User,
+    ]),
   ],
   controllers: [MainController],
   providers: [MainService],
