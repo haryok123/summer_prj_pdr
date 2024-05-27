@@ -7,8 +7,11 @@ import { QuestionTheme } from './entities/question-theme.entity';
 import { Subchapter } from './entities/subchapter.entity';
 import { TheoryItem } from './entities/theory-item.entity';
 import { TheoryItemType } from './entities/theory-item-type.entity';
-import { UserAccount } from './entities/user.entity';
+import { UserAccount } from './entities/user-account.entity';
 import { MainService } from './modules/main/main.service';
+import { TestQuestion } from './entities/test-question.entity';
+import { Test } from './entities/test.entity';
+import { Comments } from './entities/comments.entity';
 
 // console.log('DB_HOST:', process.env.DB_HOST);
 // console.log('DB_PORT:', process.env.DB_PORT);
@@ -33,6 +36,9 @@ import { MainService } from './modules/main/main.service';
         TheoryItem,
         TheoryItemType,
         UserAccount,
+        Test,
+        TestQuestion,
+        Comments,
       ],
     }),
     TypeOrmModule.forFeature([
@@ -43,6 +49,9 @@ import { MainService } from './modules/main/main.service';
       TheoryItem,
       TheoryItemType,
       UserAccount,
+      Test,
+      TestQuestion,
+      Comments,
     ]),
   ],
   controllers: [MainController],

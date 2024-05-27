@@ -6,7 +6,7 @@ import {
   JoinColumn,
   CreateDateColumn,
 } from 'typeorm';
-import { UserAccount } from './user.entity';
+import { UserAccount } from './user-account.entity';
 
 @Entity()
 export class Test {

@@ -6,11 +6,11 @@ import {
   JoinColumn,
   CreateDateColumn,
 } from 'typeorm';
-import { UserAccount } from './user.entity';
+import { UserAccount } from './user-account.entity';
 import { Question } from './question.entity';
 
 @Entity()
-export class Comment {
+export class Comments {
   @PrimaryGeneratedColumn()
   comment_id: number;
 
