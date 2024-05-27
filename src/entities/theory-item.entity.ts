@@ -1,15 +1,15 @@
 import { Entity, PrimaryColumn, Column, ManyToOne } from 'typeorm';
 import { TheoryItemType } from './theory-item-type.entity';
 
-@Entity()
+@Entity('theory_item')
 export class TheoryItem {
-  @PrimaryColumn({ length: 10 })
+  @PrimaryColumn({ type: 'varchar', length: 10 })
   item_id: string;
 
   @ManyToOne(() => TheoryItemType, (type) => type.items)
-  type: TheoryItemType;
+  type_id: TheoryItemType;
 
-  @Column({ length: 200 })
+  @PrimaryColumn({ type: 'varchar', length: 200 })
   item_name: string;
 
   @Column('text')
