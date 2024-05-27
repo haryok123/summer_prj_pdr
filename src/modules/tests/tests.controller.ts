@@ -1,7 +1,11 @@
 import { Controller, Get, Render } from '@nestjs/common';
 import { TestsService } from './tests.service';
 
-@Controller()
+@Controller('tests')
 export class TestsController {
-  constructor(private testsService: TestsService) {}
+  @Get()
+  @Render('tests')
+  getTests() {
+    return { title: 'Тести з ПДР' };
+  }
 }

@@ -6,7 +6,7 @@ import { Chapter } from '../../entities/chapter.entity';
 export class MainController {
   constructor(private mainService: MainService) {}
 
-  @Render('layout')
+  @Render('home')
   @Get()
   async getAllChapters(): Promise<Chapter[]> {
     return this.mainService.findAllChapters();
