@@ -6,11 +6,13 @@ export class TheoryItem {
   @PrimaryColumn({ type: 'varchar', length: 10 })
   item_id: string;
 
-  @ManyToOne(() => TheoryItemType, (type) => type.items)
-  @JoinColumn({ name: 'type_id' })
-  type: TheoryItemType;
+  @PrimaryColumn()
+  type_id: number;
 
-  @PrimaryColumn({ type: 'varchar', length: 200 })
+  @PrimaryColumn({ type: 'enum', enum: ['sign', 'marking'] })
+  theory_type: 'sign' | 'marking';
+
+  @Column({ type: 'varchar', length: 200 })
   item_name: string;
 
   @Column('text')
@@ -21,4 +23,11 @@ export class TheoryItem {
 
   @Column('mediumblob', { nullable: true })
   item_example_image: Buffer;
+
+  @ManyToOne(() => TheoryItemType, (type) => type.items)
+  @JoinColumn([
+    { name: 'type_id', referencedColumnName: 'type_id' },
+    { name: 'theory_type', referencedColumnName: 'theory_type' },
+  ])
+  type: TheoryItemType;
 }

@@ -14,18 +14,20 @@ import { TestQuestion } from '../../entities/test-question.entity';
 import { Comments } from '../../entities/comments.entity';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([
-    Chapter,
-    Question,
-    QuestionTheme,
-    Subchapter,
-    TheoryItem,
-    TheoryItemType,
-    UserAccount,
-    Test,
-    TestQuestion,
-    Comments,
-  ]),],
+  imports: [
+    TypeOrmModule.forFeature([
+      Chapter,
+      Question,
+      QuestionTheme,
+      Subchapter,
+      TheoryItem,
+      TheoryItemType,
+      UserAccount,
+      Test,
+      TestQuestion,
+      Comments,
+    ]),
+  ],
   providers: [MainService],
   controllers: [MainController],
   exports: [],

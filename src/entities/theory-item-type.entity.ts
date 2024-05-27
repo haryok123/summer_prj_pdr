@@ -15,7 +15,7 @@ export class TheoryItemType {
   @Column('blob')
   type_image: Buffer;
 
-  @Column({ type: 'enum', enum: ['sign', 'marking'] })
+  @PrimaryColumn({ type: 'enum', enum: ['sign', 'marking'] })
   theory_type: 'sign' | 'marking';
 
   @OneToMany(() => TheoryItem, (item) => item.type)

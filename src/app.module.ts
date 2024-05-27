@@ -19,21 +19,15 @@ import { StatisticsModule } from './modules/statistics/statistics.module';
 import { ProfileModule } from './modules/profile/profile.module';
 import { TheoryModule } from './modules/theory/theory.module';
 
-// console.log('DB_HOST:', process.env.DB_HOST);
-// console.log('DB_PORT:', process.env.DB_PORT);
-// console.log('DB_USER:', process.env.DB_USER);
-// console.log('DB_PASSWORD:', process.env.DB_PASSWORD);
-// console.log('DB_NAME:', process.env.DB_NAME);
-
 @Module({
   imports: [
     TypeOrmModule.forRoot({
       type: 'mysql',
       host: 'mysql-pdr-denis29shw-4aa7.h.aivencloud.com',
-      port: 17597, //parseInt(process.env.DB_PORT),
-      username: 'avnadmin', //process.env.DB_USER,
-      password: 'AVNS_6gaMsnsMRw1q7WVrMfi', //process.env.DB_PASSWORD,
-      database: 'pdr', //process.env.DB_NAME,
+      port: 17597,
+      username: 'avnadmin',
+      password: 'AVNS_6gaMsnsMRw1q7WVrMfi',
+      database: 'pdr',
       entities: [
         Chapter,
         Question,

@@ -1,4 +1,4 @@
-import { Entity, PrimaryColumn, Column, ManyToOne } from 'typeorm';
+import { Entity, PrimaryColumn, Column, ManyToOne, JoinColumn } from 'typeorm';
 import { Chapter } from './chapter.entity';
 
 @Entity('subchapter')
@@ -16,5 +16,6 @@ export class Subchapter {
   subchapter_video_link: string;
 
   @ManyToOne(() => Chapter, (chapter) => chapter.subchapters)
+  @JoinColumn({ name: 'chapter_num', referencedColumnName: 'chapter_num' })
   chapter: Chapter;
 }

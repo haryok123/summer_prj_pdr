@@ -1,4 +1,4 @@
-import { Entity, PrimaryColumn, Column, ManyToOne } from 'typeorm';
+import { Entity, PrimaryColumn, Column, ManyToOne, JoinColumn } from 'typeorm';
 import { QuestionTheme } from './question-theme.entity';
 
 @Entity('question')
@@ -34,5 +34,6 @@ export class Question {
   q_correct_answer: number;
 
   @ManyToOne(() => QuestionTheme, (theme) => theme.questions)
+  @JoinColumn({ name: 'theme_id', referencedColumnName: 'theme_id' })
   theme: QuestionTheme;
 }

@@ -15,15 +15,18 @@ export class Comments {
   comment_id: number;
 
   @ManyToOne(() => Question)
-  @JoinColumn({ name: 'q_id' })
+  @JoinColumn({ name: 'q_id', referencedColumnName: 'q_id' })
   question: Question;
 
   @ManyToOne(() => UserAccount)
-  @JoinColumn({ name: 'user_login' })
+  @JoinColumn({ name: 'user_login', referencedColumnName: 'user_login' })
   user: UserAccount;
 
   @ManyToOne(() => Comments, { nullable: true })
-  @JoinColumn({ name: 'parent_comment_id' })
+  @JoinColumn({
+    name: 'parent_comment_id',
+    referencedColumnName: 'comment_id',
+  })
   parent_comment: Comments;
 
   @Column()

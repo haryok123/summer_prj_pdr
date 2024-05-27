@@ -1,4 +1,10 @@
-import { Entity, PrimaryGeneratedColumn, Column, OneToMany } from 'typeorm';
+import {
+  Entity,
+  PrimaryGeneratedColumn,
+  Column,
+  OneToMany,
+  JoinColumn,
+} from 'typeorm';
 import { Question } from './question.entity';
 
 @Entity('question_theme')
@@ -10,5 +16,6 @@ export class QuestionTheme {
   theme_chapter: string;
 
   @OneToMany(() => Question, (question) => question.theme)
+  @JoinColumn({ name: 'q_id', referencedColumnName: 'q_id' })
   questions: Question[];
 }
