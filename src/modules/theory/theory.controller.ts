@@ -1,7 +1,11 @@
 import { Controller, Get, Render } from '@nestjs/common';
 import { TheoryService } from './theory.service';
 
-@Controller()
+@Controller('theory')
 export class TheoryController {
-  constructor(private theoryService: TheoryService) {}
+  @Get()
+  @Render('theory')
+  getTheory() {
+    return { title: 'Вивчення теорії' };
+  }
 }
