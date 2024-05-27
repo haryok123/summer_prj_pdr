@@ -1,4 +1,4 @@
-import { Entity, PrimaryColumn, Column, ManyToOne } from 'typeorm';
+import { Entity, PrimaryColumn, Column, ManyToOne, JoinColumn } from 'typeorm';
 import { TheoryItemType } from './theory-item-type.entity';
 
 @Entity('theory_item')
@@ -7,7 +7,8 @@ export class TheoryItem {
   item_id: string;
 
   @ManyToOne(() => TheoryItemType, (type) => type.items)
-  type_id: TheoryItemType;
+  @JoinColumn({ name: 'type_id' })
+  type: TheoryItemType;
 
   @PrimaryColumn({ type: 'varchar', length: 200 })
   item_name: string;

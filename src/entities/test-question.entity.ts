@@ -5,15 +5,15 @@ import {
   ManyToOne,
   PrimaryGeneratedColumn,
 } from 'typeorm';
-import { Test } from '@nestjs/testing';
+import { Test } from './test.entity';
 import { Question } from './question.entity';
 
-@Entity()
+@Entity('test_question')
 export class TestQuestion {
   @PrimaryGeneratedColumn()
   test_question_id: number;
 
-  @ManyToOne(() => Test)
+  @ManyToOne(() => Test, (test) => test.items)
   @JoinColumn({ name: 'test_id' })
   test: Test;
 

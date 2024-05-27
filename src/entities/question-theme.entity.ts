@@ -1,7 +1,7 @@
 import { Entity, PrimaryGeneratedColumn, Column, OneToMany } from 'typeorm';
 import { Question } from './question.entity';
 
-@Entity()
+@Entity('question_theme')
 export class QuestionTheme {
   @PrimaryGeneratedColumn('increment')
   theme_id: number;

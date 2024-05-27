@@ -1,7 +1,7 @@
 import { Entity, PrimaryColumn, Column, ManyToOne } from 'typeorm';
 import { QuestionTheme } from './question-theme.entity';
 
-@Entity()
+@Entity('question')
 export class Question {
   @PrimaryColumn()
   theme_id: number;

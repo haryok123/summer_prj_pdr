@@ -1,7 +1,7 @@
 import { Entity, PrimaryColumn, Column, ManyToOne } from 'typeorm';
 import { Chapter } from './chapter.entity';
 
-@Entity()
+@Entity('subchapter')
 export class Subchapter {
   @PrimaryColumn()
   chapter_num: number;

@@ -9,7 +9,7 @@ import {
 import { UserAccount } from './user-account.entity';
 import { Question } from './question.entity';
 
-@Entity()
+@Entity('comment')
 export class Comments {
   @PrimaryGeneratedColumn()
   comment_id: number;
@@ -22,9 +22,9 @@ export class Comments {
   @JoinColumn({ name: 'user_login' })
   user: UserAccount;
 
-  @ManyToOne(() => Comment, { nullable: true })
+  @ManyToOne(() => Comments, { nullable: true })
   @JoinColumn({ name: 'parent_comment_id' })
-  parent_comment: Comment;
+  parent_comment: Comments;
 
   @Column()
   comment_text: string;

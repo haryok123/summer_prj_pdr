@@ -5,10 +5,12 @@ import {
   PrimaryGeneratedColumn,
   JoinColumn,
   CreateDateColumn,
+  OneToMany,
 } from 'typeorm';
 import { UserAccount } from './user-account.entity';
+import { TestQuestion } from './test-question.entity';
 
-@Entity()
+@Entity('test')
 export class Test {
   @PrimaryGeneratedColumn()
   test_id: number;
@@ -22,4 +24,7 @@ export class Test {
 
   @Column({ type: 'enum', enum: ['theme', 'exam'] })
   test_type: 'theme' | 'exam';
+
+  @OneToMany(() => TestQuestion, (item) => item.test)
+  items: TestQuestion[];
 }
