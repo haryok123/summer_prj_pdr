@@ -14,15 +14,51 @@
   {{/if}}
 
   <title>{{title}}</title>
+
 </head>
 <body>
-<div class="d-flex flex-nowrap h-100">
+<div class="d-flex flex-column min-vh-100">
 
+  <header>
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+      <div class="container-fluid px-4">
+        <a class="navbar-brand" href="http://localhost:19429/main/chapters">HighwayToMohyla</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+          <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+            <li class="nav-item">
+              <a class="nav-link" href="/tests">Тести</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="/pages/learn">Теорія ПДР</a>
+            </li>
+          </ul>
+          <div class="d-flex">
+            <a class="btn btn-outline-primary me-2" href="/login">Вхід</a>
+            <a class="btn btn-primary" href="/register">Реєстрація</a>
+          </div>
+        </div>
+      </div>
+    </nav>
+  </header>
 
 
   <section class="container-fluid p-2" id="page-content">
-
+    {{#> pageContent}}
+      An Error Occurred
+    {{/pageContent}}
   </section>
+
+  <footer class="bg-light text-center text-lg-start mt-auto py-3">
+    <div class="container p-4">
+      <h6>Контакти</h6>
+      <p>Email: info@pdr-online.com</p>
+      <p>Телефон: +380 123 456 789</p>
+    </div>
+  </footer>
+
 </div>
 
 
