@@ -12,6 +12,12 @@ import { MainService } from './modules/main/main.service';
 import { TestQuestion } from './entities/test-question.entity';
 import { Test } from './entities/test.entity';
 import { Comments } from './entities/comments.entity';
+import { MainModule } from './modules/main/main.module';
+import { TestsModule } from './modules/tests/tests.module';
+import { AuthModule } from './modules/auth/auth.module';
+import { StatisticsModule } from './modules/statistics/statistics.module';
+import { ProfileModule } from './modules/profile/profile.module';
+import { TheoryModule } from './modules/theory/theory.module';
 
 // console.log('DB_HOST:', process.env.DB_HOST);
 // console.log('DB_PORT:', process.env.DB_PORT);
@@ -53,9 +59,15 @@ import { Comments } from './entities/comments.entity';
       TestQuestion,
       Comments,
     ]),
+    MainModule,
+    AuthModule,
+    TestsModule,
+    StatisticsModule,
+    ProfileModule,
+    TheoryModule,
   ],
-  controllers: [MainController],
-  providers: [MainService],
-  exports: [MainService],
+  controllers: [],
+  providers: [],
+  exports: [],
 })
 export class AppModule {}
