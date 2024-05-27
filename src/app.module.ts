@@ -7,7 +7,7 @@ import { QuestionTheme } from './entities/question-theme.entity';
 import { Subchapter } from './entities/subchapter.entity';
 import { TheoryItem } from './entities/theory-item.entity';
 import { TheoryItemType } from './entities/theory-item-type.entity';
-import { User } from './entities/user.entity';
+import { UserAccount } from './entities/user.entity';
 import { MainService } from './modules/main/main.service';
 
 // console.log('DB_HOST:', process.env.DB_HOST);
@@ -32,7 +32,7 @@ import { MainService } from './modules/main/main.service';
         Subchapter,
         TheoryItem,
         TheoryItemType,
-        User,
+        UserAccount,
       ],
     }),
     TypeOrmModule.forFeature([
@@ -42,7 +42,7 @@ import { MainService } from './modules/main/main.service';
       Subchapter,
       TheoryItem,
       TheoryItemType,
-      User,
+      UserAccount,
     ]),
   ],
   controllers: [MainController],

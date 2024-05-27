@@ -1,9 +1,9 @@
-import { Entity, PrimaryGeneratedColumn, Column, OneToMany } from 'typeorm';
+import { Entity, Column, OneToMany, PrimaryColumn } from 'typeorm';
 import { TheoryItem } from './theory-item.entity';
 
 @Entity()
 export class TheoryItemType {
-  @PrimaryGeneratedColumn()
+  @PrimaryColumn()
   type_id: number;
 
   @Column({ length: 100 })
@@ -18,6 +18,6 @@ export class TheoryItemType {
   @Column({ type: 'enum', enum: ['sign', 'marking'] })
   theory_type: 'sign' | 'marking';
 
-  @OneToMany(() => TheoryItem, (item) => item.type)
+  @OneToMany(() => TheoryItem, (item) => item.type_id)
   items: TheoryItem[];
 }

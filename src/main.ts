@@ -4,11 +4,13 @@ import { join } from 'path';
 import { NestExpressApplication } from '@nestjs/platform-express';
 import * as hbs from 'hbs';
 import * as dotenv from 'dotenv';
+import { ValidationPipe } from '@nestjs/common';
 
 dotenv.config();
 
 async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule);
+  app.useGlobalPipes(new ValidationPipe());
   await app.listen(19429);
 
   app.useStaticAssets(join(__dirname, '..', 'public'));
@@ -19,4 +21,5 @@ async function bootstrap() {
     return arg1 == arg2 ? options.fn(this) : options.inverse(this);
   });
 }
+
 bootstrap();
