@@ -1,4 +1,4 @@
-import { Controller, Get, Param, ParseIntPipe } from '@nestjs/common';
+import { Controller, Get, Param, ParseIntPipe, Render } from "@nestjs/common";
 import { TestsService } from './tests.service';
 import { QuestionTheme } from '../../entities/question-theme.entity';
 import { Question } from '../../entities/question.entity';
@@ -43,5 +43,13 @@ export class TestsController {
     @Param('id', ParseIntPipe) id: number,
   ): Promise<Comments> {
     return this.testsService.findCommentById(id);
+  }
+
+  @Get()
+  @Render('tests')
+  getTests() {
+    return {
+      title: 'Тести з ПДР'
+    };
   }
 }
