@@ -1,5 +1,4 @@
 import { Module } from '@nestjs/common';
-import { MainController } from './modules/main/main.controller';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Chapter } from './entities/chapter.entity';
 import { Question } from './entities/question.entity';
@@ -8,7 +7,6 @@ import { Subchapter } from './entities/subchapter.entity';
 import { TheoryItem } from './entities/theory-item.entity';
 import { TheoryItemType } from './entities/theory-item-type.entity';
 import { UserAccount } from './entities/user-account.entity';
-import { MainService } from './modules/main/main.service';
 import { TestQuestion } from './entities/test-question.entity';
 import { Test } from './entities/test.entity';
 import { Comments } from './entities/comments.entity';
@@ -18,9 +16,14 @@ import { AuthModule } from './modules/auth/auth.module';
 import { StatisticsModule } from './modules/statistics/statistics.module';
 import { ProfileModule } from './modules/profile/profile.module';
 import { TheoryModule } from './modules/theory/theory.module';
+import { ServeStaticModule } from '@nestjs/serve-static';
+import { join } from 'path';
 
 @Module({
   imports: [
+    ServeStaticModule.forRoot({
+      rootPath: join(__dirname, '..', 'public'),
+    }),
     TypeOrmModule.forRoot({
       type: 'mysql',
       host: 'mysql-pdr-denis29shw-4aa7.h.aivencloud.com',

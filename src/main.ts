@@ -5,6 +5,7 @@ import { NestExpressApplication } from '@nestjs/platform-express';
 import * as hbs from 'hbs';
 import * as dotenv from 'dotenv';
 import { ValidationPipe } from '@nestjs/common';
+import * as express from 'express';
 
 dotenv.config();
 
@@ -13,6 +14,7 @@ async function bootstrap() {
   app.useGlobalPipes(new ValidationPipe());
   await app.listen(19429);
 
+  app.use('/public', express.static(join(__dirname, '..', 'public')));
   app.useStaticAssets(join(__dirname, '..', 'public'));
   app.setBaseViewsDir(join(__dirname, '..', 'views/pages'));
   app.setViewEngine('hbs');
