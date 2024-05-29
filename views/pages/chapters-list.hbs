@@ -1,0 +1,16 @@
+{{#> layout}}
+  {{#*inline "pageContent"}}
+    <div class="container mt-5">
+      <h1>{{title}}</h1>
+      <p>Тут ви можете знайти всі необхідні матеріали для вивчення правил дорожнього руху.</p>
+      <div class="chapters-list">
+        {{#each chapters}}
+          <a href="/theory/rules/{{chapter_num}}" class="chapter-button">
+            <div class="chapter-number">{{chapter_num}}</div>
+            <div class="chapter-name">{{chapter_name}}</div>
+          </a>
+        {{/each}}
+      </div>
+    </div>
+  {{/inline}}
+{{/layout}}

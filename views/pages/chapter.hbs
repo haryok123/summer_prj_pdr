@@ -1,0 +1,26 @@
+{{#> layout}}
+  {{#*inline "pageContent"}}
+    <div class="container mt-5">
+      <h1>Розділ {{chapter.chapter_num}}: {{chapter.chapter_name}}</h1>
+      <div class="subchapters-list mt-4">
+        {{#each subchapters}}
+          <div class="subchapter">
+            <h3><strong>{{this.chapter_num}}.{{this.subchapter_num}}</strong></h3>
+            <p>{{this.subchapter_content}}</p>
+            {{#if this.subchapter_video_link}}
+              <a href="{{this.subchapter_video_link}}" target="_blank">Дивитись відео</a>
+            {{/if}}
+          </div>
+        {{/each}}
+      </div>
+      <div class="navigation-buttons mt-4">
+        {{#if prevChapter}}
+          <a href="/theory/rules/{{prevChapter}}" class="btn btn-secondary">Попередній розділ</a>
+        {{/if}}
+        {{#if nextChapter}}
+          <a href="/theory/rules/{{nextChapter}}" class="btn btn-secondary">Наступний розділ</a>
+        {{/if}}
+      </div>
+    </div>
+  {{/inline}}
+{{/layout}}
