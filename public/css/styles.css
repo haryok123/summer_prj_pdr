@@ -1,0 +1,60 @@
+.chapter-button {
+    display: flex;
+    align-items: center;
+    justify-content: start;
+    padding: 10px 20px;
+    margin: 10px 0;
+    border: 2px solid #28a745;
+    border-radius: 50px;
+    text-decoration: none;
+    color: #000;
+    transition: background-color 0.3s;
+}
+
+.chapter-button:hover {
+    background-color: #28a745;
+    color: #fff;
+    .chapter-number {
+        color: #28a745;
+    }
+}
+
+.chapter-number {
+    background-color: #fff;
+    border: 2px solid #28a745;
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-right: 20px;
+}
+
+.chapter-name {
+    font-weight: bold;
+}
+
+.subchapter {
+    margin-bottom: 20px;
+}
+
+.navigation-buttons {
+    display: flex;
+    justify-content: space-between;
+    .btn{
+        background-color: #fff;
+        color: #000;
+        border: 2px solid #28a745;
+    }
+}
+
+.navigation-buttons .btn {
+    min-width: 150px;
+}
+
+.btn:hover {
+    background-color: #28a745;
+    color: #fff;
+}
+

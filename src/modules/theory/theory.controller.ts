@@ -45,7 +45,7 @@ export class TheoryController {
     return this.theoryService.findAllMarkings();
   }
 
-  @Get(['chapters', 'rules'])
+  @Get('chapters')
   async findAllChapters(): Promise<Chapter[]> {
     return this.theoryService.findAllChapters();
   }
@@ -86,14 +86,14 @@ export class TheoryController {
     );
   }
 
-  @Get('rules/:chapter_num')
+  @Get('chapters/:chapter_num')
   async findOneChapter(
     @Param('chapter_num') chapter_num: number,
   ): Promise<Chapter> {
     return this.theoryService.findOneChapter(chapter_num);
   }
 
-  @Get('rules/:chapter_num/:subchapter_num')
+  @Get('chapters/:chapter_num/:subchapter_num')
   async findOneSubchapter(
     @Param('chapter_num') chapter_num: number,
     @Param('subchapter_num') subchapter_num: number,
@@ -105,5 +105,39 @@ export class TheoryController {
   @Render('theory')
   getTheory() {
     return { title: 'Вивчення теорії' };
+  }
+
+  @Get('rules')
+  @Render('chapters-list')
+  async getChapters() {
+    const chapters = await this.theoryService.findAllChapters();
+    return { chapters, title: 'Перелік розділів' };
+  }
+
+  @Get('rules/:chapter_num')
+  @Render('chapter')
+  async getChapter(@Param('chapter_num') chapter_num: number) {
+    const chapter = await this.theoryService.findOneChapter(chapter_num);
+    const subchapters =
+      await this.theoryService.findAllSubchaptersByChapter(chapter_num);
+
+    if (!chapter) {
+      throw new NotFoundException('Chapter not found');
+    }
+
+    const prevChapter = await this.theoryService.findOneChapter(
+      +chapter_num - 1,
+    );
+    const nextChapter = await this.theoryService.findOneChapter(
+      +chapter_num + 1,
+    );
+
+    return {
+      chapter,
+      subchapters,
+      prevChapter: prevChapter ? prevChapter.chapter_num : null,
+      nextChapter: nextChapter ? nextChapter.chapter_num : null,
+      title: `Розділ ${chapter_num}: ${chapter.chapter_name}`,
+    };
   }
 }

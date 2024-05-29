@@ -91,4 +91,10 @@ export class TheoryService {
       where: { chapter_num, subchapter_num },
     });
   }
+
+  async findAllSubchaptersByChapter(chapter_num: number) {
+    return this.subchapterRepository.find({
+      where: { chapter_num: chapter_num },
+    });
+  }
 }
