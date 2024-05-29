@@ -18,6 +18,8 @@ import { ProfileModule } from './modules/profile/profile.module';
 import { TheoryModule } from './modules/theory/theory.module';
 import { ServeStaticModule } from '@nestjs/serve-static';
 import { join } from 'path';
+import { APP_FILTER } from '@nestjs/core';
+import { AllExceptionsFilter } from './all-exceptions-filter';
 
 @Module({
   imports: [
@@ -64,7 +66,12 @@ import { join } from 'path';
     TheoryModule,
   ],
   controllers: [],
-  providers: [],
+  providers: [
+    {
+      provide: APP_FILTER,
+      useClass: AllExceptionsFilter,
+    },
+  ],
   exports: [],
 })
 export class AppModule {}

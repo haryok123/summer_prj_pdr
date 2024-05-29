@@ -1,0 +1,13 @@
+{{#> layout}}
+  {{#*inline "pageContent"}}
+    <div class="container mt-5">
+      <h1>Сталася помилка</h1>
+      <h2>{{statusCode}} - {{error}}</h2>
+      <p>{{message}}</p>
+      {{#if stack}}
+        <pre>{{stack}}</pre>
+      {{/if}}
+      <a href="/" class="btn btn-primary mt-3">На головну</a>
+    </div>
+  {{/inline}}
+{{/layout}}
