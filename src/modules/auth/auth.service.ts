@@ -28,11 +28,14 @@ export class AuthService {
     };
 
     if (!user) {
-      console.log('User not found:', user_email);
       return error_message;
     }
+    bcrypt.hash(password, 10).then(function(res) {
+      console.log("db password", user.user_password.toString());
+      console.log("hashed qwerty123 password", res);
+    })
 
-    const isMatch: boolean = await bcrypt.compare(password, user.user_password);
+    const isMatch: boolean = await bcrypt.compare(password, user.user_password.toString());
     console.log("user password compare password",isMatch);
 
     if (!isMatch) {
