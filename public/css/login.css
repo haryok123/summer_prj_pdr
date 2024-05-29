@@ -1,0 +1,10 @@
+body {
+    height: 100vh;
+    min-height: 100vh; }
+
+.row > * {
+    align-content: center; }
+
+.side-panel {
+    color: #fff;
+    background-color: #212529; }

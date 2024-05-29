@@ -9,6 +9,7 @@ import { TheoryItemType } from '../../entities/theory-item-type.entity';
 import { UserAccount } from '../../entities/user-account.entity';
 import { AuthService } from './auth.service';
 import { AuthController } from './auth.controller';
+import { JwtModule } from '@nestjs/jwt';
 
 @Module({
   imports: [
@@ -21,9 +22,14 @@ import { AuthController } from './auth.controller';
       TheoryItemType,
       UserAccount,
     ]),
+    JwtModule.register({
+      global: true,
+      secret: "test",
+      signOptions: { expiresIn: '60m' },
+    }),
   ],
   providers: [AuthService],
   controllers: [AuthController],
-  exports: [],
+  exports: [AuthService],
 })
 export class AuthModule {}

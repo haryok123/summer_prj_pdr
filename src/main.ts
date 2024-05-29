@@ -4,6 +4,7 @@ import { join } from 'path';
 import { NestExpressApplication } from '@nestjs/platform-express';
 import * as hbs from 'hbs';
 import * as dotenv from 'dotenv';
+import * as cookieParser from 'cookie-parser';
 import { ValidationPipe } from '@nestjs/common';
 import * as express from 'express';
 
@@ -22,6 +23,10 @@ async function bootstrap() {
   hbs.registerHelper('ifEquals', function (arg1: any, arg2: any, options: any) {
     return arg1 == arg2 ? options.fn(this) : options.inverse(this);
   });
+
+  app.use(cookieParser());
+  app.useGlobalPipes(new ValidationPipe({ transform: true }));
+
 }
 
 bootstrap();
