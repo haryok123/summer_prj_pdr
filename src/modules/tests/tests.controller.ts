@@ -1,14 +1,30 @@
-import { Controller, Get, Param, ParseIntPipe, Render } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  NotFoundException,
+  Param,
+  ParseIntPipe,
+  Patch,
+  Post,
+  Query,
+  Render,
+} from '@nestjs/common';
 import { TestsService } from './tests.service';
 import { QuestionTheme } from '../../entities/question-theme.entity';
 import { Question } from '../../entities/question.entity';
 import { Comments } from '../../entities/comments.entity';
+import { CreateTestDto } from '../../dto/create-test.dto';
+import { Test } from '../../entities/test.entity';
+import { TestQuestion } from '../../entities/test-question.entity';
+import { UpdateTestQuestionDto } from '../../dto/update-test-question.dto';
 
 @Controller('tests')
 export class TestsController {
   constructor(private readonly testsService: TestsService) {}
 
-  @Get('themes')
+  @Get('themes-list')
   async getAllQuestionThemes(): Promise<QuestionTheme[]> {
     return this.testsService.findAllQuestionThemes();
   }
@@ -36,6 +52,86 @@ export class TestsController {
   @Get('comments')
   async getAllComments(): Promise<Comments[]> {
     return this.testsService.findAllComments();
+  }
+
+  @Post()
+  async createTest(@Body() createTestDto: CreateTestDto): Promise<Test> {
+    return this.testsService.createTest(createTestDto);
+  }
+
+  @Get('all-tests')
+  async findAllTests(): Promise<Test[]> {
+    return this.testsService.findAllTests();
+  }
+
+  @Get('test/:id')
+  async findOneTest(@Param('id') id: number): Promise<Test> {
+    return this.testsService.findOneTest(id);
+  }
+
+  @Patch('update/questions/:id')
+  async updateTestQuestion(
+    @Param('id') id: number,
+    @Body() updateTestQuestionDto: UpdateTestQuestionDto,
+  ): Promise<TestQuestion> {
+    console.log(updateTestQuestionDto);
+    return this.testsService.updateTestQuestion(id, updateTestQuestionDto);
+  }
+
+  @Delete('delete/test/:id')
+  async removeTest(@Param('id') id: number): Promise<void> {
+    return this.testsService.removeTest(id);
+  }
+
+  @Delete('delete/questions/:id')
+  async removeTestQuestion(@Param('id') id: number): Promise<void> {
+    return this.testsService.removeTestQuestion(id);
+  }
+
+  @Get('themes')
+  @Render('test-themes-list')
+  async getThemes(): Promise<{
+    title: string;
+    themes: QuestionTheme[];
+  }> {
+    const themes = await this.testsService.findAllQuestionThemes();
+    return { title: 'Теми тестів', themes };
+  }
+
+  @Get('theme/test')
+  @Render('theme-test')
+  async createThemeTest(
+    @Query('theme_id') theme_id: number,
+    @Query('user_login') user_login: string,
+  ): Promise<{
+    test: Test;
+  }> {
+    if (!theme_id || !user_login) {
+      throw new NotFoundException('Theme ID and User Login are required');
+    }
+    const createTestDto: CreateTestDto = {
+      user_login: user_login,
+      test_type: 'theme',
+      theme_id: theme_id,
+    };
+    const test = await this.testsService.createTest(createTestDto);
+    return { test };
+  }
+
+  @Get('exam')
+  @Render('exam-test')
+  async createExamTest(
+    @Query('user_login') user_login: string,
+  ): Promise<{ test: Test }> {
+    if (!user_login) {
+      throw new NotFoundException('User Login is required');
+    }
+    const createTestDto: CreateTestDto = {
+      user_login,
+      test_type: 'exam',
+    };
+    const test = await this.testsService.createTest(createTestDto);
+    return { test };
   }
 
   @Get('comments/:id')

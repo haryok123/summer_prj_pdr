@@ -18,7 +18,10 @@ export class TestQuestion {
   test: Test;
 
   @ManyToOne(() => Question)
-  @JoinColumn({ name: 'q_id' })
+  @JoinColumn([
+    { name: 'q_id', referencedColumnName: 'q_id' },
+    { name: 'theme_id', referencedColumnName: 'theme_id' },
+  ])
   question: Question;
 
   @Column({ nullable: true })

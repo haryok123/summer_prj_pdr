@@ -3,7 +3,7 @@ import {
   PrimaryGeneratedColumn,
   Column,
   OneToMany,
-  JoinColumn,
+  //JoinColumn,
 } from 'typeorm';
 import { Question } from './question.entity';
 
@@ -16,6 +16,6 @@ export class QuestionTheme {
   theme_chapter: string;
 
   @OneToMany(() => Question, (question) => question.theme)
-  @JoinColumn({ name: 'q_id', referencedColumnName: 'q_id' })
+  //@JoinColumn({ name: 'q_id', referencedColumnName: 'q_id' })
   questions: Question[];
 }

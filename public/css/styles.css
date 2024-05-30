@@ -39,14 +39,14 @@
     margin-bottom: 20px;
 }
 
+.btn{
+    background-color: #28a745;
+    color: #fff;
+    border: 2px solid #28a745;
+}
 .navigation-buttons {
     display: flex;
     justify-content: space-between;
-    .btn{
-        background-color: #fff;
-        color: #000;
-        border: 2px solid #28a745;
-    }
 }
 
 .navigation-buttons .btn {
@@ -54,7 +54,8 @@
 }
 
 .btn:hover {
-    background-color: #28a745;
-    color: #fff;
+    background-color: #fff;
+    color: #000;
+    border: 2px solid #28a745;
 }
 

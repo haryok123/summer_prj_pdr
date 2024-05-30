@@ -1,0 +1,36 @@
+{{#> layout}}
+  {{#*inline "pageContent"}}
+    <h1>Тест за темою</h1>
+    {{#each test.items as |item|}}
+      <div class="question">
+        <h5>{{item.question.q_content}}</h5>
+        {{#if item.question.q_image}}
+          <b>image here</b>
+        {{/if}}
+        <ol>
+          {{#if item.question.q_answer1}}
+            <li>{{item.question.q_answer1}}</li>
+          {{/if}}
+          {{#if item.question.q_answer2}}
+            <li>{{item.question.q_answer2}}</li>
+          {{/if}}
+          {{#if item.question.q_answer3}}
+            <li>{{item.question.q_answer3}}</li>
+          {{/if}}
+          {{#if item.question.q_answer4}}
+            <li>{{item.question.q_answer4}}</li>
+          {{/if}}
+          {{#if item.question.q_answer5}}
+            <li>{{item.question.q_answer5}}</li>
+          {{/if}}
+        </ol>
+        <form action="/tests/update/questions/{{item.test_question_id}}" method="post">
+          <input type="hidden" name="_method" value="patch">
+          <label for="user_answer">Ваша відповідь:</label>
+          <input type="number" name="user_answer" id="user_answer">
+          <button type="submit">Відправити</button>
+        </form>
+      </div>
+    {{/each}}
+  {{/inline}}
+{{/layout}}
