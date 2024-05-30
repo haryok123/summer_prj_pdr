@@ -10,6 +10,7 @@ import { UserAccount } from '../../entities/user-account.entity';
 import { AuthService } from './auth.service';
 import { AuthController } from './auth.controller';
 import { JwtModule } from '@nestjs/jwt';
+import { jwtConstants } from './constants';
 
 @Module({
   imports: [
@@ -24,7 +25,7 @@ import { JwtModule } from '@nestjs/jwt';
     ]),
     JwtModule.register({
       global: true,
-      secret: "test",
+      secret: "secret",
       signOptions: { expiresIn: '60m' },
     }),
   ],

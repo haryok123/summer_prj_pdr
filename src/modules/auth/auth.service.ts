@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { DeleteResult, Repository } from 'typeorm';
+import { Repository } from 'typeorm';
 import { UserAccount } from '../../entities/user-account.entity';
 import { CreateUserAccountDto } from '../../dto/create-user-account.dto';
 import { UpdateUserAccountDto } from '../../dto/update-user-account.dto';
@@ -13,13 +13,13 @@ export class AuthService {
   constructor(
     @InjectRepository(UserAccount)
     private readonly userAccountRepository: Repository<UserAccount>,
-    private jwtService: JwtService
+    private jwtService: JwtService,
   ) {}
 
   async signIn(user_email: string, password: string): Promise<any> {
-    const user: UserAccount = await this.userAccountRepository.findOne({ where: { user_email: user_email } });
-
-    console.log("user: ",user);
+    const user: UserAccount = await this.userAccountRepository.findOne({
+      where: { user_email: user_email },
+    });
 
     const error_message: any = {
       result: 'error',
@@ -30,22 +30,18 @@ export class AuthService {
     if (!user) {
       return error_message;
     }
-    bcrypt.hash(password, 10).then(function(res) {
-      console.log("db password", user.user_password.toString());
-      console.log("hashed qwerty123 password", res);
-    })
 
-    const isMatch: boolean = await bcrypt.compare(password, user.user_password.toString());
-    console.log("user password compare password",isMatch);
+    const isMatch: boolean = await bcrypt.compare(
+      password,
+      user.user_password.toString(),
+    );
 
     if (!isMatch) {
-      console.log('Password mismatch for user:', user_email);
       return error_message;
     }
 
     const payload = { sub: user.user_email };
     const accessToken = await this.jwtService.signAsync(payload);
-    console.log('Generated access token for user:', accessToken);
 
     return {
       result: 'success',
@@ -55,7 +51,9 @@ export class AuthService {
   async register(registerDto: RegisterDTO): Promise<any> {
     const { userLogin, userEmail, password } = registerDto;
 
-    const existingUser = await this.userAccountRepository.findOne({ where: { user_email: userEmail } });
+    const existingUser = await this.userAccountRepository.findOne({
+      where: { user_email: userEmail },
+    });
     if (existingUser) {
       throw new Error('User already exists');
     }
@@ -74,8 +72,14 @@ export class AuthService {
   async create(
     createUserAccountDto: CreateUserAccountDto,
   ): Promise<UserAccount> {
-    const hashedPassword = await bcrypt.hash(createUserAccountDto.user_password, 10);
-    const newUser = this.userAccountRepository.create({ ...createUserAccountDto, user_password: hashedPassword });
+    const hashedPassword = await bcrypt.hash(
+      createUserAccountDto.user_password,
+      10,
+    );
+    const newUser = this.userAccountRepository.create({
+      ...createUserAccountDto,
+      user_password: hashedPassword,
+    });
     return this.userAccountRepository.save(newUser);
   }
 
@@ -83,7 +87,10 @@ export class AuthService {
     user_login: string,
     updateUserAccountDto: UpdateUserAccountDto,
   ): Promise<UserAccount> {
-    await this.userAccountRepository.update({ user_login }, updateUserAccountDto);
+    await this.userAccountRepository.update(
+      { user_login },
+      updateUserAccountDto,
+    );
     return this.userAccountRepository.findOne({ where: { user_login } });
   }
 
