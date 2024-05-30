@@ -1,0 +1,13 @@
+{{#> layout}}
+  {{#*inline "pageContent"}}
+    <div class="container mt-5">
+      <h1>{{item.item_id}}. {{item.item_name}}</h1>
+      <img src="data:image/png;base64,{{hexToBase64 item.item_image}}" alt="{{item.item_name}}">
+      <p>{{item.item_description}}</p>
+      {{#if item.item_example_image}}
+        <h4>Приклад:</h4>
+        <img src="data:image/png;base64,{{hexToBase64 item.item_example_image}}" alt="Example of {{item.item_name}}">
+      {{/if}}
+    </div>
+  {{/inline}}
+{{/layout}}

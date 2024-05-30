@@ -26,12 +26,14 @@ export class TheoryService {
   async findAllSignTypes(): Promise<TheoryItemType[]> {
     return this.theoryItemTypeRepository.find({
       where: { theory_type: 'sign' },
+      relations: ['items'],
     });
   }
 
   async findAllMarkingTypes(): Promise<TheoryItemType[]> {
     return this.theoryItemTypeRepository.find({
       where: { theory_type: 'marking' },
+      relations: ['items'],
     });
   }
 
@@ -95,6 +97,15 @@ export class TheoryService {
   async findAllSubchaptersByChapter(chapter_num: number) {
     return this.subchapterRepository.find({
       where: { chapter_num: chapter_num },
+    });
+  }
+
+  async findAllTheoryItemsByType(
+    type_id: number,
+    theory_type: 'sign' | 'marking',
+  ): Promise<TheoryItem[]> {
+    return this.theoryItemRepository.find({
+      where: { type_id, theory_type },
     });
   }
 }

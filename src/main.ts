@@ -23,7 +23,10 @@ async function bootstrap() {
   hbs.registerHelper('ifEquals', function (arg1: any, arg2: any, options: any) {
     return arg1 == arg2 ? options.fn(this) : options.inverse(this);
   });
-
+  hbs.registerHelper('hexToBase64', function (hexString: any) {
+    if (!hexString) return '';
+    return Buffer.from(hexString, 'binary').toString('base64');
+  });
   app.use(cookieParser());
   app.useGlobalPipes(new ValidationPipe({ transform: true }));
 }

@@ -33,6 +33,7 @@ export class AllExceptionsFilter implements ExceptionFilter {
           : null,
     };
 
+    console.error(exception);
     response.status(status).render('error', errorResponse);
   }
 }

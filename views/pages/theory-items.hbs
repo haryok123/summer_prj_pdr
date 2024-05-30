@@ -1,0 +1,65 @@
+{{#> layout}}
+  {{#*inline "pageContent"}}
+    <div class="container mt-5">
+      <h1>{{title}}</h1>
+      <div class="accordion" id="accordionExample">
+        {{#each types as |type|}}
+          <div class="accordion-item">
+            <h2 class="accordion-header" id="heading{{type.type_id}}">
+              <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse{{type.type_id}}" aria-expanded="false" aria-controls="collapse{{type.type_id}}">
+                <img src="data:image/png;base64,{{hexToBase64 type.type_image}}" alt="{{type.type_name}}" style="height: 40px; margin-right: 10px;">
+                {{type.type_name}}
+              </button>
+            </h2>
+            <div id="collapse{{type.type_id}}" class="accordion-collapse collapse" aria-labelledby="heading{{type.type_id}}" data-bs-parent="#accordionExample">
+              <div class="accordion-body">
+                <p>{{type.type_description}}</p>
+                <div class="row">
+                  {{#each type.items as |item|}}
+                    <div class="col-3 text-center">
+                      <a href="/theory/road-{{type.theory_type}}s/{{type.type_id}}/{{item.item_id}}">
+                        <img src="data:image/png;base64,{{hexToBase64 item.item_image}}" alt="{{item.item_name}}" style="height: 60px;">
+                      </a>
+                      <div class="item-number">{{item.item_id}}</div>
+                    </div>
+                  {{/each}}
+                </div>
+              </div>
+            </div>
+          </div>
+        {{/each}}
+      </div>
+    </div>
+
+    <style>
+      .item-number {
+        color: inherit;
+        text-decoration: none;
+      }
+    </style>
+
+    <script>
+      document.addEventListener('DOMContentLoaded', () => {
+        document.querySelectorAll('.accordion-button').forEach(button => {
+          button.addEventListener('click', function () {
+            const target = this.getAttribute('data-bs-target');
+            const collapseElement = document.querySelector(target);
+
+            if (collapseElement.classList.contains('show')) {
+              collapseElement.classList.remove('show');
+              this.classList.add('collapsed');
+            } else {
+              const currentlyOpen = document.querySelector('.accordion-collapse.show');
+              if (currentlyOpen) {
+                currentlyOpen.classList.remove('show');
+                document.querySelector('.accordion-button:not(.collapsed)').classList.add('collapsed');
+              }
+              collapseElement.classList.add('show');
+              this.classList.remove('collapsed');
+            }
+          });
+        });
+      });
+    </script>
+  {{/inline}}
+{{/layout}}

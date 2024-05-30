@@ -55,36 +55,36 @@ export class TheoryController {
     return this.theoryService.findAllSubchapters();
   }
 
-  @Get(':theory_type(road-signs|road-markings)/:type_id')
-  async findOneTheoryItemType(
-    @Param('theory_type') theory_type: string,
-    @Param('type_id') type_id: number,
-  ): Promise<TheoryItemType> {
-    const normalizedType = theory_type.replace('road-', '').slice(0, -1);
-
-    if (normalizedType !== 'sign' && normalizedType !== 'marking') {
-      throw new NotFoundException(`Theory_${theory_type} not found`);
-    }
-    return this.theoryService.findOneTheoryItemType(type_id, normalizedType);
-  }
-
-  @Get(':theory_type(road-signs|road-markings)/:type_id/:item_id')
-  async findOneTheoryItem(
-    @Param('theory_type') theory_type: string,
-    @Param('type_id') type_id: number,
-    @Param('item_id') item_id: string,
-  ): Promise<TheoryItem> {
-    const normalizedType = theory_type.replace('road-', '').slice(0, -1);
-
-    if (normalizedType !== 'sign' && normalizedType !== 'marking') {
-      throw new NotFoundException(`Theory_${theory_type} not found`);
-    }
-    return this.theoryService.findOneTheoryItem(
-      item_id,
-      type_id,
-      normalizedType,
-    );
-  }
+  // @Get(':theory_type(road-signs|road-markings)/:type_id')
+  // async findOneTheoryItemType(
+  //   @Param('theory_type') theory_type: string,
+  //   @Param('type_id') type_id: number,
+  // ): Promise<TheoryItemType> {
+  //   const normalizedType = theory_type.replace('road-', '').slice(0, -1);
+  //
+  //   if (normalizedType !== 'sign' && normalizedType !== 'marking') {
+  //     throw new NotFoundException(`Theory_${theory_type} not found`);
+  //   }
+  //   return this.theoryService.findOneTheoryItemType(type_id, normalizedType);
+  // }
+  //
+  // @Get(':theory_type(road-signs|road-markings)/:type_id/:item_id')
+  // async findOneTheoryItem(
+  //   @Param('theory_type') theory_type: string,
+  //   @Param('type_id') type_id: number,
+  //   @Param('item_id') item_id: string,
+  // ): Promise<TheoryItem> {
+  //   const normalizedType = theory_type.replace('road-', '').slice(0, -1);
+  //
+  //   if (normalizedType !== 'sign' && normalizedType !== 'marking') {
+  //     throw new NotFoundException(`Theory_${theory_type} not found`);
+  //   }
+  //   return this.theoryService.findOneTheoryItem(
+  //     item_id,
+  //     type_id,
+  //     normalizedType,
+  //   );
+  // }
 
   @Get('chapters/:chapter_num')
   async findOneChapter(
@@ -139,5 +139,62 @@ export class TheoryController {
       nextChapter: nextChapter ? nextChapter.chapter_num : null,
       title: `Розділ ${chapter_num}: ${chapter.chapter_name}`,
     };
+  }
+
+  @Get('road-signs')
+  @Render('theory-items')
+  async getRoadSignsPage() {
+    const types = await this.theoryService.findAllSignTypes();
+    return { types, title: 'Дорожні знаки' };
+  }
+
+  // Endpoint to render road markings page
+  @Get('road-markings')
+  @Render('theory-items')
+  async getRoadMarkingsPage() {
+    const types = await this.theoryService.findAllMarkingTypes();
+    return { types, title: 'Дорожня розмітка' };
+  }
+
+  // Endpoint to fetch items of a specific type
+  @Get('road-signs/:type_id')
+  async getSignsByType(@Param('type_id') type_id: number) {
+    return await this.theoryService.findAllTheoryItemsByType(type_id, 'sign');
+  }
+
+  @Get('road-markings/:type_id')
+  async getMarkingsByType(@Param('type_id') type_id: number) {
+    return await this.theoryService.findAllTheoryItemsByType(
+      type_id,
+      'marking',
+    );
+  }
+
+  @Get('road-signs/:type_id/:item_id')
+  @Render('item-detail')
+  async getSignDetail(
+    @Param('type_id') type_id: number,
+    @Param('item_id') item_id: string,
+  ) {
+    const item = await this.theoryService.findOneTheoryItem(
+      item_id,
+      type_id,
+      'sign',
+    );
+    return { item, title: item.item_name };
+  }
+
+  @Get('road-markings/:type_id/:item_id')
+  @Render('item-detail')
+  async getMarkingDetail(
+    @Param('type_id') type_id: number,
+    @Param('item_id') item_id: string,
+  ) {
+    const item = await this.theoryService.findOneTheoryItem(
+      item_id,
+      type_id,
+      'marking',
+    );
+    return { item, title: item.item_name };
   }
 }
