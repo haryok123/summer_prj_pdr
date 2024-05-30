@@ -9318,9 +9318,6 @@ aside .logo-container {
 aside .logo-container .fs-7 {
     transform: translateY(-7px); }
 
-#page-content {
-    overflow: scroll; }
-
 div#checkoutSidebar {
     background-color: red;
     height: 100vh;

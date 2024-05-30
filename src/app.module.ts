@@ -67,10 +67,10 @@ import { AllExceptionsFilter } from './all-exceptions-filter';
   ],
   controllers: [],
   providers: [
-    // {
-    //   provide: APP_FILTER,
-    //   useClass: AllExceptionsFilter,
-    // },
+    {
+      provide: APP_FILTER,
+      useClass: AllExceptionsFilter,
+    },
   ],
   exports: [],
 })
