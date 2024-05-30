@@ -5,31 +5,35 @@ import {
   Body,
   Param,
   Get,
-  Delete, Render, Req, Res, HttpStatus, HttpException,
+  Delete,
+  Render,
+  Req,
+  Res,
+  HttpStatus,
+  HttpException,
 } from '@nestjs/common';
 import { UserAccount } from '../../entities/user-account.entity';
 import { CreateUserAccountDto } from '../../dto/create-user-account.dto';
 import { UpdateUserAccountDto } from '../../dto/update-user-account.dto';
 import { AuthService } from './auth.service';
 import { SignInDTO } from '../../dto/sign-in.dto';
-import { CookieOptions, Response} from 'express';
+import { CookieOptions, Response } from 'express';
 import { RegisterDTO } from '../../dto/register.dto';
 
 @Controller('auth')
 export class AuthController {
-  constructor(private readonly authService: AuthService) {
-  }
+  constructor(private readonly authService: AuthService) {}
 
   @Get('login')
   @Render('login')
-  async login(@Req() req){
-  return {
-  title: 'Login',
-};
-}
+  async login(@Req() req) {
+    return {
+      title: 'Login',
+    };
+  }
   @Get('registration')
   @Render('registration')
-  async registration(@Req() req){
+  async registration(@Req() req) {
     return {
       title: 'Register',
     };
@@ -44,16 +48,21 @@ export class AuthController {
         user: result,
       };
     } catch (error) {
-      throw new HttpException({
-        status: HttpStatus.BAD_REQUEST,
-        error: error.message,
-      }, HttpStatus.BAD_REQUEST);
+      throw new HttpException(
+        {
+          status: HttpStatus.BAD_REQUEST,
+          error: error.message,
+        },
+        HttpStatus.BAD_REQUEST,
+      );
     }
   }
 
-
   @Post('signIn')
-  async signIn(@Body() signInDto: SignInDTO, @Res() res: Response): Promise<any> {
+  async signIn(
+    @Body() signInDto: SignInDTO,
+    @Res() res: Response,
+  ): Promise<any> {
     // console.log(signInDto.userEmail, signInDto.password);
 
     const result = await this.authService.signIn(
@@ -75,8 +84,6 @@ export class AuthController {
     } else {
       cookieOptions.expires = new Date(Date.now() + 12 * 60 * 60 * 1000);
     }
-    // console.log('Result from authService.signIn:', result);
-    // console.log(' result.access_token:', result.access_token);
 
     res.cookie('access_token', result.access_token, cookieOptions);
     return res.redirect('/');

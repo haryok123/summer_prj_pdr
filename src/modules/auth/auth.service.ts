@@ -44,10 +44,10 @@ export class AuthService {
     const accessToken = await this.jwtService.signAsync(payload);
 
     return {
-      result: 'success',
       access_token: accessToken,
     };
   }
+  //
   async register(registerDto: RegisterDTO): Promise<any> {
     const { userLogin, userEmail, password } = registerDto;
 

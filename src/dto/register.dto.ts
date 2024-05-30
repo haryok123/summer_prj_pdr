@@ -9,5 +9,4 @@ export class RegisterDTO {
 
   @MinLength(6)
   password: string;
-
 }
