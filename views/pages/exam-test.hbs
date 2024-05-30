@@ -1,0 +1,22 @@
+{{#> layout}}
+  {{#*inline "pageContent"}}
+    <h1>Іспит</h1>
+    <p>У вас є 20 хвилин на завершення тесту.</p>
+    {{#each test.items as |item|}}
+      <div class="question">
+        <p>{{item.question.question_text}}</p>
+        <ul>
+          {{#each item.question.answers as |answer|}}
+            <li>{{answer.answer_text}}</li>
+          {{/each}}
+        </ul>
+        <form action="/tests/questions/{{item.test_question_id}}" method="post">
+          <input type="hidden" name="_method" value="patch">
+          <label for="user_answer">Ваша відповідь:</label>
+          <input type="number" name="user_answer" id="user_answer">
+          <button type="submit">Відправити</button>
+        </form>
+      </div>
+    {{/each}}
+  {{/inline}}
+{{/layout}}

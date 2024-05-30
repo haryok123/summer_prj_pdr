@@ -1,0 +1,14 @@
+{{#> layout}}
+  {{#*inline "pageContent"}}
+    <div class="container mt-5">
+      <h1>{{title}}</h1>
+      <p>Виберіть тему для проходження тесту:</p>
+      <div class="themes-list">
+        {{#each themes}}
+          <a href="/tests/theme/test?theme_id={{theme_id}}&user_login=patron" class="chapter-button">
+          <div class="chapter-name">{{theme_chapter}}</div>
+        {{/each}}
+      </div>
+    </div>
+  {{/inline}}
+{{/layout}}
