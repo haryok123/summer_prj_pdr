@@ -16,7 +16,7 @@
                 <p>{{type.type_description}}</p>
                 <div class="row">
                   {{#each type.items as |item|}}
-                    <div class="col-3 text-center">
+                    <div class="col-1 text-center">
                       <a href="/theory/road-{{type.theory_type}}s/{{type.type_id}}/{{item.item_id}}">
                         <img src="data:image/png;base64,{{hexToBase64 item.item_image}}" alt="{{item.item_name}}" style="height: 60px;">
                       </a>
