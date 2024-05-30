@@ -9,6 +9,7 @@ import { TheoryItemType } from '../../entities/theory-item-type.entity';
 import { UserAccount } from '../../entities/user-account.entity';
 import { TheoryService } from './theory.service';
 import { TheoryController } from './theory.controller';
+import { DataStorage } from '../data-storage.service';
 
 @Module({
   imports: [
@@ -22,8 +23,8 @@ import { TheoryController } from './theory.controller';
       UserAccount,
     ]),
   ],
-  providers: [TheoryService],
+  providers: [TheoryService, DataStorage],
   controllers: [TheoryController],
-  exports: [],
+  exports: [TheoryService],
 })
 export class TheoryModule {}

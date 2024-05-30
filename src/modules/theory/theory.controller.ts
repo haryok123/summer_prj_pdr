@@ -10,10 +10,25 @@ import { TheoryItemType } from '../../entities/theory-item-type.entity';
 import { TheoryItem } from '../../entities/theory-item.entity';
 import { Chapter } from '../../entities/chapter.entity';
 import { Subchapter } from '../../entities/subchapter.entity';
-
+import { DataStorage } from '../data-storage.service';
 @Controller('theory')
 export class TheoryController {
-  constructor(private readonly theoryService: TheoryService) {}
+  constructor(
+    private readonly theoryService: TheoryService,
+    private readonly storage: DataStorage,
+  ) {
+    this.uploadStorage();
+  }
+
+  async uploadStorage(): Promise<void> {
+    const signs = await this.theoryService.findAllSigns();
+    const markings = await this.theoryService.findAllMarkings();
+    const chapters = await this.theoryService.findAllChapters();
+
+    this.storage.setSigns(signs);
+    this.storage.setMarkings(markings);
+    this.storage.setChapters(chapters);
+  }
 
   @Get('item-types')
   async findAllTheoryItemTypes(): Promise<TheoryItemType[]> {
@@ -116,25 +131,34 @@ export class TheoryController {
 
   @Get('rules/:chapter_num')
   @Render('chapter')
-  async getChapter(@Param('chapter_num') chapter_num: number) {
-    const chapter = await this.theoryService.findOneChapter(chapter_num);
-    const subchapters =
-      await this.theoryService.findAllSubchaptersByChapter(chapter_num);
+  getChapter(@Param('chapter_num') chapter_num: number) {
+    let chapters = this.storage.getChapters();
+    if (chapters.length === 0)
+      this.uploadStorage().then((r) => (chapters = this.storage.getChapters()));
+    const chapter = chapters.find((chap) => +chap.chapter_num === +chapter_num);
 
     if (!chapter) {
       throw new NotFoundException('Chapter not found');
     }
 
-    const prevChapter = await this.theoryService.findOneChapter(
-      +chapter_num - 1,
+    const subchapters = chapter.subchapters;
+
+    const prevChapter = chapters.find(
+      (chap) => chap.chapter_num === chapter.chapter_num - 1,
     );
-    const nextChapter = await this.theoryService.findOneChapter(
-      +chapter_num + 1,
+    const nextChapter = chapters.find(
+      (chap) => chap.chapter_num === chapter.chapter_num + 1,
     );
+
+    const signs = this.storage.getSigns();
+    const markings = this.storage.getMarkings();
 
     return {
       chapter,
       subchapters,
+      signs,
+      markings,
+      chapters,
       prevChapter: prevChapter ? prevChapter.chapter_num : null,
       nextChapter: nextChapter ? nextChapter.chapter_num : null,
       title: `Розділ ${chapter_num}: ${chapter.chapter_name}`,

@@ -6,7 +6,7 @@
         {{#each subchapters}}
           <div class="subchapter">
             <h3><strong>{{this.chapter_num}}.{{this.subchapter_num}}</strong></h3>
-            <p>{{this.subchapter_content}}</p>
+            <div>{{{formatContent this.subchapter_content ../signs ../markings ../chapters}}}</div>
             {{#if this.subchapter_video_link}}
               <a href="{{this.subchapter_video_link}}" target="_blank">Дивитись відео</a>
             {{/if}}

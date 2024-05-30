@@ -54,7 +54,7 @@ export class TheoryService {
   }
 
   async findAllChapters(): Promise<Chapter[]> {
-    return this.chapterRepository.find();
+    return this.chapterRepository.find({ relations: ['subchapters'] });
   }
 
   async findAllSubchapters(): Promise<Subchapter[]> {
