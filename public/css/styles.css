@@ -59,3 +59,70 @@
     border: 2px solid #28a745;
 }
 
+.info_holder{
+    display: flex;
+    flex-direction: row;
+    gap: 20px;
+    align-items: flex-start;
+    justify-content: space-between;
+    width: 100%;
+}
+
+.block_box_new_theory{
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+    align-items: center;
+    flex-wrap: wrap;
+    width: 100%;
+    gap: 32px;
+    margin: 30px auto 30px auto;
+    box-sizing: border-box;
+}
+.block_box_new_theory li{
+    width: 425px;
+    display:flex;
+    flex-direction:column;
+}
+.block_box_new_theory li a{
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 24px;
+    border-radius: 12px;
+    background: #F1F1F1;
+    padding: 25px 20px;
+    height: 100%;
+    transition: 0.5s;
+    transition:0.5s;
+}
+.block_box_new_theory li a:hover{
+    background: #28a745;
+}
+.block_box_new_theory li .block_box_title{
+    font-size:20px;
+    line-height:30px;
+    font-weight:bold;
+    text-align:center;
+    width:100%;
+    color:#1A1A1A;
+}
+.block_box_new_theory li .block_box_subtitle{
+    font-size:16px;
+    line-height:20px;
+    font-weight:normal;
+    text-align:center;
+    width:100%;
+    color: #F7F8F9FF;
+}
+.block_box_new_theory li .block_box_img{
+    margin:0px auto;
+    display: block;
+    height: 160px;
+    width: auto;
+}
+
+.link-without-underline{
+    text-decoration: none;
+}
+
