@@ -135,10 +135,10 @@ export class TheoryController {
 
   @Get('rules/:chapter_num')
   @Render('chapter')
-  getChapter(@Param('chapter_num') chapter_num: number) {
+  async getChapter(@Param('chapter_num') chapter_num: number) {
     let chapters = this.storage.chapters;
     if (chapters.length === 0)
-      this.uploadStorage().then((r) => (chapters = this.storage.chapters));
+      await this.uploadStorage().then(() => (chapters = this.storage.chapters));
     const chapter = chapters.find((chap) => +chap.chapter_num === +chapter_num);
 
     if (!chapter) {
@@ -172,7 +172,9 @@ export class TheoryController {
   @Get('road-signs')
   @Render('theory-items')
   async getRoadSignsPage() {
-    const types = this.storage.signTypes;
+    let types = this.storage.signTypes;
+    if (types.length === 0)
+      await this.uploadStorage().then(() => (types = this.storage.signTypes));
     return { types, title: 'Дорожні знаки' };
   }
 
@@ -180,7 +182,11 @@ export class TheoryController {
   @Get('road-markings')
   @Render('theory-items')
   async getRoadMarkingsPage() {
-    const types = this.storage.markingTypes;
+    let types = this.storage.markingTypes;
+    if (types.length === 0)
+      await this.uploadStorage().then(
+        () => (types = this.storage.markingTypes),
+      );
     return { types, title: 'Дорожня розмітка' };
   }
 

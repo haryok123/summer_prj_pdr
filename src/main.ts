@@ -30,12 +30,6 @@ async function bootstrap() {
 
 bootstrap();
 
-async function loadTheoryData(theoryService) {
-  const signs = await theoryService.findAllSigns();
-  const markings = await theoryService.findAllMarkings();
-  return { signs, markings };
-}
-
 function loadHelpers() {
   hbs.registerHelper('ifEquals', function (arg1: any, arg2: any, options: any) {
     return arg1 == arg2 ? options.fn(this) : options.inverse(this);
@@ -51,8 +45,8 @@ function loadHelpers() {
     function (content: string, signs: any[], markings: any[], chapters: any[]) {
       let currentType = null;
       const processParagraph = (paragraph: string) => {
-        let isBold = paragraph.endsWith(':');
-        let isItalic = paragraph.includes('КМ');
+        const isBold = paragraph.endsWith(':');
+        const isItalic = paragraph.includes('КМ');
         //const termRegex = /^([А-Яа-яЇїІіЄєҐґ \-]+) [—\-] (.+)$/;
         //paragraph = paragraph.replace(termRegex, '<strong>$1</strong> — $2');
 
