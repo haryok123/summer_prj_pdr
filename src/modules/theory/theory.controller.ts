@@ -24,10 +24,14 @@ export class TheoryController {
     const signs = await this.theoryService.findAllSigns();
     const markings = await this.theoryService.findAllMarkings();
     const chapters = await this.theoryService.findAllChapters();
+    const signTypes = await this.theoryService.findAllSignTypes();
+    const markingTypes = await this.theoryService.findAllMarkingTypes();
 
-    this.storage.setSigns(signs);
-    this.storage.setMarkings(markings);
-    this.storage.setChapters(chapters);
+    this.storage.signs = signs;
+    this.storage.markings = markings;
+    this.storage.chapters = chapters;
+    this.storage.signTypes = signTypes;
+    this.storage.markingTypes = markingTypes;
   }
 
   @Get('item-types')
@@ -132,9 +136,9 @@ export class TheoryController {
   @Get('rules/:chapter_num')
   @Render('chapter')
   getChapter(@Param('chapter_num') chapter_num: number) {
-    let chapters = this.storage.getChapters();
+    let chapters = this.storage.chapters;
     if (chapters.length === 0)
-      this.uploadStorage().then((r) => (chapters = this.storage.getChapters()));
+      this.uploadStorage().then((r) => (chapters = this.storage.chapters));
     const chapter = chapters.find((chap) => +chap.chapter_num === +chapter_num);
 
     if (!chapter) {
@@ -150,8 +154,8 @@ export class TheoryController {
       (chap) => chap.chapter_num === chapter.chapter_num + 1,
     );
 
-    const signs = this.storage.getSigns();
-    const markings = this.storage.getMarkings();
+    const signs = this.storage.signs;
+    const markings = this.storage.markings;
 
     return {
       chapter,
@@ -168,7 +172,7 @@ export class TheoryController {
   @Get('road-signs')
   @Render('theory-items')
   async getRoadSignsPage() {
-    const types = await this.theoryService.findAllSignTypes();
+    const types = this.storage.signTypes;
     return { types, title: 'Дорожні знаки' };
   }
 
@@ -176,7 +180,7 @@ export class TheoryController {
   @Get('road-markings')
   @Render('theory-items')
   async getRoadMarkingsPage() {
-    const types = await this.theoryService.findAllMarkingTypes();
+    const types = this.storage.markingTypes;
     return { types, title: 'Дорожня розмітка' };
   }
 
