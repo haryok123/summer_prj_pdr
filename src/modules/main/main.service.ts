@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Req } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Chapter } from '../../entities/chapter.entity';
@@ -12,5 +12,14 @@ export class MainService {
 
   async findAllChapters(): Promise<Chapter[]> {
     return this.chapterRepository.find();
+  }
+
+  renderHome(@Req() req) {
+    return {
+      style: 'home',
+      script: 'home',
+      title: 'Головна сторінка',
+      currentUser: req.user.user_login,
+    };
   }
 }

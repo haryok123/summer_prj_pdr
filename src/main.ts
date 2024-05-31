@@ -51,8 +51,8 @@ function loadHelpers() {
     function (content: string, signs: any[], markings: any[], chapters: any[]) {
       let currentType = null;
       const processParagraph = (paragraph: string) => {
-        let isBold = paragraph.endsWith(':');
-        let isItalic = paragraph.includes('КМ');
+        const isBold = paragraph.endsWith(':');
+        const isItalic = paragraph.includes('КМ');
         //const termRegex = /^([А-Яа-яЇїІіЄєҐґ \-]+) [—\-] (.+)$/;
         //paragraph = paragraph.replace(termRegex, '<strong>$1</strong> — $2');
 

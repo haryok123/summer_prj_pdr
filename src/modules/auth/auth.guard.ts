@@ -5,8 +5,8 @@ import {
   UnauthorizedException,
 } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
-import { Request } from 'express';
 import { jwtConstants } from './constants';
+import { Request } from 'express';
 
 @Injectable()
 export class AuthGuard implements CanActivate {
@@ -24,7 +24,6 @@ export class AuthGuard implements CanActivate {
       });
       request['user'] = payload;
     } catch (err) {
-      console.error('Error verifying token:', err);
       throw new UnauthorizedException();
     }
     return true;
