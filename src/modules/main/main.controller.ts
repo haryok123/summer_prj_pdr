@@ -6,7 +6,7 @@ import { AuthGuard } from '../auth/auth.guard';
 export class MainController {
   constructor(private mainService: MainService) {}
 
-  @UseGuards(AuthGuard)
+  //@UseGuards(AuthGuard)
   @Render('home')
   @Get()
   async renderHome(@Req() req) {

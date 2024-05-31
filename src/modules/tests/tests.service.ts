@@ -1,6 +1,6 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { Repository, UpdateResult } from 'typeorm';
 import { QuestionTheme } from '../../entities/question-theme.entity';
 import { Question } from '../../entities/question.entity';
 import { Comments } from '../../entities/comments.entity';
@@ -47,6 +47,11 @@ export class TestsService {
       where: { theme_id: themeId, q_id: qId },
     });
   }
+  async findTestQuestionById(id: number): Promise<TestQuestion> {
+    return this.testQuestionRepository.findOne({
+      where: { test_question_id: id },
+    });
+  }
 
   async findAllComments(): Promise<Comments[]> {
     return this.commentsRepository.find();
@@ -90,19 +95,21 @@ export class TestsService {
     const questions = await this.questionRepository.find({
       where: { theme_id: theme_id },
     });
-    for (const question of questions) {
+    const promises = questions.map(async (question) => {
       const createTestQuestionDto: CreateTestQuestionDto = {
         test_id: test.test_id,
         q_id: question.q_id,
         theme_id: theme_id,
       };
       await this.createTestQuestion(createTestQuestionDto, test, question);
-    }
+    });
+    await Promise.all(promises);
   }
 
   private async generateExamTestQuestions(test: Test): Promise<void> {
     const questions = await this.questionRepository
-      .createQueryBuilder()
+      .createQueryBuilder('q')
+      .where('q.theme_id < 40')
       .orderBy('RAND()')
       .limit(20)
       .getMany();
@@ -144,17 +151,8 @@ export class TestsService {
   async updateTestQuestion(
     id: number,
     updateTestQuestionDto: UpdateTestQuestionDto,
-  ): Promise<TestQuestion> {
-    const testQuestion = await this.testQuestionRepository.findOne({
-      where: { test_question_id: id },
-    });
-
-    if (!testQuestion) {
-      throw new NotFoundException('Test question not found');
-    }
-
-    testQuestion.user_answer = updateTestQuestionDto.user_answer;
-    return this.testQuestionRepository.save(testQuestion);
+  ): Promise<UpdateResult> {
+    return this.testQuestionRepository.update(id, updateTestQuestionDto);
   }
 
   async removeTest(id: number): Promise<void> {

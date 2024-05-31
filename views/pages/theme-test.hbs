@@ -1,36 +1,161 @@
 {{#> layout}}
   {{#*inline "pageContent"}}
-    <h1>Тест за темою</h1>
-    {{#each test.items as |item|}}
-      <div class="question">
-        <h5>{{item.question.q_content}}</h5>
-        {{#if item.question.q_image}}
-          <b>image here</b>
-        {{/if}}
-        <ol>
-          {{#if item.question.q_answer1}}
-            <li>{{item.question.q_answer1}}</li>
-          {{/if}}
-          {{#if item.question.q_answer2}}
-            <li>{{item.question.q_answer2}}</li>
-          {{/if}}
-          {{#if item.question.q_answer3}}
-            <li>{{item.question.q_answer3}}</li>
-          {{/if}}
-          {{#if item.question.q_answer4}}
-            <li>{{item.question.q_answer4}}</li>
-          {{/if}}
-          {{#if item.question.q_answer5}}
-            <li>{{item.question.q_answer5}}</li>
-          {{/if}}
-        </ol>
-        <form action="/tests/update/questions/{{item.test_question_id}}" method="post">
-          <input type="hidden" name="_method" value="patch">
-          <label for="user_answer">Ваша відповідь:</label>
-          <input type="number" name="user_answer" id="user_answer">
-          <button type="submit">Відправити</button>
-        </form>
-      </div>
+    <link href="/css/test.css" rel="stylesheet">
+    <link rel="stylesheet" href="/css/test.css">
+    <h2>Тест за темою {{theme_name}}</h2>
+
+    <!-- Pagination -->
+    <div class="pagination">
+    {{#each test.items as |item index|}}
+      {{#if (eq (mod index 25) 0)}}
+        <div class="pagination-row">
+      {{/if}}
+        <button
+          class="pagination-button
+            {{#if (eq ../currentQuestionIndex index )}}current
+            {{else}}{{#if (eq item.user_answer item.question.q_correct_answer)}}correct
+            {{else}}{{#if
+            (and (neq item.user_answer null) (neq item.user_answer item.question.q_correct_answer))}}incorrect{{/if}}{{/if}}{{/if}}"
+          onclick="navigateToQuestion({{../theme_id}}, {{../test.test_id}}, {{index}})">
+          <span class="pagination-text">{{add index 1}}</span>
+        </button>
+      {{#if (eq (mod (add index 1) 25) 0)}}
+        </div>
+      {{/if}}
     {{/each}}
+    {{#if (neq (mod test.items.length 25) 0)}}
+      </div>
+    {{/if}}
+    </div>
+
+    <!-- Question Block -->
+    <div class="question-block">
+      <div class="question-content">
+        <h6>{{add 1 currentQuestionIndex}} запитання</h6>
+        <h5>{{currentQuestion.question.q_content}}</h5>
+      </div>
+      {{#if currentQuestion.question.q_image}}
+        <div class="question-image">
+          <img src="data:image/png;base64,{{hexToBase64 currentQuestion.question.q_image}}" alt="Question Image">
+        </div>
+      {{/if}}
+      <div class="question-answers">
+        {{#if currentQuestion.question.q_answer1}}
+          <button class="answer-button" data-answer="1">{{currentQuestion.question.q_answer1}}</button>
+        {{/if}}
+        {{#if currentQuestion.question.q_answer2}}
+          <button class="answer-button" data-answer="2">{{currentQuestion.question.q_answer2}}</button>
+        {{/if}}
+        {{#if currentQuestion.question.q_answer3}}
+          <button class="answer-button" data-answer="3">{{currentQuestion.question.q_answer3}}</button>
+        {{/if}}
+        {{#if currentQuestion.question.q_answer4}}
+          <button class="answer-button" data-answer="4">{{currentQuestion.question.q_answer4}}</button>
+        {{/if}}
+        {{#if currentQuestion.question.q_answer5}}
+          <button class="answer-button" data-answer="5">{{currentQuestion.question.q_answer5}}</button>
+        {{/if}}
+
+
+        <!-- End Test Button -->
+        <button class="btn btn-success end-test-button" onclick="endTest()">Закінчити тест</button>
+      </div>
+    </div>
+
+
+    <!-- End Test Modal -->
+    <div id="endTestModal" class="modal">
+      <div class="modal-content">
+        <span class="close" onclick="closeModal()">&times;</span>
+        <p>Вірних відповідей: {{correctAnswers}}</p>
+        <p>Невірних відповідей: {{incorrectAnswers}}</p>
+        <p>Запитань пройдено: {{answeredQuestions}}</p>
+        <button class="btn btn-primary" onclick="window.location.href='/tests/themes/test?theme_id={{nextTheme}}'">Наступна тема</button>
+      </div>
+    </div>
+
+    <script>
+      document.addEventListener('DOMContentLoaded', function() {
+      const userAnswer = '{{currentQuestion.user_answer}}';
+      const correctAnswer = '{{currentQuestion.question.q_correct_answer}}';
+
+      // Highlight the answers based on previous selection
+      if (userAnswer) {
+        document.querySelectorAll('.answer-button').forEach((btn) => {
+          const answer = btn.getAttribute('data-answer');
+          if (answer == correctAnswer) {
+            btn.classList.add('correct');
+          } else if (answer == userAnswer) {
+            btn.classList.add('incorrect');
+          }
+          btn.disabled = true;
+        });
+      }
+
+      // Add event listeners to answer buttons
+      document.querySelectorAll('.answer-button').forEach((button) => {
+        button.addEventListener('click', async function() {
+          const userAnswer = this.getAttribute('data-answer');
+          const questionId = '{{currentQuestion.test_question_id}}';
+          try {
+            const response = await fetch(`/tests/update/questions/${questionId}`, {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+                'X-Requested-With': 'XMLHttpRequest',
+              },
+              body: JSON.stringify({ user_answer: userAnswer }),
+            });
+
+            if (!response.ok) {
+              throw new Error('Network response was not ok');
+            }
+
+            const result = await response.json();
+
+            // Highlight the buttons based on the correctness of the answer
+            document.querySelectorAll('.answer-button').forEach((btn) => {
+              const answer = btn.getAttribute('data-answer');
+              btn.classList.remove('correct', 'incorrect');
+              if (answer == result.correctAnswer) {
+                btn.classList.add('correct');
+              } else if (answer == userAnswer) {
+                btn.classList.add('incorrect');
+              }
+              btn.disabled = true;
+            });
+
+            // Update the pagination button color
+            const paginationButton = document.querySelector(
+              `.pagination-button:nth-child(${parseInt('{{question_index}}') + 1})`,
+            );
+            if (userAnswer == result.correctAnswer) {
+              paginationButton.classList.add('correct');
+              paginationButton.classList.remove('incorrect');
+            } else {
+              paginationButton.classList.add('incorrect');
+              paginationButton.classList.remove('correct');
+            }
+          } catch (error) {
+            console.error('There was a problem with the fetch operation:', error);
+          }
+        });
+      });
+    });
+
+    function navigateToQuestion(themeId, testId, questionIndex) {
+      window.location.href = `/tests/themes/test?theme_id=${themeId}&test_id=${testId}&question_index=${questionIndex}`;
+    }
+
+    function endTest() {
+      document.getElementById('endTestModal').style.display = 'flex';
+    }
+
+    function closeModal() {
+      document.getElementById('endTestModal').style.display = 'none';
+    }
+    </script>
+
   {{/inline}}
 {{/layout}}
+

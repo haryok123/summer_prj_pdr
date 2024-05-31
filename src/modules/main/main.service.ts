@@ -19,7 +19,7 @@ export class MainService {
       style: 'home',
       script: 'home',
       title: 'Головна сторінка',
-      currentUser: req.user,
+      //currentUser: req.user,
     };
   }
 }

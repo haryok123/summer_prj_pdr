@@ -40,6 +40,38 @@ function loadHelpers() {
     return Buffer.from(hexString, 'binary').toString('base64');
   });
 
+  hbs.registerHelper('eq', function (arg1: any, arg2: any, options: any) {
+    return arg1 == arg2;
+  });
+
+  hbs.registerHelper('neq', function (arg1: any, arg2: any, options: any) {
+    return arg1 != arg2;
+  });
+
+  hbs.registerHelper('and', function (arg1: any, arg2: any, options: any) {
+    return arg1 === true && arg2 === true;
+  });
+
+  hbs.registerHelper('mod', function (n: number, m: number) {
+    return n % m;
+  });
+
+  hbs.registerHelper('chunk', function (context, chunkSize, options) {
+    let ret = '';
+    for (let i = 0; i < context.length; i += chunkSize) {
+      ret += options.fn(context.slice(i, i + chunkSize));
+    }
+    return ret;
+  });
+
+  hbs.registerHelper('multiply', function (a, b) {
+    return a * b;
+  });
+
+  hbs.registerHelper('add', function (a: number, b: number) {
+    return +a + +b;
+  });
+
   hbs.registerHelper(
     'formatContent',
     function (content: string, signs: any[], markings: any[], chapters: any[]) {

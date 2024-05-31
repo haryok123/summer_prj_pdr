@@ -29,26 +29,6 @@ export class TestsController {
     return this.testsService.findAllQuestionThemes();
   }
 
-  @Get('themes/:id')
-  async getQuestionThemeById(
-    @Param('id', ParseIntPipe) id: number,
-  ): Promise<QuestionTheme> {
-    return this.testsService.findQuestionThemeById(id);
-  }
-
-  @Get('questions')
-  async getAllQuestions(): Promise<Question[]> {
-    return this.testsService.findAllQuestions();
-  }
-
-  @Get('questions/:themeId/:qId')
-  async getQuestionById(
-    @Param('themeId', ParseIntPipe) themeId: number,
-    @Param('qId', ParseIntPipe) qId: number,
-  ): Promise<Question> {
-    return this.testsService.findQuestionById(themeId, qId);
-  }
-
   @Get('comments')
   async getAllComments(): Promise<Comments[]> {
     return this.testsService.findAllComments();
@@ -69,13 +49,23 @@ export class TestsController {
     return this.testsService.findOneTest(id);
   }
 
-  @Patch('update/questions/:id')
+  @Post('update/questions/:id')
   async updateTestQuestion(
-    @Param('id') id: number,
-    @Body() updateTestQuestionDto: UpdateTestQuestionDto,
-  ): Promise<TestQuestion> {
-    console.log(updateTestQuestionDto);
-    return this.testsService.updateTestQuestion(id, updateTestQuestionDto);
+    @Param('id') test_question_id: number,
+    @Body('user_answer') user_answer: number,
+  ): Promise<{ correctAnswer: number }> {
+    const testQuestion =
+      await this.testsService.findTestQuestionById(test_question_id);
+    if (!testQuestion) {
+      throw new NotFoundException('Test question not found');
+    }
+    const dto: UpdateTestQuestionDto = {
+      user_answer: user_answer,
+    };
+    await this.testsService.updateTestQuestion(test_question_id, dto);
+
+    const correctAnswer = 1;
+    return { correctAnswer };
   }
 
   @Delete('delete/test/:id')
@@ -98,40 +88,127 @@ export class TestsController {
     return { title: 'Теми тестів', themes };
   }
 
-  @Get('theme/test')
+  @Get('themes/test')
   @Render('theme-test')
   async createThemeTest(
     @Query('theme_id') theme_id: number,
-    @Query('user_login') user_login: string,
+    @Query('test_id') test_id: number,
+    @Query('question_index') question_index: number = 0,
+    @Query('user_login') user_login: string = 'pesyk',
   ): Promise<{
+    incorrectAnswers: number;
+    currentQuestionIndex: number;
+    answeredQuestions: number;
     test: Test;
+    currentQuestion: TestQuestion;
+    correctAnswers: number;
+    theme_id: number;
+    theme_name: string;
   }> {
-    if (!theme_id || !user_login) {
-      throw new NotFoundException('Theme ID and User Login are required');
+    let test: Test;
+    if (!test_id) {
+      const createTestDto: CreateTestDto = {
+        user_login: user_login,
+        test_type: 'theme',
+        theme_id: theme_id,
+      };
+      test = await this.testsService.createTest(createTestDto);
+    } else {
+      test = await this.testsService.findOneTest(test_id);
     }
-    const createTestDto: CreateTestDto = {
-      user_login: user_login,
-      test_type: 'theme',
-      theme_id: theme_id,
+
+    if (question_index < 0) question_index = 0;
+    if (question_index >= test.items.length)
+      question_index = test.items.length - 1;
+
+    const currentQuestion = test.items[question_index];
+
+    const correctAnswers = test.items.filter(
+      (item) => item.user_answer === item.question.q_correct_answer,
+    ).length;
+    const incorrectAnswers = test.items.filter(
+      (item) =>
+        item.user_answer !== null &&
+        item.user_answer !== item.question.q_correct_answer,
+    ).length;
+    const answeredQuestions = test.items.filter(
+      (item) => item.user_answer !== null,
+    ).length;
+
+    const theme_name = await this.testsService.findQuestionThemeById(theme_id);
+
+    return {
+      test,
+      currentQuestion,
+      currentQuestionIndex: question_index,
+      theme_name: theme_name.theme_chapter,
+      correctAnswers,
+      incorrectAnswers,
+      answeredQuestions,
+      theme_id,
     };
-    const test = await this.testsService.createTest(createTestDto);
-    return { test };
   }
 
   @Get('exam')
   @Render('exam-test')
   async createExamTest(
-    @Query('user_login') user_login: string,
-  ): Promise<{ test: Test }> {
+    @Query('test_id') test_id: number,
+    @Query('question_index') question_index: number = 0,
+    @Query('user_login') user_login: string = 'pesyk',
+  ): Promise<{
+    incorrectAnswers: number;
+    currentQuestionIndex: number;
+    answeredQuestions: number;
+    test: Test;
+    currentQuestion: TestQuestion;
+    correctAnswers: number;
+    current_theme: string;
+  }> {
     if (!user_login) {
       throw new NotFoundException('User Login is required');
     }
-    const createTestDto: CreateTestDto = {
-      user_login,
-      test_type: 'exam',
+    let test: Test;
+    if (!test_id) {
+      const createTestDto: CreateTestDto = {
+        user_login: user_login,
+        test_type: 'exam',
+      };
+      test = await this.testsService.createTest(createTestDto);
+    } else {
+      test = await this.testsService.findOneTest(test_id);
+    }
+
+    if (question_index < 0) question_index = 0;
+    if (question_index >= test.items.length)
+      question_index = test.items.length - 1;
+
+    const currentQuestion = test.items[question_index];
+
+    const correctAnswers = test.items.filter(
+      (item) => item.user_answer === item.question.q_correct_answer,
+    ).length;
+    const incorrectAnswers = test.items.filter(
+      (item) =>
+        item.user_answer !== null &&
+        item.user_answer !== item.question.q_correct_answer,
+    ).length;
+    const answeredQuestions = test.items.filter(
+      (item) => item.user_answer !== null,
+    ).length;
+
+    const current_theme = await this.testsService.findQuestionThemeById(
+      currentQuestion.question.theme_id,
+    );
+
+    return {
+      test,
+      currentQuestion,
+      currentQuestionIndex: question_index,
+      current_theme: current_theme.theme_chapter,
+      correctAnswers,
+      incorrectAnswers,
+      answeredQuestions,
     };
-    const test = await this.testsService.createTest(createTestDto);
-    return { test };
   }
 
   @Get('comments/:id')
