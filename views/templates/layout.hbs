@@ -44,7 +44,7 @@
           <div class="d-flex">
             {{#if currentUser}}
               <a href="/profile" class="btn btn-round">
-                <img src="{{ user_avatar }}" alt="User Avatar" style="width:40px;" class="rounded-pill">
+                <img src="data:image/png;base64,{{hexToBase64 currentUser.user_photo}}" alt="User Avatar" style="width:40px;" class="rounded-pill">
               </a>
             {{else}}
               <button id="loginButton" type="button" class="btn btn-round" data-toggle="modal" data-target="#loginModal">
@@ -160,5 +160,39 @@
   <script src="/js/{{script}}.js"></script>
 {{/if}}
 
+{{#if currentUser}}
+  <script>
+    const loginButton = document.getElementById('loginButton');
+    loginButton.onclick = function (e) {
+      e.preventDefault();
+      let loginModal = new bootstrap.Modal(document.getElementById('loginModal'));
+      loginModal.show();
+
+      let tooltipTriggerList = [].slice.call(
+        document.querySelectorAll('[data-bs-toggle="tooltip"]'),
+      );
+      tooltipTriggerList.forEach(function (tooltipTriggerEl) {
+        new bootstrap.Tooltip(tooltipTriggerEl);
+      });
+    };
+
+    const loginButton = document.getElementById('registerButton');
+    loginButton.onclick = function (e) {
+      e.preventDefault();
+      let registerModal = new bootstrap.Modal(
+        document.getElementById('registerModal'),
+      );
+      registerModal.show();
+
+      let tooltipTriggerList = [].slice.call(
+        document.querySelectorAll('[data-bs-toggle="tooltip"]'),
+      );
+      tooltipTriggerList.forEach(function (tooltipTriggerEl) {
+        new bootstrap.Tooltip(tooltipTriggerEl);
+      });
+    };
+
+  </script>
+{{/if}}
 </body>
 </html>
