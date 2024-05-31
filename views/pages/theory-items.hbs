@@ -37,29 +37,5 @@
         text-decoration: none;
       }
     </style>
-
-    <script>
-      document.addEventListener('DOMContentLoaded', () => {
-        document.querySelectorAll('.accordion-button').forEach(button => {
-          button.addEventListener('click', function () {
-            const target = this.getAttribute('data-bs-target');
-            const collapseElement = document.querySelector(target);
-
-            if (collapseElement.classList.contains('show')) {
-              collapseElement.classList.remove('show');
-              this.classList.add('collapsed');
-            } else {
-              const currentlyOpen = document.querySelector('.accordion-collapse.show');
-              if (currentlyOpen) {
-                currentlyOpen.classList.remove('show');
-                document.querySelector('.accordion-button:not(.collapsed)').classList.add('collapsed');
-              }
-              collapseElement.classList.add('show');
-              this.classList.remove('collapsed');
-            }
-          });
-        });
-      });
-    </script>
   {{/inline}}
 {{/layout}}
