@@ -3,13 +3,14 @@ import {
   PrimaryGeneratedColumn,
   Column,
   OneToMany,
+  PrimaryColumn,
   //JoinColumn,
 } from 'typeorm';
 import { Question } from './question.entity';
 
 @Entity('question_theme')
 export class QuestionTheme {
-  @PrimaryGeneratedColumn('increment')
+  @PrimaryColumn({ type: 'double' })
   theme_id: number;
 
   @Column({ length: 150 })

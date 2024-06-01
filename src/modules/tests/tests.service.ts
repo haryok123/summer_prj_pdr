@@ -10,6 +10,7 @@ import { UpdateTestQuestionDto } from '../../dto/update-test-question.dto';
 import { CreateTestQuestionDto } from '../../dto/create-test-question.dto';
 import { CreateTestDto } from '../../dto/create-test.dto';
 import { UserAccount } from '../../entities/user-account.entity';
+import { UpdateTestDto } from '../../dto/update-test.dto';
 
 @Injectable()
 export class TestsService {
@@ -47,6 +48,7 @@ export class TestsService {
       where: { theme_id: themeId, q_id: qId },
     });
   }
+
   async findTestQuestionById(id: number): Promise<TestQuestion> {
     return this.testQuestionRepository.findOne({
       where: { test_question_id: id },
@@ -148,15 +150,21 @@ export class TestsService {
     });
   }
 
+  async updateTest(
+    id: number,
+    updateTestDto: UpdateTestDto,
+  ): Promise<UpdateResult> {
+    return this.testRepository.update(id, updateTestDto);
+  }
+
   async updateTestQuestion(
     id: number,
     updateTestQuestionDto: UpdateTestQuestionDto,
   ): Promise<UpdateResult> {
     return this.testQuestionRepository.update(id, updateTestQuestionDto);
   }
-
-  async removeTest(id: number): Promise<void> {
-    await this.testRepository.delete(id);
+  async deleteTest(test_id: number): Promise<void> {
+    await this.testRepository.delete(test_id);
   }
 
   async removeTestQuestion(id: number): Promise<void> {

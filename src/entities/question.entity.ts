@@ -3,7 +3,7 @@ import { QuestionTheme } from './question-theme.entity';
 
 @Entity('question')
 export class Question {
-  @PrimaryColumn()
+  @PrimaryColumn({ type: 'double' })
   theme_id: number;
 
   @PrimaryColumn()

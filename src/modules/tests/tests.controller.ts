@@ -6,7 +6,6 @@ import {
   NotFoundException,
   Param,
   ParseIntPipe,
-  Patch,
   Post,
   Query,
   Render,
@@ -15,14 +14,17 @@ import {
 } from '@nestjs/common';
 import { TestsService } from './tests.service';
 import { QuestionTheme } from '../../entities/question-theme.entity';
-import { Question } from '../../entities/question.entity';
 import { Comments } from '../../entities/comments.entity';
 import { CreateTestDto } from '../../dto/create-test.dto';
 import { Test } from '../../entities/test.entity';
 import { TestQuestion } from '../../entities/test-question.entity';
 import { UpdateTestQuestionDto } from '../../dto/update-test-question.dto';
+import { UpdateTestDto } from '../../dto/update-test.dto';
+
 import { AuthGuard } from '../auth/auth.guard';
 import { Request } from 'express';
+import { UserAccount } from '../../entities/user-account.entity';
+
 @Controller('tests')
 export class TestsController {
   constructor(private readonly testsService: TestsService) {}
@@ -52,6 +54,46 @@ export class TestsController {
     return this.testsService.findOneTest(id);
   }
 
+  @Post('finish/:id')
+  async finishTest(@Param('id') test_id: number): Promise<{
+    incorrectAnswers: number;
+    answeredQuestions: number;
+    unansweredQuestions: number;
+    correctAnswers: number;
+  }> {
+    const test = await this.testsService.findOneTest(test_id);
+    if (!test) {
+      throw new NotFoundException('Test not found');
+    }
+    const dto: UpdateTestDto = {
+      is_done: true,
+    };
+    await this.testsService.updateTest(test.test_id, dto);
+
+    const correctAnswers = test.items.filter(
+      (item) => item.user_answer === item.question.q_correct_answer,
+    ).length;
+    const incorrectAnswers = test.items.filter(
+      (item) =>
+        item.user_answer !== null &&
+        item.user_answer !== item.question.q_correct_answer,
+    ).length;
+    const answeredQuestions = test.items.filter(
+      (item) => item.user_answer !== null,
+    ).length;
+
+    const unansweredQuestions = test.items.filter(
+      (item) => item.user_answer === null,
+    ).length;
+
+    return {
+      correctAnswers,
+      incorrectAnswers,
+      answeredQuestions,
+      unansweredQuestions,
+    };
+  }
+
   @Post('update/questions/:id')
   async updateTestQuestion(
     @Param('id') test_question_id: number,
@@ -71,9 +113,9 @@ export class TestsController {
     return { correctAnswer };
   }
 
-  @Delete('delete/test/:id')
-  async removeTest(@Param('id') id: number): Promise<void> {
-    return this.testsService.removeTest(id);
+  @Delete('delete/:id')
+  async deleteTest(@Param('id') test_id: number): Promise<void> {
+    await this.testsService.deleteTest(test_id);
   }
 
   @Delete('delete/questions/:id')
@@ -94,42 +136,25 @@ export class TestsController {
   }
 
   @UseGuards(AuthGuard)
-  @Get('theme/test')
+  @Get('themes/test')
   @Render('theme-test')
   async createThemeTest(
     @Req() req: Request,
+    @Query('test_id') test_id: number,
     @Query('theme_id') theme_id: number,
-    @Query('user_login') user_login: string,
+    @Query('question_index') question_index: number = 0,
   ): Promise<any> {
-    if (!theme_id || !user_login) {
+    const user: UserAccount = req['user'];
+
+    if (!theme_id || !user) {
       throw new NotFoundException('Theme ID and User Login are required');
     }
-    const createTestDto: CreateTestDto = {
-      user_login: user_login,
-      test_type: 'theme',
-      theme_id: theme_id,
-    @Query('test_id') test_id: number,
-    @Query('question_index') question_index: number = 0,
-    @Query('user_login') user_login: string = 'pesyk',
-  ): Promise<{
-    incorrectAnswers: number;
-    currentQuestionIndex: number;
-    answeredQuestions: number;
-    test: Test;
-    currentQuestion: TestQuestion;
-    correctAnswers: number;
-    theme_id: number;
-    theme_name: string;
-      title: string;
-      currentUser: object;
-  }> {
     let test: Test;
     if (!test_id) {
       const createTestDto: CreateTestDto = {
-        user_login: user_login,
+        user_login: user.user_login,
         test_type: 'theme',
         theme_id: theme_id,
-
       };
       test = await this.testsService.createTest(createTestDto);
     } else {
@@ -142,18 +167,6 @@ export class TestsController {
 
     const currentQuestion = test.items[question_index];
 
-    const correctAnswers = test.items.filter(
-      (item) => item.user_answer === item.question.q_correct_answer,
-    ).length;
-    const incorrectAnswers = test.items.filter(
-      (item) =>
-        item.user_answer !== null &&
-        item.user_answer !== item.question.q_correct_answer,
-    ).length;
-    const answeredQuestions = test.items.filter(
-      (item) => item.user_answer !== null,
-    ).length;
-
     const theme_name = await this.testsService.findQuestionThemeById(theme_id);
 
     return {
@@ -161,15 +174,12 @@ export class TestsController {
       currentQuestion,
       currentQuestionIndex: question_index,
       theme_name: theme_name.theme_chapter,
-      correctAnswers,
-      incorrectAnswers,
-      answeredQuestions,
       theme_id,
       title: 'Тести за темами',
-      currentUser: req['user'],
+      currentUser: user,
     };
-    const test = await this.testsService.createTest(createTestDto);
-    return { test };
+    //const test = await this.testsService.createTest(createTestDto);
+    //return { test };
   }
 
   @UseGuards(AuthGuard)
@@ -177,15 +187,19 @@ export class TestsController {
   @Render('exam-test')
   async createExamTest(
     @Req() req: Request,
-    @Query('user_login') user_login: string,
+    @Query('test_id') test_id: number,
+    @Query('question_index') question_index: number = 0,
   ): Promise<any> {
-    if (!user_login) {
-      throw new NotFoundException('User Login is required');
+    const user: UserAccount = req['user'];
+
+    if (!user) {
+      throw new NotFoundException('User access exception.');
     }
+
     let test: Test;
     if (!test_id) {
       const createTestDto: CreateTestDto = {
-        user_login: user_login,
+        user_login: user.user_login,
         test_type: 'exam',
       };
       test = await this.testsService.createTest(createTestDto);
@@ -199,44 +213,18 @@ export class TestsController {
 
     const currentQuestion = test.items[question_index];
 
-    const correctAnswers = test.items.filter(
-      (item) => item.user_answer === item.question.q_correct_answer,
-    ).length;
-    const incorrectAnswers = test.items.filter(
-      (item) =>
-        item.user_answer !== null &&
-        item.user_answer !== item.question.q_correct_answer,
-    ).length;
-    const answeredQuestions = test.items.filter(
-      (item) => item.user_answer !== null,
-    ).length;
-
     const current_theme = await this.testsService.findQuestionThemeById(
       currentQuestion.question.theme_id,
     );
 
     return {
-      test,
+      test: test,
       currentQuestion,
       currentQuestionIndex: question_index,
       current_theme: current_theme.theme_chapter,
-      correctAnswers,
-      incorrectAnswers,
-      answeredQuestions,
-    };
-    const test = await this.testsService.createTest(createTestDto);
-    return {
-      test: test,
       title: 'Екзамен з ПДР',
-      currentUser: req['user'],
+      currentUser: user,
     };
-  }
-
-  @Get('comments/:id')
-  async getCommentById(
-    @Param('id', ParseIntPipe) id: number,
-  ): Promise<Comments> {
-    return this.testsService.findCommentById(id);
   }
 
   @UseGuards(AuthGuard)

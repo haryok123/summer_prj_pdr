@@ -31,6 +31,7 @@ export class AuthController {
       title: 'Login',
     };
   }
+
   @Get('registration')
   @Render('registration')
   async registration(@Req() req) {
@@ -67,6 +68,7 @@ export class AuthController {
       signInDto.userEmail,
       signInDto.password,
     );
+    console.log(1, result);
 
     if (result.result === 'error') {
       return res.status(HttpStatus.UNAUTHORIZED).json(result);
@@ -77,11 +79,13 @@ export class AuthController {
       httpOnly: true,
     };
 
+    console.log(2, cookieOptions);
     if (!signInDto.remember_me) {
       cookieOptions.expires = undefined;
     } else {
       cookieOptions.expires = new Date(Date.now() + 12 * 60 * 60 * 1000);
     }
+    console.log(3, cookieOptions);
 
     res.cookie('access_token', result.access_token, cookieOptions);
     return res.redirect('/');

@@ -1,7 +1,10 @@
 {{#> layout}}
   {{#*inline "pageContent"}}
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels"></script>
     <link href="/css/test.css" rel="stylesheet">
     <link rel="stylesheet" href="/css/test.css">
+
     <h2>Іспит</h2>
 
     <!-- Pagination -->
@@ -31,7 +34,7 @@
     <!-- Question Block -->
     <div class="question-block">
       <div class="question-content">
-        <h6>{{add 1 currentQuestionIndex}} запитання з теми «{{current_theme}}»</h6>
+        <h6>{{add 1 currentQuestionIndex}} запитання з теми {{theme_name}}</h6>
         <h5>{{currentQuestion.question.q_content}}</h5>
       </div>
       {{#if currentQuestion.question.q_image}}
@@ -58,7 +61,8 @@
 
 
         <!-- End Test Button -->
-        <button class="btn btn-success end-test-button" onclick="endTest()">Закінчити тест</button>
+        <button class="btn btn-success end-test-button" {{#if test.is_done}} onclick="endTest({{test.test_id}}, 'Результати', false, this)">
+          Показати результати {{else}} onclick="endTest({{test.test_id}}, 'Тест завершено!', true, this)"> Закінчити тест{{/if}}</button>
       </div>
     </div>
 
@@ -67,10 +71,14 @@
     <div id="endTestModal" class="modal">
       <div class="modal-content">
         <span class="close" onclick="closeModal()">&times;</span>
-        <p>Вірних відповідей: {{correctAnswers}}</p>
-        <p>Невірних відповідей: {{incorrectAnswers}}</p>
-        <p>Запитань пройдено: {{answeredQuestions}}</p>
-        <button class="btn btn-primary" onclick="window.location.href='/tests/exam/'">Наступна тема</button>
+        <h6 id="resultsTitle"></h6>
+        <p>Запитань пройдено: <span id="answeredQuestions"></span></span></p>
+        <div class="chartCard">
+          <div class="chartBox">
+            <canvas id="resultChart"></canvas>
+          </div>
+        </div>
+        <button class="btn btn-success" onclick="window.location.href = `/tests/exam`">Ще один іспит!</button>
       </div>
     </div>
 
@@ -83,9 +91,9 @@
         if (userAnswer) {
           document.querySelectorAll('.answer-button').forEach((btn) => {
             const answer = btn.getAttribute('data-answer');
-            if (answer == correctAnswer) {
+            if (answer === correctAnswer) {
               btn.classList.add('correct');
-            } else if (answer == userAnswer) {
+            } else if (answer === userAnswer) {
               btn.classList.add('incorrect');
             }
             btn.disabled = true;
@@ -94,6 +102,11 @@
 
         // Add event listeners to answer buttons
         document.querySelectorAll('.answer-button').forEach((button) => {
+          if ({{test.is_done}}) {
+            button.disabled = true;
+            return;
+          }
+
           button.addEventListener('click', async function() {
             const userAnswer = this.getAttribute('data-answer');
             const questionId = '{{currentQuestion.test_question_id}}';
@@ -129,7 +142,7 @@
               const paginationButton = document.querySelector(
                 `.pagination-button:nth-child(${parseInt('{{question_index}}') + 1})`,
               );
-              if (userAnswer == result.correctAnswer) {
+              if (userAnswer === result.correctAnswer) {
                 paginationButton.classList.add('correct');
                 paginationButton.classList.remove('incorrect');
               } else {
@@ -143,19 +156,142 @@
         });
       });
 
-      function navigateToQuestion(testId, questionIndex) {
+      let isNavigatingWithinTest = false;
+      let chartIsCreated = false;
+
+      window.addEventListener('beforeunload', async function(e) {
+        if (!isNavigatingWithinTest && !{{test.is_done}}) {
+          var confirmationMessage = 'Ви точно хочете цього? Прогрес не збережетсься';
+          const leavePage = confirm(confirmationMessage);
+          if (leavePage) {
+            try {
+              const response = await fetch(`/tests/delete/{{test.test_id}}`, {
+                method: 'DELETE',
+                headers: {
+                  'Content-Type': 'application/json',
+                },
+              });
+
+              if (!response.ok) {
+                throw new Error('Network response was not ok');
+              }
+            } catch (error) {
+              console.error('There was a problem with the fetch operation:', error);
+              return;
+            }
+          }
+          e.returnValue = confirmationMessage; // Gecko, Trident, Chrome 34+
+          return confirmationMessage; // Gecko, WebKit, Chrome <34
+        }
+      });
+
+      async function navigateToQuestion(testId, questionIndex) {
+        isNavigatingWithinTest = true;
         window.location.href = `/tests/exam/?test_id=${testId}&question_index=${questionIndex}`;
       }
 
-      function endTest() {
-        document.getElementById('endTestModal').style.display = 'flex';
+      async function endTest(testId, title, disabled, button) {
+        button.disabled = false;
+
+        try {
+          const response = await fetch(`/tests/finish/${testId}`, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+          });
+
+          if (!response.ok) {
+            throw new Error('Network response was not ok');
+          }
+
+          const result = await response.json();
+          document.getElementById('answeredQuestions').textContent = `${result.answeredQuestions}/${result.answeredQuestions+result.unansweredQuestions}`;
+          document.getElementById('resultsTitle').textContent = title;
+
+          if(!chartIsCreated) {
+            renderDoughnutChart(result.correctAnswers, result.incorrectAnswers, result.unansweredQuestions);
+            chartIsCreated = true;
+          }
+
+          document.getElementById('endTestModal').style.display = 'flex';
+        } catch (error) {
+          console.error('There was a problem with the fetch operation:', error);
+        }
       }
+
+      function renderDoughnutChart(correctAnswers, incorrectAnswers, unansweredQuestions) {
+        const totalQuestions = correctAnswers + incorrectAnswers + unansweredQuestions;
+        const correctPercentage = ((correctAnswers / totalQuestions) * 100).toFixed(2);
+
+        const data = {
+          labels: ['Правильні', 'Неправильні', 'Без відповіді'],
+          datasets: [{
+            data: [correctAnswers, incorrectAnswers, unansweredQuestions],
+            backgroundColor: ['#4CAF50', '#F44336', '#9E9E9E'],
+          }],
+        };
+
+
+        const doughnutLabel = {
+          id: 'doughnutLabel',
+          afterDatasetsDraw(chart, args, pluginOptions) {
+            const { ctx, data } = chart;
+            ctx.save();
+            console.log('dsradrs');
+            const xCoor = 1000;
+            const yCoor = 1000;
+            ctx.font = 'bold 30px sans-serif';
+            ctx.fillStyle = '#4CAF50';
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            ctx.fillText(correctPercentage + '%', xCoor, yCoor);
+          },
+        };
+
+        // config
+        const config = {
+          type: 'doughnut',
+          data,
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+              datalabels: {
+                formatter: function(value, context) {
+                  return context.chart.data.labels[context.dataIndex] + '\n' + value;
+                },
+                color: '#fff',
+                font: {
+                  weight: 'bold',
+                },
+              },
+              tooltip: {
+                callbacks: {
+                  label: function(tooltipItem) {
+                    return '\t\t\t\t\t\t' + tooltipItem.raw;
+                  },
+                },
+              },
+              doughnutLabel,
+            },
+          },
+        };
+
+        // render init block
+        const ctx = new Chart(
+          document.getElementById('resultChart').getContext('2d'),
+          config,
+        );
+
+      }
+
 
       function closeModal() {
         document.getElementById('endTestModal').style.display = 'none';
       }
+
     </script>
 
   {{/inline}}
 {{/layout}}
-

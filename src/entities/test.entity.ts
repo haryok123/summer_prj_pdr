@@ -25,6 +25,9 @@ export class Test {
   @Column({ type: 'enum', enum: ['theme', 'exam'] })
   test_type: 'theme' | 'exam';
 
+  @Column({ type: 'boolean' })
+  is_done: boolean;
+
   @OneToMany(() => TestQuestion, (item) => item.test)
   items: TestQuestion[];
 }
