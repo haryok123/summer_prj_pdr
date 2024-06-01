@@ -91,6 +91,17 @@ export class AuthController {
     return res.redirect('/');
   }
 
+  @Post('logout')
+  async signOut(@Res() res) {
+    const cookieOptions: CookieOptions = {
+      sameSite: 'strict',
+      httpOnly: true,
+    };
+
+    res.clearCookie('access_token', cookieOptions);
+    return res.redirect('/');
+  }
+
   @Post('create')
   async create(
     @Body() createUserAccountDto: CreateUserAccountDto,
