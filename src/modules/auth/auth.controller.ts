@@ -63,8 +63,6 @@ export class AuthController {
     @Body() signInDto: SignInDTO,
     @Res() res: Response,
   ): Promise<any> {
-    // console.log(signInDto.userEmail, signInDto.password);
-
     const result = await this.authService.signIn(
       signInDto.userEmail,
       signInDto.password,

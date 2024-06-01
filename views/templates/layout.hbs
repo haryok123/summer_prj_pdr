@@ -50,7 +50,7 @@
               <button id="loginButton" type="button" class="btn btn-round" data-toggle="modal" data-target="#loginModal">
                 Вхід
               </button>
-              <a id="registerButton" class="btn btn-success" href="/auth/registration">Реєстрація</a>
+              <a id="registerButton" class="btn btn-success" href="">Реєстрація</a>
             {{/if}}
           </div>
         </div>
@@ -126,10 +126,10 @@
         </div>
         <div class="d-flex flex-column text-center">
           <div class="w-100">
-            <form action="register" method="POST">
+            <form action="auth/register" method="POST">
               <div class="mb-3">
-                <label for="userName" class="form-label">Ім'я користувача</label>
-                <input type="text" class="form-control" name="userName" id="userName" aria-describedby="Ім'я користувача" autocomplete="name">
+                <label for="userLogin" class="form-label">Ім'я користувача</label>
+                <input type="text" class="form-control" name="userLogin" id="userLogin" aria-describedby="Ім'я користувача" autocomplete="name">
               </div>
               <div class="mb-3">
                 <label for="userEmail" class="form-label">E-mail користувача</label>
@@ -160,7 +160,6 @@
   <script src="/js/{{script}}.js"></script>
 {{/if}}
 
-{{#if currentUser}}
   <script>
     const loginButton = document.getElementById('loginButton');
     loginButton.onclick = function (e) {
@@ -176,8 +175,8 @@
       });
     };
 
-    const loginButton = document.getElementById('registerButton');
-    loginButton.onclick = function (e) {
+    const registerButton = document.getElementById('registerButton');
+    registerButton.onclick = function (e) {
       e.preventDefault();
       let registerModal = new bootstrap.Modal(
         document.getElementById('registerModal'),
@@ -193,6 +192,6 @@
     };
 
   </script>
-{{/if}}
+
 </body>
 </html>

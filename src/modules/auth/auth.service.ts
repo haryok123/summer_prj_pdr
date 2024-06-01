@@ -40,11 +40,11 @@ export class AuthService {
       return error_message;
     }
 
-    const payload = { sub: user.user_email, user: user };
+    const payload = { sub: user.user_email, userLogin: user.user_login };
     const accessToken = await this.jwtService.signAsync(payload);
-
     return {
       access_token: accessToken,
+      user: user,
     };
   }
   //

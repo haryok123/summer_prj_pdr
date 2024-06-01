@@ -10,6 +10,8 @@ import {
   Post,
   Query,
   Render,
+  Req,
+  UseGuards,
 } from '@nestjs/common';
 import { TestsService } from './tests.service';
 import { QuestionTheme } from '../../entities/question-theme.entity';
@@ -19,7 +21,8 @@ import { CreateTestDto } from '../../dto/create-test.dto';
 import { Test } from '../../entities/test.entity';
 import { TestQuestion } from '../../entities/test-question.entity';
 import { UpdateTestQuestionDto } from '../../dto/update-test-question.dto';
-
+import { AuthGuard } from '../auth/auth.guard';
+import { Request } from 'express';
 @Controller('tests')
 export class TestsController {
   constructor(private readonly testsService: TestsService) {}
@@ -88,24 +91,26 @@ export class TestsController {
     return this.testsService.removeTestQuestion(id);
   }
 
+  @UseGuards(AuthGuard)
   @Get('themes')
   @Render('test-themes-list')
-  async getThemes(): Promise<{
+  async getThemes(@Req() req: Request): Promise<{
     title: string;
     themes: QuestionTheme[];
+    currentUser: object;
   }> {
     const themes = await this.testsService.findAllQuestionThemes();
-    return { title: 'Теми тестів', themes };
+    return { title: 'Теми тестів', themes: themes, currentUser: req['user'] };
   }
 
+  @UseGuards(AuthGuard)
   @Get('theme/test')
   @Render('theme-test')
   async createThemeTest(
+    @Req() req: Request,
     @Query('theme_id') theme_id: number,
     @Query('user_login') user_login: string,
-  ): Promise<{
-    test: Test;
-  }> {
+  ): Promise<any> {
     if (!theme_id || !user_login) {
       throw new NotFoundException('Theme ID and User Login are required');
     }
@@ -115,14 +120,20 @@ export class TestsController {
       theme_id: theme_id,
     };
     const test = await this.testsService.createTest(createTestDto);
-    return { test };
+    return {
+      test: test,
+      title: 'Тести за темами',
+      currentUser: req['user'],
+    };
   }
 
+  @UseGuards(AuthGuard)
   @Get('exam')
   @Render('exam-test')
   async createExamTest(
+    @Req() req: Request,
     @Query('user_login') user_login: string,
-  ): Promise<{ test: Test }> {
+  ): Promise<any> {
     if (!user_login) {
       throw new NotFoundException('User Login is required');
     }
@@ -131,7 +142,11 @@ export class TestsController {
       test_type: 'exam',
     };
     const test = await this.testsService.createTest(createTestDto);
-    return { test };
+    return {
+      test: test,
+      title: 'Екзамен з ПДР',
+      currentUser: req['user'],
+    };
   }
 
   @Get('comments/:id')
@@ -141,11 +156,13 @@ export class TestsController {
     return this.testsService.findCommentById(id);
   }
 
+  @UseGuards(AuthGuard)
   @Get()
   @Render('tests')
-  getTests() {
+  renderTests(@Req() req: Request) {
     return {
       title: 'Тести з ПДР',
+      currentUser: req['user'],
     };
   }
 }

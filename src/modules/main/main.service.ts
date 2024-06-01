@@ -1,25 +1,36 @@
-import { Injectable, Req } from '@nestjs/common';
+import { Injectable, Req, Res } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { Chapter } from '../../entities/chapter.entity';
+import { Request } from 'express';
+import { JwtService } from '@nestjs/jwt';
+import * as jwt from 'jsonwebtoken';
+import { jwtConstants } from '../auth/constants';
+import { UserAccount } from '../../entities/user-account.entity';
 
 @Injectable()
 export class MainService {
   constructor(
-    @InjectRepository(Chapter)
-    private readonly chapterRepository: Repository<Chapter>,
+    @InjectRepository(UserAccount)
+    private readonly userAccountRepository: Repository<UserAccount>,
   ) {}
 
-  async findAllChapters(): Promise<Chapter[]> {
-    return this.chapterRepository.find();
-  }
+  async renderHome(@Req() req: Request) {
+    const token = req.headers.cookie ? req.headers.cookie.split('=')[1] : null;
+    let user_email: string | null = null;
+    let user: any = null;
+    if (token) {
+      const decoded = jwt.verify(token, jwtConstants.secret);
+      user_email = decoded.sub.toString();
 
-  renderHome(@Req() req) {
+      user = await this.userAccountRepository.findOne({
+        where: { user_email },
+      });
+    }
     return {
       style: 'home',
       script: 'home',
       title: 'Головна сторінка',
-      currentUser: req.user,
+      currentUser: user,
     };
   }
 }

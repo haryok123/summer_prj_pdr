@@ -4,6 +4,8 @@ import {
   NotFoundException,
   Param,
   Render,
+  Req,
+  UseGuards,
 } from '@nestjs/common';
 import { TheoryService } from './theory.service';
 import { TheoryItemType } from '../../entities/theory-item-type.entity';
@@ -11,6 +13,7 @@ import { TheoryItem } from '../../entities/theory-item.entity';
 import { Chapter } from '../../entities/chapter.entity';
 import { Subchapter } from '../../entities/subchapter.entity';
 import { DataStorage } from '../data-storage.service';
+import { AuthGuard } from '../auth/auth.guard';
 @Controller('theory')
 export class TheoryController {
   constructor(
@@ -119,23 +122,31 @@ export class TheoryController {
   ): Promise<Subchapter> {
     return this.theoryService.findOneSubchapter(chapter_num, subchapter_num);
   }
-
+  @UseGuards(AuthGuard)
   @Get()
   @Render('theory')
-  getTheory() {
-    return { title: 'Вивчення теорії' };
+  getTheory(@Req() req: Request) {
+    return {
+      title: 'Вивчення теорії',
+      currentUser: req['user'],
+    };
   }
 
+  @UseGuards(AuthGuard)
   @Get('rules')
   @Render('chapters-list')
-  async getChapters() {
+  async getChapters(@Req() req: Request) {
     const chapters = await this.theoryService.findAllChapters();
-    return { chapters, title: 'Перелік розділів' };
+    return { chapters, title: 'Перелік розділів', currentUser: req['user'] };
   }
 
+  @UseGuards(AuthGuard)
   @Get('rules/:chapter_num')
   @Render('chapter')
-  async getChapter(@Param('chapter_num') chapter_num: number) {
+  async getChapter(
+    @Req() req: Request,
+    @Param('chapter_num') chapter_num: number,
+  ) {
     let chapters = this.storage.chapters;
     if (chapters.length === 0)
       await this.uploadStorage().then(() => (chapters = this.storage.chapters));
@@ -166,9 +177,11 @@ export class TheoryController {
       prevChapter: prevChapter ? prevChapter.chapter_num : null,
       nextChapter: nextChapter ? nextChapter.chapter_num : null,
       title: `Розділ ${chapter_num}: ${chapter.chapter_name}`,
+      currentUSer: req['user'],
     };
   }
 
+  @UseGuards(AuthGuard)
   @Get('road-signs')
   @Render('theory-items')
   async getRoadSignsPage() {
@@ -179,15 +192,16 @@ export class TheoryController {
   }
 
   // Endpoint to render road markings page
+  @UseGuards(AuthGuard)
   @Get('road-markings')
   @Render('theory-items')
-  async getRoadMarkingsPage() {
+  async getRoadMarkingsPage(@Req() req: Request) {
     let types = this.storage.markingTypes;
     if (types.length === 0)
       await this.uploadStorage().then(
         () => (types = this.storage.markingTypes),
       );
-    return { types, title: 'Дорожня розмітка' };
+    return { types, title: 'Дорожня розмітка', currentUSer: req['user'] };
   }
 
   // Endpoint to fetch items of a specific type
@@ -204,9 +218,11 @@ export class TheoryController {
     );
   }
 
+  @UseGuards(AuthGuard)
   @Get('road-signs/:type_id/:item_id')
   @Render('item-detail')
   async getSignDetail(
+    @Req() req: Request,
     @Param('type_id') type_id: number,
     @Param('item_id') item_id: string,
   ) {
@@ -215,12 +231,14 @@ export class TheoryController {
       type_id,
       'sign',
     );
-    return { item, title: item.item_name };
+    return { item, title: item.item_name, currentUSer: req['user'] };
   }
 
+  @UseGuards(AuthGuard)
   @Get('road-markings/:type_id/:item_id')
   @Render('item-detail')
   async getMarkingDetail(
+    @Req() req: Request,
     @Param('type_id') type_id: number,
     @Param('item_id') item_id: string,
   ) {
@@ -229,6 +247,6 @@ export class TheoryController {
       type_id,
       'marking',
     );
-    return { item, title: item.item_name };
+    return { item, title: item.item_name, currentUSer: req['user'] };
   }
 }
