@@ -16,16 +16,25 @@ export class MainService {
 
   async renderHome(@Req() req: Request) {
     const token = req.headers.cookie ? req.headers.cookie.split('=')[1] : null;
+    console.log('Received Token:', token);
+
     let user_email: string | null = null;
     let user: any = null;
-    if (token) {
-      const decoded = jwt.verify(token, jwtConstants.secret);
-      user_email = decoded.sub.toString();
 
-      user = await this.userAccountRepository.findOne({
-        where: { user_email },
-      });
+    if (token) {
+      try {
+        const decoded = jwt.verify(token, jwtConstants.secret);
+        console.log('Decoded Token:', decoded);
+
+        user_email = decoded.sub.toString();
+        user = await this.userAccountRepository.findOne({
+          where: { user_email },
+        });
+      } catch (error) {
+        console.error('JWT Verification Error:', error.message);
+      }
     }
+
     return {
       style: 'home',
       script: 'home',
