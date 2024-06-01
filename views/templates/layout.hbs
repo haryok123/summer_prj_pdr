@@ -157,10 +157,17 @@
 {{#if script}}
   <script src="/js/{{script}}.js"></script>
 {{/if}}
-
+{{#unless currentUser}}
   <script>
+    window.onload = function(e) {
+      modalWindowOn(e);
+    };
     const loginButton = document.getElementById('loginButton');
-    loginButton.onclick = function (e) {
+    loginButton.onclick = function(e) {
+      modalWindowOn(e);
+    };
+
+    function modalWindowOn(e){
       e.preventDefault();
       let loginModal = new bootstrap.Modal(document.getElementById('loginModal'));
       loginModal.show();
@@ -171,7 +178,7 @@
       tooltipTriggerList.forEach(function (tooltipTriggerEl) {
         new bootstrap.Tooltip(tooltipTriggerEl);
       });
-    };
+    }
 
     const registerButton = document.getElementById('registerButton');
     registerButton.onclick = function (e) {
@@ -190,6 +197,6 @@
     };
 
   </script>
-
+{{/unless}}
 </body>
 </html>

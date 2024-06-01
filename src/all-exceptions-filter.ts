@@ -3,6 +3,7 @@ import {
   Catch,
   ArgumentsHost,
   HttpException,
+  UnauthorizedException,
 } from '@nestjs/common';
 import { Request, Response } from 'express';
 
@@ -16,6 +17,11 @@ export class AllExceptionsFilter implements ExceptionFilter {
     const status =
       exception instanceof HttpException ? exception.getStatus() : 500;
 
+    if (exception instanceof UnauthorizedException) {
+      console.error('UnauthorizedException:', exception.message);
+      response.redirect('/');
+      return;
+    }
     const errorResponse = {
       statusCode: status,
       timestamp: new Date().toISOString(),
