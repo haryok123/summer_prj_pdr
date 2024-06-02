@@ -8,7 +8,7 @@
             <h3><strong>{{this.chapter_num}}.{{this.subchapter_num}}</strong></h3>
             <div>{{{formatContent this.subchapter_content ../signs ../markings ../chapters}}}</div>
             {{#if this.subchapter_video_link}}
-              <a href="{{this.subchapter_video_link}}" target="_blank">Дивитись відео</a>
+              <iframe width="500px" height="275px" scrolling="no" title="Video" src="{{this.subchapter_video_link}}" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen=""></iframe>
             {{/if}}
           </div>
         {{/each}}
