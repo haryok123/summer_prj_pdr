@@ -17,6 +17,6 @@ export class UserAccount {
 
   @Expose()
   get avatar(): string {
-    return `/images/defaultAvatar${this.user_login}.gif`;
+    return `/images/defaultAvatar${this.user_photo}.gif`;
   }
 }

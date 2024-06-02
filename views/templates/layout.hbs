@@ -44,7 +44,7 @@
           <div class="d-flex">
             {{#if currentUser}}
               <a href="/profile" class="btn btn-round">
-                <img src="data:image/png;base64,{{hexToBase64 currentUser.user_photo}}" alt="User Avatar"
+                <img src="{{currentUser.avatar}}" alt="User Avatar"
                      style="width:40px;" class="rounded-pill">
               </a>
             {{else}}
@@ -91,7 +91,7 @@
         <div class="d-flex flex-column text-center">
           <div class="w-100">
             <form action="
-https://localhost:19429/auth/signIn" method="POST">
+http://localhost:19429/auth/signIn" method="POST">
               <div class="mb-3">
                 <label for="userEmail" class="form-label">E-mail користувача</label>
                 <input type="email" class="form-control" name="userEmail" id="userEmail"
@@ -133,7 +133,7 @@ https://localhost:19429/auth/signIn" method="POST">
         <div class="d-flex flex-column text-center">
           <div class="w-100">
             <form action="
-https://localhost:19429/auth/register" method="POST">
+http://localhost:19429/auth/register" method="POST">
               <div class="mb-3">
                 <label for="userLogin" class="form-label">Ім'я користувача</label>
                 <input type="text" class="form-control" name="userLogin" id="userLogin"
