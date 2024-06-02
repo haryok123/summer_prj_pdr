@@ -221,6 +221,7 @@ export class TestsController {
       theme_id,
       title: 'Тести з ' + theme,
       currentUser: user,
+      script: 'theme-test',
     };
     //const test = await this.testsService.createTest(createTestDto);
     //return { test };
