@@ -40,6 +40,9 @@
             <li class="nav-item">
               <a class="nav-link" href="/theory">Теорія ПДР</a>
             </li>
+            <li class="nav-item">
+              <a class="nav-link" href="/statistics/champions-list">Список Чемпіонів</a>
+            </li>
           </ul>
           <div class="d-flex">
             {{#if currentUser}}
@@ -109,7 +112,7 @@
           </div>
 
           <div class="modal-footer d-flex justify-content-center">
-            <div class="signup-section">Все ще не заєстровні? <a href="#" class="text-info"> Реєструйтесь</a>.</div>
+            <div class="signup-section">Все ще не заєстровні? <a href="#" class="text-info register-link">Реєструйтесь</a>.</div>
           </div>
 
         </div>
@@ -208,6 +211,22 @@
         new bootstrap.Tooltip(tooltipTriggerEl);
       });
     };
+
+    const registerLinks = document.querySelectorAll('.register-link');
+    registerLinks.forEach(function(link) {
+      link.onclick = function(e) {
+        e.preventDefault();
+        let registerModal = new bootstrap.Modal(document.getElementById('registerModal'));
+        registerModal.show();
+
+        let tooltipTriggerList = [].slice.call(
+          document.querySelectorAll('[data-bs-toggle="tooltip"]'),
+        );
+        tooltipTriggerList.forEach(function(tooltipTriggerEl) {
+          new bootstrap.Tooltip(tooltipTriggerEl);
+        });
+      };
+    });
 
   </script>
 {{/unless}}
