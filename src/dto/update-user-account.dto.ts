@@ -14,20 +14,8 @@ export class UpdateUserAccountDto extends PartialType(CreateUserAccountDto) {
 
   @IsOptional()
   @Length(5, 50, { message: 'Incorrect password length.' })
-  @Matches(/(?=.*[a-z])/, {
-    message: 'Password must contain at least one lowercase letter.',
-  })
-  @Matches(/(?=.*[A-Z])/, {
-    message: 'Password must contain at least one uppercase letter.',
-  })
-  @Matches(/(?=.*[0-9])/, {
-    message: 'Password must contain at least one number.',
-  })
-  @Matches(/(?=.*[!@#$%^&*()_+[\]{};':"\\|,.<>/?-])/, {
-    message: 'Password must contain at least one special character.',
-  })
   user_password?: string;
 
   @IsOptional()
-  user_photo?: Buffer;
+  user_photo?: number;
 }

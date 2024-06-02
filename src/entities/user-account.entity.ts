@@ -1,4 +1,5 @@
 import { Entity, PrimaryColumn, Column } from 'typeorm';
+import { Expose } from 'class-transformer';
 
 @Entity('user_account')
 export class UserAccount {
@@ -11,6 +12,11 @@ export class UserAccount {
   @Column({ length: 50 })
   user_password: string;
 
-  @Column('mediumblob', { nullable: true })
-  user_photo: Buffer;
+  @Column('int')
+  user_photo: number;
+
+  @Expose()
+  get avatar(): string {
+    return `/images/defaultAvatar${this.user_login}.gif`;
+  }
 }
