@@ -68,22 +68,23 @@
     width: 100%;
 }
 
-.block_box_new_theory{
+.block_box_new_theory {
     display: flex;
-    flex-direction: row;
-    justify-content: flex-start;
-    align-items: center;
     flex-wrap: wrap;
-    width: 100%;
-    gap: 32px;
-    margin: 30px auto 30px auto;
-    box-sizing: border-box;
+    justify-content: center;
+    margin: 20px auto;
+    padding: 10px 0 10px 0;
+    list-style-type: none;
 }
-.block_box_new_theory li{
-    width: 425px;
+
+.block_box_new_theory li {
     display:flex;
-    flex-direction:column;
+    flex-basis: 0;
+    flex-direction: column;
+    margin: 0 10px 15px 10px;
+    min-width: 425px;
 }
+
 .block_box_new_theory li a{
     display: flex;
     flex-direction: row;
@@ -94,7 +95,6 @@
     padding: 25px 20px;
     height: 100%;
     transition: 0.5s;
-    transition:0.5s;
 }
 .block_box_new_theory li a:hover{
     background: #28a745;
