@@ -19,7 +19,6 @@ export class AuthGuard implements CanActivate {
     @InjectRepository(UserAccount)
     private readonly userAccountRepository: Repository<UserAccount>,
   ) {}
-
   async canActivate(context: ExecutionContext): Promise<boolean> {
     const request = context.switchToHttp().getRequest<Request>();
     if (!request.headers.cookie) {
@@ -29,9 +28,8 @@ export class AuthGuard implements CanActivate {
     let user;
     try {
       const payload = await this.jwtService.verifyAsync(token, {
-        secret: jwtConstants.secret,
+        secret: 'qwerty123123',
       });
-      //console.log(payload.userLogin);
       user = await this.userAccountRepository.findOne({
         where: { user_login: payload.userLogin },
       });
