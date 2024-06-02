@@ -135,7 +135,6 @@ export class TestsController {
   }> {
     const themes = await this.testsService.findAllQuestionThemes();
     const user: UserAccount = req['user'];
-
     // Fetch all tests for the current user and calculate the best results for each theme
     const tests = await this.testsService.findAllTestsByUser(
       user.user_login,
@@ -222,6 +221,7 @@ export class TestsController {
       theme_id,
       title: 'Тести з ' + theme,
       currentUser: user,
+      script: 'theme-test',
     };
     //const test = await this.testsService.createTest(createTestDto);
     //return { test };

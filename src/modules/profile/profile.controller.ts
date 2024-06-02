@@ -1,6 +1,7 @@
-import { Controller, Get, Render, Req, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, Post, Render, Req, UseGuards } from '@nestjs/common';
 import { ProfileService } from './profile.service';
 import { AuthGuard } from '../auth/auth.guard';
+import { UpdateProfileImgNumberDto } from '../../dto/update-profile-img-number-dto';
 
 @Controller('profile')
 export class ProfileController {
@@ -15,5 +16,11 @@ export class ProfileController {
       currentUser: req['user'],
       script: 'profile',
     };
+  }
+
+  @Post('updateProfileImgNumber')
+  updateProfileImgNumber(@Body() updateImgDto: UpdateProfileImgNumberDto) {
+    console.log(updateImgDto);
+    this.profileService.updateProfileImgNumber(updateImgDto);
   }
 }

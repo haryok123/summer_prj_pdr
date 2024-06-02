@@ -6,17 +6,17 @@
           <div class="row">
             <div class="col-4">
               <div class="profile-pic-container my-3" style="margin-left: 10px">
-                <img class="avatar" src="/images/defaultAvatar.gif" alt="You">
+                <img class="avatar" src="{{currentUser.avatar}}" alt="You">
               </div>
             </div>
 
             <div class="col-8 d-flex flex-column justify-content-evenly">
               <div>
-                <div class="h2 my-0">ім'я</div>
-                <div class="text-secondary">айді</div>
+                <div id="currentUserLogin" class="h2 my-0">{{ currentUser.user_login }}</div>
+                <div class="text-secondary">{{ currentUser.user_email }}</div>
               </div>
               <div class="d-flex">
-                <button id="changeProfileImgButton" class="btn btn-outline-success me-2" >Редагувати профіль</button>
+                <button id="changeProfileImgButton" class="btn btn-outline-success me-2" >Змінити аватарку</button>
                 <form action="auth/logout" method="post">
                   <button type="submit" class="btn btn-success">Вийти</button>
                 </form>
@@ -42,7 +42,7 @@
           </div>
           <div class="modal-body">
             <div class="form-title text-center">
-              <h4>Вибір зображення</h4>
+              <h4>Вибір аватарки</h4>
             </div>
             <div class="d-flex flex-column text-center" id="imageContainer">
               <!-- Images will be loaded here -->
