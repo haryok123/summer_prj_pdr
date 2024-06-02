@@ -78,7 +78,7 @@
             <canvas id="resultChart"></canvas>
           </div>
         </div>
-        <button class="btn btn-success" onclick="navigateToNextTheme({{nextTheme}})">Наступна тема</button>
+        <button class="btn btn-success" onclick="navigateToNextTheme({{add theme_id 1}})">Наступна тема</button>
       </div>
     </div>
 
@@ -160,7 +160,7 @@
       let chartIsCreated = false;
 
       window.addEventListener('beforeunload', async function(e) {
-        if (!isNavigatingWithinTest && !{{test.is_done}}) {
+        if (!isNavigatingWithinTest && !{{test.is_done}} && (!{{test.is_done}} && !chartIsCreated)) {
           var confirmationMessage = 'Ви точно хочете цього? Прогрес не збережетсься';
           const leavePage = confirm(confirmationMessage);
           if (leavePage) {

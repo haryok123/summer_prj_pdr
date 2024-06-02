@@ -66,7 +66,6 @@ export class Test {
 
   @Expose()
   get theme(): QuestionTheme {
-    if (this.items.length === 0) return null;
     return this.items[0].question.theme;
   }
 }

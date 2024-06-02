@@ -160,7 +160,7 @@
       let chartIsCreated = false;
 
       window.addEventListener('beforeunload', async function(e) {
-        if (!isNavigatingWithinTest && !{{test.is_done}}) {
+        if (!isNavigatingWithinTest && !{{test.is_done}} && (!{{test.is_done}} && !chartIsCreated)) {
           var confirmationMessage = 'Ви точно хочете цього? Прогрес не збережетсься';
           const leavePage = confirm(confirmationMessage);
           if (leavePage) {

@@ -212,15 +212,15 @@ export class TestsController {
     const currentQuestion = test.items[question_index];
 
     console.log(theme_id);
-    const theme_name = await this.testsService.findQuestionThemeById(theme_id);
+    const theme = await this.testsService.findQuestionThemeById(theme_id);
 
     return {
       test,
       currentQuestion,
       currentQuestionIndex: question_index,
-      theme_name: theme_name.theme_chapter,
+      theme_name: theme.theme_chapter,
       theme_id,
-      title: 'Тести за темами',
+      title: 'Тести з ' + theme,
       currentUser: user,
     };
     //const test = await this.testsService.createTest(createTestDto);
