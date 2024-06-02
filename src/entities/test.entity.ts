@@ -9,6 +9,8 @@ import {
 } from 'typeorm';
 import { UserAccount } from './user-account.entity';
 import { TestQuestion } from './test-question.entity';
+import { Expose } from 'class-transformer';
+import { QuestionTheme } from './question-theme.entity';
 
 @Entity('test')
 export class Test {
@@ -30,4 +32,41 @@ export class Test {
 
   @OneToMany(() => TestQuestion, (item) => item.test)
   items: TestQuestion[];
+
+  @Expose()
+  get correctAnswers(): number {
+    return this.items.filter(
+      (item) => item.user_answer === item.question.q_correct_answer,
+    ).length;
+  }
+
+  @Expose()
+  get incorrectAnswers(): number {
+    return this.items.filter(
+      (item) =>
+        item.user_answer !== null &&
+        item.user_answer !== item.question.q_correct_answer,
+    ).length;
+  }
+
+  @Expose()
+  get unansweredQuestions(): number {
+    return this.items.filter((item) => item.user_answer === null).length;
+  }
+
+  @Expose()
+  get totalQuestions(): number {
+    return this.items.length;
+  }
+
+  @Expose()
+  get percentage(): number {
+    return Math.round((this.correctAnswers / this.totalQuestions) * 100);
+  }
+
+  @Expose()
+  get theme(): QuestionTheme {
+    if (this.items.length === 0) return null;
+    return this.items[0].question.theme;
+  }
 }

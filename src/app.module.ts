@@ -20,6 +20,7 @@ import { ServeStaticModule } from '@nestjs/serve-static';
 import { join } from 'path';
 import { APP_FILTER } from '@nestjs/core';
 import { AllExceptionsFilter } from './all-exceptions-filter';
+import { JwtModule } from '@nestjs/jwt';
 
 @Module({
   imports: [
@@ -58,6 +59,11 @@ import { AllExceptionsFilter } from './all-exceptions-filter';
       TestQuestion,
       Comments,
     ]),
+    JwtModule.register({
+      global: true,
+      secret: 'qwerty123123',
+      signOptions: { expiresIn: '60m' },
+    }),
     MainModule,
     AuthModule,
     TestsModule,

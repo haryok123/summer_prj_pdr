@@ -23,11 +23,6 @@ import { jwtConstants } from './constants';
       TheoryItemType,
       UserAccount,
     ]),
-    JwtModule.register({
-      global: true,
-      secret: jwtConstants.secret,
-      signOptions: { expiresIn: '60m' },
-    }),
   ],
   providers: [AuthService],
   controllers: [AuthController],

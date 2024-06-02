@@ -12,6 +12,7 @@ import { Chapter } from '../../entities/chapter.entity';
 import { Subchapter } from '../../entities/subchapter.entity';
 import { DataStorage } from '../data-storage.service';
 import { AuthGuard } from '../auth/auth.guard';
+
 @Controller('theory')
 export class TheoryController {
   constructor(
@@ -34,6 +35,7 @@ export class TheoryController {
     this.storage.signTypes = signTypes;
     this.storage.markingTypes = markingTypes;
   }
+
   @Get('chapters/:chapter_num')
   async findOneChapter(
     @Param('chapter_num') chapter_num: number,
@@ -48,6 +50,7 @@ export class TheoryController {
   ): Promise<Subchapter> {
     return this.theoryService.findOneSubchapter(chapter_num, subchapter_num);
   }
+
   @UseGuards(AuthGuard)
   @Get()
   @Render('theory')
@@ -70,8 +73,8 @@ export class TheoryController {
   @Get('rules/:chapter_num')
   @Render('chapter')
   async getChapter(
-    @Req() req: Request,
     @Param('chapter_num') chapter_num: number,
+    @Req() req: Request,
   ) {
     let chapters = this.storage.chapters;
     if (chapters.length === 0)
@@ -103,18 +106,22 @@ export class TheoryController {
       prevChapter: prevChapter ? prevChapter.chapter_num : null,
       nextChapter: nextChapter ? nextChapter.chapter_num : null,
       title: `Розділ ${chapter_num}: ${chapter.chapter_name}`,
-      currentUSer: req['user'],
+      currentUser: req['user'],
     };
   }
 
   @UseGuards(AuthGuard)
   @Get('road-signs')
   @Render('theory-items')
-  async getRoadSignsPage() {
+  async getRoadSignsPage(@Req() req: Request) {
     let types = this.storage.signTypes;
     if (types.length === 0)
       await this.uploadStorage().then(() => (types = this.storage.signTypes));
-    return { types, title: 'Дорожні знаки' };
+    return {
+      types,
+      title: 'Дорожні знаки',
+      currentUser: req['user'],
+    };
   }
 
   // Endpoint to render road markings page
@@ -127,7 +134,7 @@ export class TheoryController {
       await this.uploadStorage().then(
         () => (types = this.storage.markingTypes),
       );
-    return { types, title: 'Дорожня розмітка', currentUSer: req['user'] };
+    return { types, title: 'Дорожня розмітка', currentUser: req['user'] };
   }
 
   // Endpoint to fetch items of a specific type
@@ -157,7 +164,7 @@ export class TheoryController {
       type_id,
       'sign',
     );
-    return { item, title: item.item_name, currentUSer: req['user'] };
+    return { item, title: item.item_name, currentUser: req['user'] };
   }
 
   @UseGuards(AuthGuard)
@@ -167,12 +174,12 @@ export class TheoryController {
     @Req() req: Request,
     @Param('type_id') type_id: number,
     @Param('item_id') item_id: string,
-  ) {
+  ): Promise<any> {
     const item = await this.theoryService.findOneTheoryItem(
       item_id,
       type_id,
       'marking',
     );
-    return { item, title: item.item_name, currentUSer: req['user'] };
+    return { item, title: item.item_name, currentUser: req['user'] };
   }
 }

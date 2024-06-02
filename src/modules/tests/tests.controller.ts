@@ -131,9 +131,52 @@ export class TestsController {
     title: string;
     themes: QuestionTheme[];
     currentUser: object;
+    overallProgress: number;
   }> {
     const themes = await this.testsService.findAllQuestionThemes();
-    return { title: 'Теми тестів', themes: themes, currentUser: req['user'] };
+    const user: UserAccount = req['user'];
+
+    // Fetch all tests for the current user and calculate the best results for each theme
+    const tests = await this.testsService.findAllTestsByUser(
+      user.user_login,
+      'theme',
+    );
+
+    const questions = await this.testsService.findAllQuestions();
+
+    const themeResults = themes.map((theme) => {
+      const themeTests = tests.filter((test) =>
+        test.items.length === 0
+          ? 1
+          : test.items[0].question.theme_id === theme.theme_id,
+      );
+      const bestResult = themeTests.reduce((best, test) => {
+        const correctAnswers = test.items.filter(
+          (item) => item.user_answer === item.question.q_correct_answer,
+        ).length;
+        const totalQuestions = test.items.length;
+        const percentage = (correctAnswers / totalQuestions) * 100;
+        return percentage > best ? percentage : best;
+      }, 0);
+      const questionCount = questions.filter(
+        (q) => q.theme_id === theme.theme_id,
+      ).length;
+
+      return { ...theme, bestResult: Math.round(bestResult), questionCount };
+    });
+
+    // Calculate overall progress
+    const overallProgress = Math.round(
+      themeResults.reduce((sum, theme) => sum + theme.bestResult, 0) /
+        themes.length,
+    );
+
+    return {
+      title: 'Теми тестів',
+      themes: themeResults,
+      currentUser: user,
+      overallProgress,
+    };
   }
 
   @UseGuards(AuthGuard)
@@ -168,6 +211,7 @@ export class TestsController {
 
     const currentQuestion = test.items[question_index];
 
+    console.log(theme_id);
     const theme_name = await this.testsService.findQuestionThemeById(theme_id);
 
     return {
@@ -225,6 +269,33 @@ export class TestsController {
       current_theme: current_theme.theme_chapter,
       title: 'Екзамен з ПДР',
       currentUser: user,
+    };
+  }
+
+  @UseGuards(AuthGuard)
+  @Get('history')
+  @Render('test-history')
+  async getTestHistory(
+    @Req() req: Request,
+    @Query('page') page: number = 1,
+    @Query('limit') limit: number = 20,
+  ): Promise<any> {
+    const user: UserAccount = req['user'];
+    const [tests, totalTests] =
+      await this.testsService.findTestsByUserWithPagination(
+        user.user_login,
+        page,
+        limit,
+      );
+
+    const totalPages = Math.ceil(totalTests / limit);
+
+    return {
+      title: 'Історія тестів',
+      tests,
+      currentUser: user,
+      totalPages,
+      currentPage: page,
     };
   }
 

@@ -1,14 +1,46 @@
 {{#> layout}}
   {{#*inline "pageContent"}}
-    <div class="container mt-5">
+    <div class="container mt-5" style="width: 60%;">
       <h1>{{title}}</h1>
-      <p>Виберіть тему для проходження тесту:</p>
+      <p>Тут ви можете знайти всі необхідні матеріали для вивчення правил дорожнього руху.</p>
+
+      <!-- Overall Progress Block -->
+      <div class="overall-progress">
+        <div>
+          <span style="width: 49%; text-align: left; font-weight: bold">Загальний прогрес по темах:</span>
+          <span style="width: 49%; text-align: right; font-weight: bold">{{overallProgress}}%</span>
+        </div>
+        <div class="progress-bar-container">
+          <div class="progress-bar" style="width: {{overallProgress}}%;"></div>
+        </div>
+      </div>
+
+      <!-- Themes List -->
       <div class="themes-list">
         {{#each themes}}
-          <a href="/tests/themes/test?theme_id={{theme_id}}" class="chapter-button">
-          <div class="chapter-name">{{theme_chapter}}</div>
+          <div class="theme-button" onclick="startTest({{theme_id}})">
+            <div class="theme-number">{{theme_id}}</div>
+            <div class="theme-details">
+              <div class="theme-name">{{theme_chapter}}</div>
+              <div class="question-count">{{questionCount}} питань</div>
+            </div>
+            <div class="best-result">
+              <span>Найкращий результат: {{bestResult}}%</span>
+            </div>
+          </div>
         {{/each}}
       </div>
     </div>
+
+    <link href="/css/themes.css" rel="stylesheet">
+    <link rel="stylesheet" href="/css/themes.css">
+    <script>
+      document.addEventListener('DOMContentLoaded', function() {
+          window.startTest = function(themeId) {
+          window.location.href = `/tests/themes/test?theme_id=${themeId}`;
+        };
+      });
+    </script>
+
   {{/inline}}
 {{/layout}}

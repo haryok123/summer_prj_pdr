@@ -17,6 +17,5 @@ export class QuestionTheme {
   theme_chapter: string;
 
   @OneToMany(() => Question, (question) => question.theme)
-  //@JoinColumn({ name: 'q_id', referencedColumnName: 'q_id' })
   questions: Question[];
 }

@@ -22,7 +22,7 @@ export class MainService {
 
     if (token) {
       try {
-        const decoded = jwt.verify(token, jwtConstants.secret);
+        const decoded = jwt.verify(token, 'qwerty123123');
         //console.log('Decoded Token:', decoded);
 
         user_email = decoded.sub.toString();

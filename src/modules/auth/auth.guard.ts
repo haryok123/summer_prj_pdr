@@ -22,10 +22,10 @@ export class AuthGuard implements CanActivate {
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
     const request = context.switchToHttp().getRequest<Request>();
-    const token = request.headers.cookie ? request.headers.cookie.split('=')[1] : null;
-    if (!token) {
+    if (!request.headers.cookie) {
       throw new UnauthorizedException();
     }
+    const token = request.headers.cookie.split('=')[1];
     let user;
     try {
       const payload = await this.jwtService.verifyAsync(token, {

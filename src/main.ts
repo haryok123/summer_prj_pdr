@@ -8,6 +8,7 @@ import * as dotenv from 'dotenv';
 import * as cookieParser from 'cookie-parser';
 import { ValidationPipe } from '@nestjs/common';
 import * as express from 'express';
+import * as moment from 'moment';
 
 dotenv.config();
 
@@ -71,6 +72,17 @@ function loadHelpers() {
   hbs.registerHelper('add', function (a: number, b: number) {
     return +a + +b;
   });
+
+  hbs.registerHelper('subtract', function (a: number, b: number) {
+    return +a - +b;
+  });
+
+  hbs.registerHelper('formatDate', (date) => {
+    return moment(date).format('MMMM Do YYYY, h:mm:ss a');
+  });
+
+  hbs.registerHelper('gt', (a, b) => a > b);
+  hbs.registerHelper('lt', (a, b) => a < b);
 
   hbs.registerHelper(
     'formatContent',

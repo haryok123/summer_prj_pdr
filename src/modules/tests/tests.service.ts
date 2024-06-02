@@ -14,6 +14,8 @@ import { UpdateTestDto } from '../../dto/update-test.dto';
 
 @Injectable()
 export class TestsService {
+  private cache = new Map<string, { data: any; expiry: number }>();
+
   constructor(
     @InjectRepository(QuestionTheme)
     private readonly questionThemeRepository: Repository<QuestionTheme>,
@@ -39,10 +41,6 @@ export class TestsService {
     });
   }
 
-  async findAllQuestions(): Promise<Question[]> {
-    return this.questionRepository.find();
-  }
-
   async findQuestionById(themeId: number, qId: number): Promise<Question> {
     return this.questionRepository.findOne({
       where: { theme_id: themeId, q_id: qId },
@@ -53,6 +51,48 @@ export class TestsService {
     return this.testQuestionRepository.findOne({
       where: { test_question_id: id },
     });
+  }
+
+  private getFromCache(key: string) {
+    const cached = this.cache.get(key);
+    if (cached && cached.expiry > Date.now()) {
+      return cached.data;
+    }
+    this.cache.delete(key);
+    return null;
+  }
+
+  private setCache(key: string, data: any, ttl: number = 60000) {
+    // default TTL: 60 seconds
+    this.cache.set(key, { data, expiry: Date.now() + ttl });
+  }
+
+  async findAllTestsByUser(
+    userLogin: string,
+    testType: 'theme' | 'exam',
+  ): Promise<Test[]> {
+    const cacheKey = `tests-${userLogin}-${testType}`;
+    const cachedData = this.getFromCache(cacheKey);
+    if (cachedData) {
+      return cachedData;
+    }
+    const data = await this.testRepository.find({
+      where: { user: { user_login: userLogin }, test_type: testType },
+      relations: ['items', 'items.question'],
+    });
+    this.setCache(cacheKey, data);
+    return data;
+  }
+
+  async findAllQuestions(): Promise<Question[]> {
+    const cacheKey = 'questions';
+    const cachedData = this.getFromCache(cacheKey);
+    if (cachedData) {
+      return cachedData;
+    }
+    const data = await this.questionRepository.find();
+    this.setCache(cacheKey, data);
+    return data;
   }
 
   async findAllComments(): Promise<Comments[]> {
@@ -139,8 +179,24 @@ export class TestsService {
     return this.testQuestionRepository.save(testQuestion);
   }
 
+  async findTestsByUserWithPagination(
+    userLogin: string,
+    page: number,
+    limit: number,
+  ): Promise<[Test[], number]> {
+    const [tests, totalTests] = await this.testRepository.findAndCount({
+      where: { user: { user_login: userLogin } },
+      relations: ['items', 'items.question', 'items.question.theme'],
+      order: { test_date: 'DESC' },
+      skip: (page - 1) * limit,
+      take: limit,
+    });
+
+    return [tests, totalTests];
+  }
+
   async findAllTests(): Promise<Test[]> {
-    return this.testRepository.find();
+    return this.testRepository.find({ relations: ['items', 'items.question'] });
   }
 
   async findOneTest(id: number): Promise<Test> {
@@ -163,6 +219,7 @@ export class TestsService {
   ): Promise<UpdateResult> {
     return this.testQuestionRepository.update(id, updateTestQuestionDto);
   }
+
   async deleteTest(test_id: number): Promise<void> {
     await this.testRepository.delete(test_id);
   }
