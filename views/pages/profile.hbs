@@ -16,7 +16,7 @@
                 <div class="text-secondary">айді</div>
               </div>
               <div class="d-flex">
-                <a class="btn btn-outline-success me-2" href="/auth/registration">Редагувати профіль</a>
+                <button id="changeProfileImgButton" class="btn btn-outline-success me-2" >Редагувати профіль</button>
                 <form action="auth/logout" method="post">
                   <button type="submit" class="btn btn-success">Вийти</button>
                 </form>
@@ -32,5 +32,25 @@
           </div>
         </section>
     </section>
+
+
+    <div class="modal fade" id="imageSelectionModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+          <div class="modal-header border-bottom-0">
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            <div class="form-title text-center">
+              <h4>Вибір зображення</h4>
+            </div>
+            <div class="d-flex flex-column text-center" id="imageContainer">
+              <!-- Images will be loaded here -->
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
   {{/inline}}
 {{/layout}}

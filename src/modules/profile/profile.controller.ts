@@ -13,6 +13,7 @@ export class ProfileController {
     return {
       title: 'Профіль користувача',
       currentUser: req['user'],
+      script: 'profile',
     };
   }
 }

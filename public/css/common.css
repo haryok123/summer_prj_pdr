@@ -9418,3 +9418,10 @@ div#checkoutSidebar #checkoutFooter #createReceipt {
 .signup-section {
     padding: 0.3rem 0rem;
 }
+
+.img-thumbnail {
+    height: 150px;
+    width: 100%;
+    object-fit: cover; /* Ensures the image covers the specified height and width */
+    cursor: pointer;
+}
