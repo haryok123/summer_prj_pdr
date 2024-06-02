@@ -1,4 +1,5 @@
-window.onload = function () {
+
+document.addEventListener('DOMContentLoaded', function () {
   const comments = [
     {
       username: 'Maria Smantha',
@@ -66,7 +67,28 @@ window.onload = function () {
       commentsContainer.appendChild(replyElement);
     });
   });
-};
+
+  // Handle posting a new comment
+  document
+    .getElementById('postCommentButton')
+    .addEventListener('click', function () {
+      const newCommentText = document.getElementById('newComment').value;
+      if (newCommentText.trim() !== '') {
+        const newComment = {
+          username: 'Current User',
+          avatar: 'https://mdbcdn.b-cdn.net/img/Photos/Avatars/img%20(1).webp', // URL for current user's avatar
+          time: 'Just now',
+          message: newCommentText,
+          replies: [],
+        };
+        const newCommentElement = createCommentElement(newComment);
+        commentsContainer.appendChild(newCommentElement);
+
+        // Clear the textarea
+        document.getElementById('newComment').value = '';
+      }
+    });
+});
 
 function createCommentElement(comment, isReply = false) {
   const div = document.createElement('div');
@@ -74,10 +96,11 @@ function createCommentElement(comment, isReply = false) {
   if (isReply) {
     div.className += ' ms-5';
   }
-
+  random = Math.floor(Math.random() * 10);
   const avatar = document.createElement('img');
   avatar.className = 'rounded-circle shadow-1-strong me-3';
-  avatar.src = comment.avatar;
+
+  avatar.src = '/images/avatar' + random + '.gif';
   avatar.alt = 'avatar';
   avatar.width = 65;
   avatar.height = 65;
@@ -98,13 +121,12 @@ function createCommentElement(comment, isReply = false) {
     replyLink.innerHTML =
       '<i class="fas fa-reply fa-xs"></i><span class="small"> reply</span>';
   }
-
   const message = document.createElement('p');
   message.className = 'small mb-0';
   message.textContent = comment.message;
 
   header.appendChild(nameTime);
-  if (isReply) {
+  if (!isReply) {
     header.appendChild(replyLink);
   }
   content.appendChild(header);
