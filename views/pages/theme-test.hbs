@@ -81,13 +81,21 @@
       </div>
     </div>
 
+
+
     <section class="gradient-custom">
       <div class="container my-5 py-5">
         <div class="row d-flex justify-content-center">
           <div class="col-md-12 col-lg-10 col-xl-8">
             <div class="card">
               <div class="card-body p-4">
-                <h4 class="text-center mb-4 pb-2">Nested comments section</h4>
+                <h4 class="text-center mb-4 pb-2">Коментарі до питання</h4>
+
+                <!-- Comment input field -->
+                <div class="mb-4">
+                  <textarea class="form-control" id="newComment" rows="3" placeholder="Write a comment..."></textarea>
+                  <button class="btn btn-primary mt-2" id="postCommentButton">Прокоментувати</button>
+                </div>
 
                 <div class="row">
                   <div class="col" id="commentsContainer">

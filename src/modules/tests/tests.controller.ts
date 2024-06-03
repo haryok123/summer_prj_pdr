@@ -105,12 +105,12 @@ export class TestsController {
     if (!testQuestion) {
       throw new NotFoundException('Test question not found');
     }
+    const correctAnswer = testQuestion.question.q_correct_answer;
     const dto: UpdateTestQuestionDto = {
       user_answer: user_answer,
     };
     await this.testsService.updateTestQuestion(test_question_id, dto);
 
-    const correctAnswer = 1;
     return { correctAnswer };
   }
 
@@ -135,36 +135,24 @@ export class TestsController {
   }> {
     const themes = await this.testsService.findAllQuestionThemes();
     const user: UserAccount = req['user'];
-    // Fetch all tests for the current user and calculate the best results for each theme
+
     const tests = await this.testsService.findAllTestsByUser(
       user.user_login,
       'theme',
     );
 
-    const questions = await this.testsService.findAllQuestions();
-
     const themeResults = themes.map((theme) => {
-      const themeTests = tests.filter((test) =>
-        test.items.length === 0
-          ? 1
-          : test.items[0].question.theme_id === theme.theme_id,
+      const themeTests = tests.filter(
+        (test) => test.theme.theme_id === theme.theme_id,
       );
       const bestResult = themeTests.reduce((best, test) => {
-        const correctAnswers = test.items.filter(
-          (item) => item.user_answer === item.question.q_correct_answer,
-        ).length;
-        const totalQuestions = test.items.length;
-        const percentage = (correctAnswers / totalQuestions) * 100;
-        return percentage > best ? percentage : best;
+        return test.percentage > best ? test.percentage : best;
       }, 0);
-      const questionCount = questions.filter(
-        (q) => q.theme_id === theme.theme_id,
-      ).length;
+      const questionCount = theme.questionCount;
 
-      return { ...theme, bestResult: Math.round(bestResult), questionCount };
+      return { ...theme, bestResult: bestResult, questionCount };
     });
 
-    // Calculate overall progress
     const overallProgress = Math.round(
       themeResults.reduce((sum, theme) => sum + theme.bestResult, 0) /
         themes.length,
@@ -210,7 +198,6 @@ export class TestsController {
 
     const currentQuestion = test.items[question_index];
 
-    console.log(theme_id);
     const theme = await this.testsService.findQuestionThemeById(theme_id);
 
     return {
@@ -219,7 +206,7 @@ export class TestsController {
       currentQuestionIndex: question_index,
       theme_name: theme.theme_chapter,
       theme_id,
-      title: 'Тести з ' + theme,
+      title: 'Тести з ' + theme.theme_chapter,
       currentUser: user,
       script: 'theme-test',
     };

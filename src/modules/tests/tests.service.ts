@@ -32,7 +32,16 @@ export class TestsService {
   ) {}
 
   async findAllQuestionThemes(): Promise<QuestionTheme[]> {
-    return this.questionThemeRepository.find();
+    const cacheKey = 'questions-themes';
+    const cachedData = this.getFromCache(cacheKey);
+    if (cachedData) {
+      return cachedData;
+    }
+    const data = await this.questionThemeRepository.find({
+      relations: ['questions'],
+    });
+    this.setCache(cacheKey, data, 600000);
+    return data;
   }
 
   async findQuestionThemeById(id: number): Promise<QuestionTheme> {
@@ -50,6 +59,7 @@ export class TestsService {
   async findTestQuestionById(id: number): Promise<TestQuestion> {
     return this.testQuestionRepository.findOne({
       where: { test_question_id: id },
+      relations: ['question'],
     });
   }
 
@@ -78,7 +88,7 @@ export class TestsService {
     }
     const data = await this.testRepository.find({
       where: { user: { user_login: userLogin }, test_type: testType },
-      relations: ['items', 'items.question'],
+      relations: ['items', 'items.question', 'items.question.theme'],
     });
     this.setCache(cacheKey, data);
     return data;

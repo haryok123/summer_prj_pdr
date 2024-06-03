@@ -42,6 +42,7 @@ h1 {
 .test-details {
     display: none;
     margin-top: 15px;
+    margin-bottom: 25px;
     padding-left: 55px;
 }
 .test-details p {

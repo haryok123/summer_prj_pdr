@@ -7,6 +7,7 @@ import {
   //JoinColumn,
 } from 'typeorm';
 import { Question } from './question.entity';
+import { Expose } from 'class-transformer';
 
 @Entity('question_theme')
 export class QuestionTheme {
@@ -18,4 +19,9 @@ export class QuestionTheme {
 
   @OneToMany(() => Question, (question) => question.theme)
   questions: Question[];
+
+  @Expose()
+  get questionCount() {
+    return this.questions.length;
+  }
 }
