@@ -1,6 +1,7 @@
 {{#> layout }}
   {{#*inline "pageContent"}}
-    <div class="container mt-5">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <div class="container mt-2">
       <div class="row">
         <div class="col d-flex align-items-center justify-content-center">
           <h3>Готуєшся до теоретичного іспиту та хочеш <a class="link-success link-offset-2 link-underline-opacity-25 link-underline-opacity-100-hover" style="display:inline" href="/tests">перевірити</a> свої знання.</h3>
@@ -9,7 +10,7 @@
           <img src="/images/tests.jpg" class="img-thumbnail" alt="Speed Limit">
         </div>
       </div>
-      <div class="row">
+      <div class="row second">
         <div class="col">
           <img src="/images/getLicense.jpg" class="img-thumbnail" alt="Get License">
         </div>
@@ -25,7 +26,7 @@
           <img src="/images/speedLimit.jpg" class="img-thumbnail" alt="Speed Limit">
         </div>
       </div>
-      <div class="row">
+      <div class="row second">
         <div class="col">
           <img src="/images/pedestrian.jpg" class="img-thumbnail" alt="Pedestrian">
         </div>
@@ -34,5 +35,18 @@
         </div>
       </div>
     </div>
+    <script>
+      document.addEventListener('scroll', function() {
+        const rows = document.querySelectorAll('.row');
+        const windowHeight = window.innerHeight;
+
+        rows.forEach(row => {
+          const rowTop = row.getBoundingClientRect().top;
+          if (rowTop < windowHeight - 50) {
+            row.classList.add('visible');
+          }
+        });
+      });
+    </script>
   {{/inline}}
 {{/layout}}
