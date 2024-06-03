@@ -41,13 +41,15 @@ export class AuthController {
   }
 
   @Post('register')
-  async register(@Body() registerDto: RegisterDTO) {
+  async register(@Body() registerDto: RegisterDTO, @Res() res: Response) {
     try {
       const result = await this.authService.register(registerDto);
-      return {
-        message: 'User successfully registered',
-        user: result,
-      };
+
+      if (result.result === 'error') {
+        return res.status(HttpStatus.UNAUTHORIZED).json(result);
+      }
+
+      return res.redirect('/');
     } catch (error) {
       throw new HttpException(
         {

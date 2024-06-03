@@ -1,56 +1,64 @@
-
 document.addEventListener('DOMContentLoaded', function () {
   const comments = [
     {
-      username: 'Maria Smantha',
+      username: 'Oliver Smith',
       avatar: 'https://mdbcdn.b-cdn.net/img/Photos/Avatars/img%20(10).webp',
-      time: '2 hours ago',
-      message:
-        'It is a long established fact that a reader will be distracted by the readable content of a page.',
+      time: '8 hours ago',
+      message: 'Thank you very much for this site. I am real PDR enjoyer!',
       replies: [
         {
-          username: 'Simona Disa',
+          username: 'Pes Patron',
           avatar: 'https://mdbcdn.b-cdn.net/img/Photos/Avatars/img%20(11).webp',
           time: '3 hours ago',
-          message:
-            'letters, as opposed to using "Content here, content here", making it look like readable English.',
+          message: 'Woof-woof!',
         },
         {
-          username: 'John Smith',
+          username: 'Barsyk',
           avatar: 'https://mdbcdn.b-cdn.net/img/Photos/Avatars/img%20(32).webp',
           time: '4 hours ago',
-          message:
-            'the majority have suffered alteration in some form, by injected humour, or randomised words.',
+          message: 'Meow meow!',
         },
       ],
     },
     {
-      username: 'Natalie Smith',
+      username: 'Joe Biden',
+      avatar: 'https://mdbcdn.b-cdn.net/img/Photos/Avatars/img%20(10).webp',
+      time: '2 hours ago',
+      message:
+        "Why are the pictures for the questions out of place? I don't understand anything",
+      replies: [
+        {
+          username: 'Donald Duck',
+          avatar: 'https://mdbcdn.b-cdn.net/img/Photos/Avatars/img%20(11).webp',
+          time: '1 hours ago',
+          message: 'They are too lazy, 100%',
+        },
+      ],
+    },
+    {
+      username: 'Ihor Haryshyn',
       avatar: 'https://mdbcdn.b-cdn.net/img/Photos/Avatars/img%20(12).webp',
       time: '2 hours ago',
       message:
-        'The standard chunk of Lorem Ipsum used since the 1500s is reproduced below for those interested. Sections 1.10.32 and 1.10.33.',
+        'I am tired of doing this piece of... clean and smart code. Yes.',
       replies: [
         {
-          username: 'Lisa Cudrow',
+          username: 'oksanaUA',
           avatar: 'https://mdbcdn.b-cdn.net/img/Photos/Avatars/img%20(31).webp',
           time: '4 hours ago',
-          message:
-            'Cras sit amet nibh libero, in gravida nulla. Nulla vel metus scelerisque ante sollicitudin commodo.',
+          message: 'LMAO. cry more',
         },
         {
-          username: 'Maggie McLoan',
+          username: 'hater',
           avatar: 'https://mdbcdn.b-cdn.net/img/Photos/Avatars/img%20(29).webp',
           time: '5 hours ago',
-          message:
-            'a Latin professor at Hampden-Sydney College in Virginia, looked up one of the more obscure Latin words, consectetur.',
+          message: 'my summer project is better in one million times, lol',
         },
         {
-          username: 'John Smith',
+          username: 'Denyska',
           avatar: 'https://mdbcdn.b-cdn.net/img/Photos/Avatars/img%20(32).webp',
           time: '6 hours ago',
-          message:
-            'Autem, totam debitis suscipit saepe sapiente magnam officiis quaerat necessitatibus odio assumenda, perferendis quae iusto labore laboriosam minima numquam impedit quam dolorem!',
+          message: 'I am too bro!',
         },
       ],
     },
@@ -96,7 +104,7 @@ function createCommentElement(comment, isReply = false) {
   if (isReply) {
     div.className += ' ms-5';
   }
-  random = Math.floor(Math.random() * 10);
+  random = Math.floor(Math.random() * 9) + 1;
   const avatar = document.createElement('img');
   avatar.className = 'rounded-circle shadow-1-strong me-3';
 
