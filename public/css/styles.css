@@ -131,3 +131,17 @@
     width: auto;
 }
 
+.theory-fine-container {
+    padding: 20px;
+    margin-bottom: 12px;
+    border-bottom: 2px solid #F3F3F3;
+    border-radius: 4px;
+    transition: 0.3s ease;
+}
+
+.theory-fine-container:hover {
+    background-color: #F1F1F1;
+    box-shadow: 10px 10px lightgray;
+}
+
+
