@@ -7,6 +7,10 @@ body, html {
     font-family: Arial, sans-serif;
 }
 
+section{
+    background: #abf39f;
+}
+
 .container {
     width: 100%;
     max-width: 1200px;
@@ -19,7 +23,7 @@ body, html {
     justify-content: space-between;
     opacity: 0;
     transform: translateX(-100%);
-    transition: all 1s ease-out;
+    transition: all 2s ease-out;
 }
 
 .second{
