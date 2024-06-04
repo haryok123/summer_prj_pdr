@@ -182,4 +182,37 @@ export class TheoryController {
     );
     return { item, title: item.item_name, currentUser: req['user'] };
   }
+
+  @UseGuards(AuthGuard)
+  @Get('traffic-lights')
+  @Render('theory-dynamic-page')
+  async getTrafficLights(@Req() req: Request) {
+    return {
+      title: 'Світлофор',
+      contentType: 'trafficLightsContent.hbs',
+      currentUser: req['user'],
+    };
+  }
+
+  @UseGuards(AuthGuard)
+  @Get('regulators')
+  @Render('theory-dynamic-page')
+  async getRegulatorsContent(@Req() req: Request) {
+    return {
+      title: 'Регулювальник',
+      contentType: 'regulatorsContent',
+      currentUser: req['user'],
+    };
+  }
+
+  @UseGuards(AuthGuard)
+  @Get('fines')
+  @Render('theory-dynamic-page')
+  async getFinesContent(@Req() req: Request) {
+    return {
+      title: 'Штрафи',
+      contentType: 'finesContent',
+      currentUser: req['user'],
+    };
+  }
 }
