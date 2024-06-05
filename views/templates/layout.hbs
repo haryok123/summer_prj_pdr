@@ -112,7 +112,7 @@
           </div>
 
           <div class="modal-footer d-flex justify-content-center">
-            <div class="signup-section">Все ще не заєстровні? <a href="#" class="text-info register-link">Реєструйтесь</a>.</div>
+            <div class="signup-section">Все ще не заєстровні? <a href="#" class="text-info" id="registerLink">Реєструйтесь</a>.</div>
           </div>
 
         </div>
@@ -212,20 +212,18 @@
       });
     };
 
-    const registerLinks = document.querySelectorAll('.register-link');
-    registerLinks.forEach(function(link) {
-      link.onclick = function(e) {
+    document.addEventListener("DOMContentLoaded", function() {
+      const registerLink = document.getElementById("registerLink");
+      registerLink.addEventListener("click", function(e) {
         e.preventDefault();
-        let registerModal = new bootstrap.Modal(document.getElementById('registerModal'));
+        const loginModal = document.getElementById("loginModal");
+        const registerModal = new bootstrap.Modal(document.getElementById("registerModal"));
+        let loginModalInstance = bootstrap.Modal.getInstance(loginModal);
+        if (loginModalInstance) {
+          loginModalInstance.hide();
+        }
         registerModal.show();
-
-        let tooltipTriggerList = [].slice.call(
-          document.querySelectorAll('[data-bs-toggle="tooltip"]'),
-        );
-        tooltipTriggerList.forEach(function(tooltipTriggerEl) {
-          new bootstrap.Tooltip(tooltipTriggerEl);
-        });
-      };
+      });
     });
 
   </script>
