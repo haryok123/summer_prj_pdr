@@ -69,6 +69,14 @@ function loadHelpers() {
     return a * b;
   });
 
+  hbs.registerHelper('less', function (a, b) {
+    return a < b;
+  });
+
+  hbs.registerHelper('more', function (a, b) {
+    return a > b;
+  });
+
   hbs.registerHelper('add', function (a: number, b: number) {
     return +a + +b;
   });

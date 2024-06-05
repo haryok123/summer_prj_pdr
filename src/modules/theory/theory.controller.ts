@@ -10,14 +10,14 @@ import {
 import { TheoryService } from './theory.service';
 import { Chapter } from '../../entities/chapter.entity';
 import { Subchapter } from '../../entities/subchapter.entity';
-import { DataStorage } from '../data-storage.service';
+import { TheoryStorage } from '../../services/theory-storage.service';
 import { AuthGuard } from '../auth/auth.guard';
 
 @Controller('theory')
 export class TheoryController {
   constructor(
     private readonly theoryService: TheoryService,
-    private readonly storage: DataStorage,
+    private readonly storage: TheoryStorage,
   ) {
     this.uploadStorage();
   }

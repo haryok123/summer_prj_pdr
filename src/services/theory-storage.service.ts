@@ -4,7 +4,7 @@ import { Chapter } from '../entities/chapter.entity';
 import { TheoryItemType } from '../entities/theory-item-type.entity';
 
 @Injectable()
-export class DataStorage {
+export class TheoryStorage {
   private _signTypes: TheoryItemType[] = [];
   private _markingTypes: TheoryItemType[] = [];
   private _signs: TheoryItem[] = [];

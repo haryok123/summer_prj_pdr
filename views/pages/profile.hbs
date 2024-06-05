@@ -1,5 +1,6 @@
 {{#> layout }}
   {{#*inline "pageContent"}}
+    <link href="/css/profile.css" rel="stylesheet">
     <div style="color: #1A1A1A; margin-left: 20px; margin-bottom: 10px; font-size: 17px">
       <a class="link-without-underline" href="/" style="color: #1A1A1A">Головна</a>
       <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-chevron-right" viewBox="0 0 16 16">
@@ -8,37 +9,103 @@
       <span style="color: green; font-weight: bold;">Профіль</span>
     </div>
     <section class="d-flex flex-column justify-content-center align-items-center h-100" style=" margin: auto">
-        <section class="content-section" style="width: 50%; min-width: 470px;">
-          <div class="row">
-            <div class="col-4">
-              <div class="profile-pic-container my-3" style="margin-left: 10px">
-                <img class="avatar" src="{{currentUser.avatar}}" alt="You">
-              </div>
-            </div>
-
-            <div class="col-8 d-flex flex-column justify-content-evenly">
-              <div>
-                <div id="currentUserLogin" class="h2 my-0">{{ currentUser.user_login }}</div>
-                <div class="text-secondary">{{ currentUser.user_email }}</div>
-              </div>
-              <div class="d-flex">
-                <button id="changeProfileImgButton" class="btn btn-outline-success me-2" >Змінити аватарку</button>
-                <form action="auth/logout" method="post">
-                  <button type="submit" class="btn btn-success">Вийти</button>
-                </form>
-              </div>
+      <section class="content-section" style="width: 50%; min-width: 470px;">
+        <div class="row">
+          <div class="col-4">
+            <div class="profile-pic-container my-3" style="margin-left: 10px">
+              <img class="avatar" src="{{currentUser.avatar}}" alt="You">
             </div>
           </div>
-        </section>
 
-        <section class="content-section p-4 my-2" style="width: 50%; min-width: 470px;">
-          <div class="d-flex">
-            <a class="btn btn-success me-2" href="/tests/history">Історія тестів</a>
-<!--            <a class="btn btn-success" href="/auth/registration">Статистика</a>-->
+          <div class="col-8 d-flex flex-column justify-content-evenly">
+            <div>
+              <div id="currentUserLogin" class="h2 my-0">{{ currentUser.user_login }}</div>
+              <div class="text-secondary">{{ currentUser.user_email }}</div>
+            </div>
+            <div class="d-flex">
+              <button id="changeProfileImgButton" class="btn btn-outline-success me-2" >Змінити аватарку</button>
+              <form action="auth/logout" method="post">
+                <button type="submit" class="btn btn-success">Вийти</button>
+              </form>
+            </div>
           </div>
-        </section>
+        </div>
+      </section>
+
+      <section class="content-section p-4 my-2" style="width: 50%; min-width: 470px;">
+        <div class="d-flex">
+          <a class="btn btn-success me-2" href="/tests/history">Історія тестів</a>
+          <!--            <a class="btn btn-success" href="/auth/registration">Статистика</a>-->
+        </div>
+      </section>
+
+      <!-- Statistics Card -->
+      <section class="content-section statistics-card my-4">
+        <div class="title">Загальний прогрес по темах:</div>
+        <div class="stat-value
+        {{#if (less overallProgress 10)}} bad-result
+          {{else}} {{#if (less overallProgress 20)}} poor-result
+            {{else}} {{#if (less overallProgress 40)}} medium-result
+              {{else}} {{#if (less overallProgress 70)}} good-result
+                {{else}} great-result
+              {{/if}}
+            {{/if}}
+          {{/if}}
+        {{/if}}">{{overallProgress}}%</div>
+        <div class="progress-bar">
+          <div class="progress {{#if (less overallProgress 10)}} bad-result
+          {{else}} {{#if (less overallProgress 20)}} poor-result
+            {{else}} {{#if (less overallProgress 40)}} medium-result
+              {{else}} {{#if (less overallProgress 70)}} good-result
+                {{else}} great-result
+              {{/if}}
+          {{/if}}
+          {{/if}}
+          {{/if}}" style="width: {{overallProgress}}%;"></div>
+        </div>
+        <div class="stat-row">
+          <div class="stat-item">
+            <div class="stat-value {{#if (more (subtract examsTotal examsPassed) 10)}} bad-result
+          {{else}} {{#if (more (subtract examsTotal examsPassed) 8)}} poor-result
+            {{else}} {{#if (more (subtract examsTotal examsPassed) 6)}} medium-result
+              {{else}} {{#if (more (subtract examsTotal examsPassed) 4)}} good-result
+                {{else}} great-result
+              {{/if}}
+            {{/if}}
+            {{/if}}
+            {{/if}}">{{examsPassed}}/{{examsTotal}}</div>
+            <div class="stat-description">Зданих іспитів</div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-value {{#if (less averageScore 4)}} bad-result
+          {{else}} {{#if (less averageScore 8)}} poor-result
+            {{else}} {{#if (less averageScore 12)}} medium-result
+              {{else}} {{#if (less averageScore 17)}} good-result
+                {{else}} great-result
+              {{/if}}
+            {{/if}}
+            {{/if}}
+            {{/if}}">{{averageScore}}/20</div>
+            <div class="stat-description">Середній рахунок іспиту</div>
+          </div>
+        </div>
+        <div class="stat-row">
+          <div class="stat-item">
+            <div class="stat-value">{{totalQuestions}}</div>
+            <div class="stat-description">Запитань пройдено</div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-value" style="color: #ff4d4f;">{{incorrectAnswers}}</div>
+            <div class="stat-description">Невірних відповідей</div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-value" style="color: #4CAF50;">{{correctAnswers}}</div>
+            <div class="stat-description">Правильних відповідей</div>
+          </div>
+        </div>
+      </section>
+
     </section>
-
 
     <div class="modal fade" id="imageSelectionModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
       <div class="modal-dialog modal-dialog-centered" role="document">

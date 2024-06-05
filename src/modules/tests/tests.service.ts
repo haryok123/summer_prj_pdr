@@ -11,6 +11,7 @@ import { CreateTestQuestionDto } from '../../dto/create-test-question.dto';
 import { CreateTestDto } from '../../dto/create-test.dto';
 import { UserAccount } from '../../entities/user-account.entity';
 import { UpdateTestDto } from '../../dto/update-test.dto';
+import { TestsStorage } from '../../services/tests-storage.service';
 
 @Injectable()
 export class TestsService {
@@ -29,25 +30,29 @@ export class TestsService {
     private readonly testQuestionRepository: Repository<TestQuestion>,
     @InjectRepository(UserAccount)
     private readonly userAccountRepository: Repository<UserAccount>,
-  ) {}
+    private readonly storage: TestsStorage,
+  ) {
+    this.uploadStorage();
+  }
+
+  async uploadStorage(): Promise<void> {
+    this.storage.questionThemes = await this.findAllQuestionThemes();
+    this.storage.questionThemes.forEach((theme: QuestionTheme) => {
+      this.storage.questions.push(...theme.questions);
+    });
+  }
 
   async findAllQuestionThemes(): Promise<QuestionTheme[]> {
-    const cacheKey = 'questions-themes';
-    const cachedData = this.getFromCache(cacheKey);
-    if (cachedData) {
-      return cachedData;
+    if (this.storage.questionThemes.length === 0) {
+      return await this.questionThemeRepository.find({
+        relations: ['questions'],
+      });
     }
-    const data = await this.questionThemeRepository.find({
-      relations: ['questions'],
-    });
-    this.setCache(cacheKey, data, 600000);
-    return data;
+    return this.storage.questionThemes;
   }
 
   async findQuestionThemeById(id: number): Promise<QuestionTheme> {
-    return this.questionThemeRepository.findOne({
-      where: { theme_id: id },
-    });
+    return this.storage.questionThemes.find((theme) => theme.theme_id == id);
   }
 
   async findQuestionById(themeId: number, qId: number): Promise<Question> {
@@ -79,30 +84,31 @@ export class TestsService {
 
   async findAllTestsByUser(
     userLogin: string,
-    testType: 'theme' | 'exam',
+    testType: 'theme' | 'exam' = null,
   ): Promise<Test[]> {
     const cacheKey = `tests-${userLogin}-${testType}`;
     const cachedData = this.getFromCache(cacheKey);
     if (cachedData) {
       return cachedData;
     }
-    const data = await this.testRepository.find({
-      where: { user: { user_login: userLogin }, test_type: testType },
-      relations: ['items', 'items.question', 'items.question.theme'],
-    });
+    let data;
+    if (testType) {
+      data = await this.testRepository.find({
+        where: { user: { user_login: userLogin }, test_type: testType },
+        relations: ['items', 'items.question', 'items.question.theme'],
+      });
+    } else {
+      data = await this.testRepository.find({
+        where: { user: { user_login: userLogin } },
+        relations: ['items', 'items.question'],
+      });
+    }
     this.setCache(cacheKey, data);
     return data;
   }
 
   async findAllQuestions(): Promise<Question[]> {
-    const cacheKey = 'questions';
-    const cachedData = this.getFromCache(cacheKey);
-    if (cachedData) {
-      return cachedData;
-    }
-    const data = await this.questionRepository.find();
-    this.setCache(cacheKey, data);
-    return data;
+    return this.storage.questions;
   }
 
   async findAllComments(): Promise<Comments[]> {

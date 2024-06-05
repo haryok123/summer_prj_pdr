@@ -11,6 +11,7 @@ import { UserAccount } from './user-account.entity';
 import { TestQuestion } from './test-question.entity';
 import { Expose } from 'class-transformer';
 import { QuestionTheme } from './question-theme.entity';
+import { Question } from './question.entity';
 
 @Entity('test')
 export class Test {
@@ -67,5 +68,15 @@ export class Test {
   @Expose()
   get theme(): QuestionTheme {
     return this.items[0].question.theme;
+  }
+
+  sortedQuestions: TestQuestion[];
+  @Expose()
+  get questions(): TestQuestion[] {
+    if (!this.sortedQuestions)
+      this.sortedQuestions = this.items.sort(
+        (a, b) => a.question.q_id - b.question.q_id,
+      );
+    return this.sortedQuestions;
   }
 }
