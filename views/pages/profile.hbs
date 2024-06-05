@@ -1,8 +1,14 @@
 {{#> layout }}
   {{#*inline "pageContent"}}
-    <section class="d-flex flex-column justify-content-center align-items-center h-100">
-
-        <section class="content-section" style="width: 700px;">
+    <div style="color: #1A1A1A; margin-left: 20px; margin-bottom: 10px; font-size: 17px">
+      <a class="link-without-underline" href="/" style="color: #1A1A1A">Головна</a>
+      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-chevron-right" viewBox="0 0 16 16">
+        <path fill-rule="evenodd" d="M4.646 1.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1 0 .708l-6 6a.5.5 0 0 1-.708-.708L10.293 8 4.646 2.354a.5.5 0 0 1 0-.708"/>
+      </svg>
+      <span style="color: green; font-weight: bold;">Профіль</span>
+    </div>
+    <section class="d-flex flex-column justify-content-center align-items-center h-100" style=" margin: auto">
+        <section class="content-section" style="width: 50%; min-width: 470px;">
           <div class="row">
             <div class="col-4">
               <div class="profile-pic-container my-3" style="margin-left: 10px">
@@ -25,7 +31,7 @@
           </div>
         </section>
 
-        <section class="content-section p-4 my-2" style="width: 700px;">
+        <section class="content-section p-4 my-2" style="width: 50%; min-width: 470px;">
           <div class="d-flex">
             <a class="btn btn-success me-2" href="/tests/history">Історія тестів</a>
 <!--            <a class="btn btn-success" href="/auth/registration">Статистика</a>-->

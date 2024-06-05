@@ -1,9 +1,24 @@
 {{#> layout}}
     {{#*inline "title"}}{{title}}{{/inline}}
     {{#*inline "pageContent"}}
-
+      <div style="color: #1A1A1A; margin-left: 20px; font-size: 17px">
+        <a class="link-without-underline" href="/" style="color: #1A1A1A">Головна</a>
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-chevron-right" viewBox="0 0 16 16">
+          <path fill-rule="evenodd" d="M4.646 1.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1 0 .708l-6 6a.5.5 0 0 1-.708-.708L10.293 8 4.646 2.354a.5.5 0 0 1 0-.708"/>
+        </svg>
+        <a class="link-without-underline" href="/theory" style="color: #1A1A1A">Теорія ПДР</a>
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-chevron-right" viewBox="0 0 16 16">
+          <path fill-rule="evenodd" d="M4.646 1.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1 0 .708l-6 6a.5.5 0 0 1-.708-.708L10.293 8 4.646 2.354a.5.5 0 0 1 0-.708"/>
+        </svg>
+        <span style="color: green; font-weight: bold;">
+      {{#if (eq contentType 'trafficLightsContent.hbs')}}Світлофор
+      {{else if (eq contentType 'finesContent')}}Штрафи
+      {{else if (eq contentType 'regulatorsContent')}}Регулювальник
+      {{/if}}
+        </span>
+      </div>
         {{#if (eq contentType 'trafficLightsContent.hbs')}}
-            <div class="container mt-5 mx-5">
+            <div class="container mt-5 mx-5" style="padding-top: 0px">
                 <h1>Світлофор</h1>
                 <p></p>
                 <p><strong>Сигнали світлофора</strong> складаються з чотирьох основних кольорів: червоного, зеленого, жовтого та біло-місячного. Чому саме ці кольори, а не блакитний, пурпуровий чи коричневий? Червоний колір символізує небезпеку в різних культурах, його довжина світлової хвилі є найбільшою серед усіх видимих кольорів, забезпечуючи видимість з великої відстані і означаючи стоп або зупинку. Зелений та жовтий використовуються через їхню хорошу видимість і відмінності в світлових хвилях.</p>
@@ -557,7 +572,7 @@
                 </ol>
             </div>
         {{else if (eq contentType 'regulatorsContent')}}
-            <div class="container mt-5 mx-5">
+            <div class="container mt-5 mx-5" style="padding-top: 0px">
                 <h1>Регулювальник</h1>
                 <p></p>
                 <p>У сучасному світі з його високою інтенсивністю дорожнього руху та постійно зростаючою кількістю автомобілів на дорогах, питання безпеки залишається надзвичайно актуальним. Одним з ключових елементів забезпечення безпеки на дорогах є регулювальники дорожнього руху. Їхня робота є невід’ємною складовою системи організації дорожнього руху, особливо у складних ситуаціях, коли стандартні засоби регулювання руху, такі як світлофори, не справляються або відсутні.</p>
@@ -609,7 +624,7 @@
                 <p>Регулювальники є незамінними учасниками системи забезпечення безпеки дорожнього руху. Їхня робота вимагає високого рівня професійної підготовки, відповідальності та вміння діяти в стресових ситуаціях. Завдяки їхній діяльності, вдається зберегти життя та здоров’я тисячам учасників дорожнього руху. Регулювальники заслуговують на високу повагу та вдячність за свою важливу та небезпечну працю.</p>
             </div>
         {{else if (eq contentType 'finesContent')}}
-            <div class="container mt-5 mx-5">
+            <div class="container mt-5 mx-5" style="padding-top: 0px">
                 <h1>Штрафи</h1>
                 <p></p>
                 <div class="theory-fine-container">
