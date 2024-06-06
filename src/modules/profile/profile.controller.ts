@@ -23,7 +23,7 @@ export class ProfileController {
     async function fetchStatistics(userLogin: string) {
       try {
         const response = await axios.get(
-          `http://localhost:19429/statistics/${userLogin}`,
+          `http://localhost:19429/statistics/user/${userLogin}`,
         );
         return response.data;
       } catch (error) {
