@@ -9,7 +9,7 @@ import { TheoryItemType } from '../../entities/theory-item-type.entity';
 import { UserAccount } from '../../entities/user-account.entity';
 import { TheoryService } from './theory.service';
 import { TheoryController } from './theory.controller';
-import { DataStorage } from '../data-storage.service';
+import { TheoryStorage } from '../../services/theory-storage.service';
 
 @Module({
   imports: [
@@ -23,7 +23,7 @@ import { DataStorage } from '../data-storage.service';
       UserAccount,
     ]),
   ],
-  providers: [TheoryService, DataStorage],
+  providers: [TheoryService, TheoryStorage],
   controllers: [TheoryController],
   exports: [TheoryService],
 })

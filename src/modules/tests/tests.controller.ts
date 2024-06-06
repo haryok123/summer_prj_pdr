@@ -18,7 +18,6 @@ import { QuestionTheme } from '../../entities/question-theme.entity';
 import { Comments } from '../../entities/comments.entity';
 import { CreateTestDto } from '../../dto/create-test.dto';
 import { Test } from '../../entities/test.entity';
-import { TestQuestion } from '../../entities/test-question.entity';
 import { UpdateTestQuestionDto } from '../../dto/update-test-question.dto';
 import { UpdateTestDto } from '../../dto/update-test.dto';
 
@@ -196,7 +195,7 @@ export class TestsController {
     if (question_index >= test.items.length)
       question_index = test.items.length - 1;
 
-    const currentQuestion = test.items[question_index];
+    const currentQuestion = test.questions[question_index];
 
     const theme = await this.testsService.findQuestionThemeById(theme_id);
 
@@ -210,8 +209,6 @@ export class TestsController {
       currentUser: user,
       script: 'theme-test',
     };
-    //const test = await this.testsService.createTest(createTestDto);
-    //return { test };
   }
 
   @UseGuards(AuthGuard)

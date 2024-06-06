@@ -9,6 +9,7 @@ import { TheoryItemType } from '../../entities/theory-item-type.entity';
 import { UserAccount } from '../../entities/user-account.entity';
 import { ProfileService } from './profile.service';
 import { ProfileController } from './profile.controller';
+import axios from 'axios';
 
 @Module({
   imports: [

@@ -8,48 +8,11 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { TheoryService } from './theory.service';
-import { Chapter } from '../../entities/chapter.entity';
-import { Subchapter } from '../../entities/subchapter.entity';
-import { DataStorage } from '../data-storage.service';
 import { AuthGuard } from '../auth/auth.guard';
 
 @Controller('theory')
 export class TheoryController {
-  constructor(
-    private readonly theoryService: TheoryService,
-    private readonly storage: DataStorage,
-  ) {
-    this.uploadStorage();
-  }
-
-  async uploadStorage(): Promise<void> {
-    const signs = await this.theoryService.findAllSigns();
-    const markings = await this.theoryService.findAllMarkings();
-    const chapters = await this.theoryService.findAllChapters();
-    const signTypes = await this.theoryService.findAllSignTypes();
-    const markingTypes = await this.theoryService.findAllMarkingTypes();
-
-    this.storage.signs = signs;
-    this.storage.markings = markings;
-    this.storage.chapters = chapters;
-    this.storage.signTypes = signTypes;
-    this.storage.markingTypes = markingTypes;
-  }
-
-  @Get('chapters/:chapter_num')
-  async findOneChapter(
-    @Param('chapter_num') chapter_num: number,
-  ): Promise<Chapter> {
-    return this.theoryService.findOneChapter(chapter_num);
-  }
-
-  @Get('chapters/:chapter_num/:subchapter_num')
-  async findOneSubchapter(
-    @Param('chapter_num') chapter_num: number,
-    @Param('subchapter_num') subchapter_num: number,
-  ): Promise<Subchapter> {
-    return this.theoryService.findOneSubchapter(chapter_num, subchapter_num);
-  }
+  constructor(private readonly theoryService: TheoryService) {}
 
   @UseGuards(AuthGuard)
   @Get()
@@ -76,9 +39,7 @@ export class TheoryController {
     @Param('chapter_num') chapter_num: number,
     @Req() req: Request,
   ) {
-    let chapters = this.storage.chapters;
-    if (chapters.length === 0)
-      await this.uploadStorage().then(() => (chapters = this.storage.chapters));
+    const chapters = await this.theoryService.findAllChapters();
     const chapter = chapters.find((chap) => +chap.chapter_num === +chapter_num);
 
     if (!chapter) {
@@ -94,8 +55,8 @@ export class TheoryController {
       (chap) => chap.chapter_num === chapter.chapter_num + 1,
     );
 
-    const signs = this.storage.signs;
-    const markings = this.storage.markings;
+    const signs = await this.theoryService.findAllSigns();
+    const markings = await this.theoryService.findAllMarkings();
 
     return {
       chapter,
@@ -114,9 +75,7 @@ export class TheoryController {
   @Get('road-signs')
   @Render('theory-items')
   async getRoadSignsPage(@Req() req: Request) {
-    let types = this.storage.signTypes;
-    if (types.length === 0)
-      await this.uploadStorage().then(() => (types = this.storage.signTypes));
+    const types = await this.theoryService.findAllSignTypes();
     return {
       types,
       title: 'Дорожні знаки',
@@ -124,31 +83,12 @@ export class TheoryController {
     };
   }
 
-  // Endpoint to render road markings page
   @UseGuards(AuthGuard)
   @Get('road-markings')
   @Render('theory-items')
   async getRoadMarkingsPage(@Req() req: Request) {
-    let types = this.storage.markingTypes;
-    if (types.length === 0)
-      await this.uploadStorage().then(
-        () => (types = this.storage.markingTypes),
-      );
+    const types = await this.theoryService.findAllMarkingTypes();
     return { types, title: 'Дорожня розмітка', currentUser: req['user'] };
-  }
-
-  // Endpoint to fetch items of a specific type
-  @Get('road-signs/:type_id')
-  async getSignsByType(@Param('type_id') type_id: number) {
-    return await this.theoryService.findAllTheoryItemsByType(type_id, 'sign');
-  }
-
-  @Get('road-markings/:type_id')
-  async getMarkingsByType(@Param('type_id') type_id: number) {
-    return await this.theoryService.findAllTheoryItemsByType(
-      type_id,
-      'marking',
-    );
   }
 
   @UseGuards(AuthGuard)

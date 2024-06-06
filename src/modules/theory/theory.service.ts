@@ -5,6 +5,7 @@ import { TheoryItemType } from '../../entities/theory-item-type.entity';
 import { TheoryItem } from '../../entities/theory-item.entity';
 import { Chapter } from '../../entities/chapter.entity';
 import { Subchapter } from '../../entities/subchapter.entity';
+import { TheoryStorage } from '../../services/theory-storage.service';
 
 @Injectable()
 export class TheoryService {
@@ -17,58 +18,70 @@ export class TheoryService {
     private readonly chapterRepository: Repository<Chapter>,
     @InjectRepository(Subchapter)
     private readonly subchapterRepository: Repository<Subchapter>,
-  ) {}
+    private readonly storage: TheoryStorage,
+  ) {
+    this.uploadStorage();
+  }
 
-  async findAllTheoryItemTypes(): Promise<TheoryItemType[]> {
-    return this.theoryItemTypeRepository.find();
+  async uploadStorage(): Promise<void> {
+    const [signs, markings, chapters, signTypes, markingTypes] =
+      await Promise.all([
+        this.findAllSigns(),
+        this.findAllMarkings(),
+        this.findAllChapters(),
+        this.findAllSignTypes(),
+        this.findAllMarkingTypes(),
+      ]);
+
+    this.storage.signs = signs;
+    this.storage.markings = markings;
+    this.storage.chapters = chapters;
+    this.storage.signTypes = signTypes;
+    this.storage.markingTypes = markingTypes;
   }
 
   async findAllSignTypes(): Promise<TheoryItemType[]> {
-    return this.theoryItemTypeRepository.find({
-      where: { theory_type: 'sign' },
-      relations: ['items'],
-    });
+    if (this.storage.signTypes.length === 0) {
+      return await this.theoryItemTypeRepository.find({
+        where: { theory_type: 'sign' },
+        relations: ['items'],
+      });
+    }
+    return this.storage.signTypes;
   }
 
   async findAllMarkingTypes(): Promise<TheoryItemType[]> {
-    return this.theoryItemTypeRepository.find({
-      where: { theory_type: 'marking' },
-      relations: ['items'],
-    });
-  }
-
-  async findAllTheoryItems(): Promise<TheoryItem[]> {
-    return this.theoryItemRepository.find();
+    if (this.storage.markingTypes.length === 0) {
+      return await this.theoryItemTypeRepository.find({
+        where: { theory_type: 'marking' },
+        relations: ['items'],
+      });
+    }
+    return this.storage.markingTypes;
   }
 
   async findAllSigns(): Promise<TheoryItem[]> {
-    return this.theoryItemRepository.find({
-      where: { theory_type: 'sign' },
-    });
+    if (this.storage.signs.length === 0) {
+      return await this.theoryItemRepository.find({
+        where: { theory_type: 'sign' },
+      });
+    }
+    return this.storage.signs;
   }
 
   async findAllMarkings(): Promise<TheoryItem[]> {
-    return this.theoryItemRepository.find({
-      where: { theory_type: 'marking' },
-    });
+    if (this.storage.markings.length === 0) {
+      return await this.theoryItemRepository.find({
+        where: { theory_type: 'marking' },
+      });
+    }
+    return this.storage.markings;
   }
 
   async findAllChapters(): Promise<Chapter[]> {
-    return this.chapterRepository.find({ relations: ['subchapters'] });
-  }
-
-  async findAllSubchapters(): Promise<Subchapter[]> {
-    return this.subchapterRepository.find();
-  }
-
-  async findOneTheoryItemType(
-    type_id: number,
-    theory_type: 'sign' | 'marking',
-  ): Promise<TheoryItemType> {
-    console.log(theory_type, theory_type);
-    return this.theoryItemTypeRepository.findOne({
-      where: { type_id, theory_type },
-    });
+    if (this.storage.chapters.length === 0)
+      return await this.chapterRepository.find({ relations: ['subchapters'] });
+    return this.storage.chapters;
   }
 
   async findOneTheoryItem(
@@ -76,36 +89,22 @@ export class TheoryService {
     type_id: number,
     theory_type: 'sign' | 'marking',
   ): Promise<TheoryItem> {
-    return this.theoryItemRepository.findOne({
-      where: { item_id, type_id: type_id, theory_type: theory_type },
-    });
-  }
-
-  async findOneChapter(chapter_num: number): Promise<Chapter> {
-    return this.chapterRepository.findOne({ where: { chapter_num } });
-  }
-
-  async findOneSubchapter(
-    chapter_num: number,
-    subchapter_num: number,
-  ): Promise<Subchapter> {
-    return this.subchapterRepository.findOne({
-      where: { chapter_num, subchapter_num },
-    });
-  }
-
-  async findAllSubchaptersByChapter(chapter_num: number) {
-    return this.subchapterRepository.find({
-      where: { chapter_num: chapter_num },
-    });
-  }
-
-  async findAllTheoryItemsByType(
-    type_id: number,
-    theory_type: 'sign' | 'marking',
-  ): Promise<TheoryItem[]> {
-    return this.theoryItemRepository.find({
-      where: { type_id, theory_type },
-    });
+    if (
+      (theory_type === 'sign' && this.storage.signs.length === 0) ||
+      (theory_type === 'marking' && this.storage.markings.length === 0)
+    ) {
+      return await this.theoryItemRepository.findOne({
+        where: { item_id, type_id: type_id, theory_type: theory_type },
+      });
+    }
+    if (theory_type === 'marking') {
+      return this.storage.markings.find(
+        (marking) => marking.item_id == item_id && marking.type_id == type_id,
+      );
+    } else if (theory_type === 'sign') {
+      return this.storage.signs.find(
+        (sign) => sign.item_id == item_id && sign.type_id == type_id,
+      );
+    }
   }
 }

@@ -11,6 +11,7 @@ import { CreateTestQuestionDto } from '../../dto/create-test-question.dto';
 import { CreateTestDto } from '../../dto/create-test.dto';
 import { UserAccount } from '../../entities/user-account.entity';
 import { UpdateTestDto } from '../../dto/update-test.dto';
+import { TestsStorage } from '../../services/tests-storage.service';
 
 @Injectable()
 export class TestsService {
@@ -29,25 +30,28 @@ export class TestsService {
     private readonly testQuestionRepository: Repository<TestQuestion>,
     @InjectRepository(UserAccount)
     private readonly userAccountRepository: Repository<UserAccount>,
-  ) {}
+    private readonly storage: TestsStorage,
+  ) {
+    this.uploadStorage();
+  }
+
+  async uploadStorage(): Promise<void> {
+    const themes = await this.findAllQuestionThemes();
+    this.storage.questionThemes = themes;
+    this.storage.questions = themes.flatMap((theme) => theme.questions);
+  }
 
   async findAllQuestionThemes(): Promise<QuestionTheme[]> {
-    const cacheKey = 'questions-themes';
-    const cachedData = this.getFromCache(cacheKey);
-    if (cachedData) {
-      return cachedData;
+    if (this.storage.questionThemes.length === 0) {
+      return await this.questionThemeRepository.find({
+        relations: ['questions'],
+      });
     }
-    const data = await this.questionThemeRepository.find({
-      relations: ['questions'],
-    });
-    this.setCache(cacheKey, data, 600000);
-    return data;
+    return this.storage.questionThemes;
   }
 
   async findQuestionThemeById(id: number): Promise<QuestionTheme> {
-    return this.questionThemeRepository.findOne({
-      where: { theme_id: id },
-    });
+    return this.storage.questionThemes.find((theme) => theme.theme_id == id);
   }
 
   async findQuestionById(themeId: number, qId: number): Promise<Question> {
@@ -79,15 +83,19 @@ export class TestsService {
 
   async findAllTestsByUser(
     userLogin: string,
-    testType: 'theme' | 'exam',
+    testType: 'theme' | 'exam' = null,
   ): Promise<Test[]> {
     const cacheKey = `tests-${userLogin}-${testType}`;
     const cachedData = this.getFromCache(cacheKey);
     if (cachedData) {
       return cachedData;
     }
+    const whereCondition = testType
+      ? { user: { user_login: userLogin }, test_type: testType }
+      : { user: { user_login: userLogin } };
+
     const data = await this.testRepository.find({
-      where: { user: { user_login: userLogin }, test_type: testType },
+      where: whereCondition,
       relations: ['items', 'items.question', 'items.question.theme'],
     });
     this.setCache(cacheKey, data);
@@ -95,14 +103,7 @@ export class TestsService {
   }
 
   async findAllQuestions(): Promise<Question[]> {
-    const cacheKey = 'questions';
-    const cachedData = this.getFromCache(cacheKey);
-    if (cachedData) {
-      return cachedData;
-    }
-    const data = await this.questionRepository.find();
-    this.setCache(cacheKey, data);
-    return data;
+    return this.storage.questions;
   }
 
   async findAllComments(): Promise<Comments[]> {
@@ -147,15 +148,13 @@ export class TestsService {
     const questions = await this.questionRepository.find({
       where: { theme_id: theme_id },
     });
-    const promises = questions.map(async (question) => {
-      const createTestQuestionDto: CreateTestQuestionDto = {
-        test_id: test.test_id,
-        q_id: question.q_id,
-        theme_id: theme_id,
-      };
-      await this.createTestQuestion(createTestQuestionDto, test, question);
-    });
-    await Promise.all(promises);
+    const createTestQuestionDtos = questions.map((question) => ({
+      test_id: test.test_id,
+      q_id: question.q_id,
+      theme_id: theme_id,
+    }));
+
+    await this.createTestQuestions(createTestQuestionDtos, test);
   }
 
   private async generateExamTestQuestions(test: Test): Promise<void> {
@@ -166,27 +165,23 @@ export class TestsService {
       .limit(20)
       .getMany();
 
-    for (const question of questions) {
-      const createTestQuestionDto: CreateTestQuestionDto = {
-        test_id: test.test_id,
-        q_id: question.q_id,
-        theme_id: question.theme_id,
-      };
-      await this.createTestQuestion(createTestQuestionDto, test, question);
-    }
+    const createTestQuestionDtos = questions.map((question) => ({
+      test_id: test.test_id,
+      q_id: question.q_id,
+      theme_id: question.theme_id,
+    }));
+
+    await this.createTestQuestions(createTestQuestionDtos, test);
   }
 
-  async createTestQuestion(
-    createTestQuestionDto: CreateTestQuestionDto,
+  private async createTestQuestions(
+    createTestQuestionDtos: CreateTestQuestionDto[],
     test: Test,
-    question: Question,
-  ): Promise<TestQuestion> {
-    const testQuestion = this.testQuestionRepository.create({
-      ...createTestQuestionDto,
-      test,
-      question,
-    });
-    return this.testQuestionRepository.save(testQuestion);
+  ): Promise<void> {
+    const testQuestions = createTestQuestionDtos.map((dto) =>
+      this.testQuestionRepository.create({ ...dto, test }),
+    );
+    await this.testQuestionRepository.save(testQuestions);
   }
 
   async findTestsByUserWithPagination(
