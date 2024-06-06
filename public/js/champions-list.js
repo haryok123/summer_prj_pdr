@@ -22,8 +22,8 @@ $(document).ready(function () {
         paging: false,
         info: false,
         columnDefs: [
-          { orderable: false, targets: [0] },
-          { type: 'num', targets: [2, 3, 4] },
+          { orderable: false, targets: [0, 1] },
+          { type: 'num', targets: [3, 4] },
         ],
         order: [],
         fnDrawCallback: function () {
