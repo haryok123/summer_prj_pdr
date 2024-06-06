@@ -1,31 +1,35 @@
 import { Injectable } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
 import { TestsService } from '../tests/tests.service';
-import { QuestionTheme } from '../../entities/question-theme.entity';
-import { Test } from '../../entities/test.entity';
+import { InjectRepository } from '@nestjs/typeorm';
+import { UserAccount } from '../../entities/user-account.entity';
+import { Repository } from 'typeorm';
 
 @Injectable()
 export class StatisticsService {
-  constructor(private readonly testsService: TestsService) {}
+  constructor(
+    private readonly testsService: TestsService,
+    @InjectRepository(UserAccount)
+    private readonly userAccountRepository: Repository<UserAccount>,
+  ) {}
 
   async getThemeResults(userLogin: string) {
-    const themes = await this.testsService.findAllQuestionThemes();
-    const tests = await this.testsService.findAllTestsByUser(
-      userLogin,
-      'theme',
-    );
+    const [themes, tests] = await Promise.all([
+      this.testsService.findAllQuestionThemes(),
+      this.testsService.findAllTestsByUser(userLogin, 'theme'),
+    ]);
+
     return themes.map((theme) => {
       const themeTests = tests.filter(
         (test) => test.theme.theme_id === theme.theme_id,
       );
-      const bestResult = themeTests.reduce((best, test) => {
-        return test.percentage > best ? test.percentage : best;
-      }, 0);
+      const bestResult = themeTests.reduce(
+        (best, test) => (test.percentage > best ? test.percentage : best),
+        0,
+      );
 
       const questionCount = theme.questionCount;
 
-      return { ...theme, bestResult: bestResult, questionCount };
+      return { ...theme, bestResult, questionCount };
     });
   }
 
@@ -37,27 +41,31 @@ export class StatisticsService {
 
   async getTestStatistics(userLogin: string) {
     const tests = await this.testsService.findAllTestsByUser(userLogin);
-    let correctAnswers = 0;
-    let incorrectAnswers = 0;
-    let examCorrectAnswers = 0;
-    const examsPassed = tests.filter(
-      (test) =>
-        test.is_done && test.test_type === 'exam' && test.correctAnswers >= 17,
-    ).length;
-    const examsTotal = tests.filter(
+
+    const correctAnswers = tests.reduce(
+      (sum, test) => sum + test.correctAnswers,
+      0,
+    );
+    const incorrectAnswers = tests.reduce(
+      (sum, test) => sum + test.incorrectAnswers,
+      0,
+    );
+    const exams = tests.filter(
       (test) => test.is_done && test.test_type === 'exam',
+    );
+
+    const examsPassed = exams.filter(
+      (test) => test.correctAnswers >= 17,
     ).length;
-    tests.forEach((test) => {
-      correctAnswers += test.correctAnswers;
-      incorrectAnswers += test.incorrectAnswers;
-    });
-    tests
-      .filter((test) => test.is_done && test.test_type === 'exam')
-      .forEach((test) => {
-        examCorrectAnswers += test.correctAnswers;
-      });
+    const examsTotal = exams.length;
+    const examCorrectAnswers = exams.reduce(
+      (sum, test) => sum + test.correctAnswers,
+      0,
+    );
+
     const totalQuestions = correctAnswers + incorrectAnswers;
-    const averageScore = Math.round(examCorrectAnswers / examsTotal);
+    const averageScore = Math.round(examCorrectAnswers / (examsTotal || 1));
+
     return {
       correctAnswers,
       incorrectAnswers,
@@ -69,15 +77,21 @@ export class StatisticsService {
   }
 
   async calculateStatistics(userLogin: string): Promise<any> {
-    const themeResults = await this.getThemeResults(userLogin);
+    const [themeResults, testsStatistics] = await Promise.all([
+      this.getThemeResults(userLogin),
+      this.getTestStatistics(userLogin),
+    ]);
+
     const overallProgress = this.getOverallProgress(themeResults);
-    const testsStatistics = await this.getTestStatistics(userLogin);
-    const correctAnswers = testsStatistics.correctAnswers;
-    const incorrectAnswers = testsStatistics.incorrectAnswers;
-    const totalQuestions = testsStatistics.totalQuestions;
-    const averageScore = testsStatistics.averageScore;
-    const examsPassed = testsStatistics.examsPassed;
-    const examsTotal = testsStatistics.examsTotal;
+    const {
+      correctAnswers,
+      incorrectAnswers,
+      totalQuestions,
+      averageScore,
+      examsPassed,
+      examsTotal,
+    } = testsStatistics;
+
     return {
       overallProgress,
       correctAnswers,
@@ -113,7 +127,32 @@ export class StatisticsService {
     }
 
     const statistics = await this.calculateStatistics(userLogin);
-    this.setCache(cacheKey, statistics);
+    this.setCache(cacheKey, statistics, 60000);
     return statistics;
+  }
+
+  async getTopUsers(limit: number = 10): Promise<any[]> {
+    const allUsers = await this.userAccountRepository.find();
+    const userStatisticsPromises = allUsers.map((user) =>
+      this.calculateStatistics(user.user_login),
+    );
+
+    const allUserStatistics = await Promise.all(userStatisticsPromises);
+
+    return allUserStatistics
+      .map((stats, index) => ({
+        user: allUsers[index],
+        ...stats,
+      }))
+      .sort(
+        (a, b) =>
+          b.overallProgress -
+          a.overallProgress +
+          b.correctAnswers -
+          a.correctAnswers +
+          b.examsPassed -
+          a.examsPassed,
+      )
+      .slice(0, limit);
   }
 }

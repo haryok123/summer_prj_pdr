@@ -36,10 +36,9 @@ export class TestsService {
   }
 
   async uploadStorage(): Promise<void> {
-    this.storage.questionThemes = await this.findAllQuestionThemes();
-    this.storage.questionThemes.forEach((theme: QuestionTheme) => {
-      this.storage.questions.push(...theme.questions);
-    });
+    const themes = await this.findAllQuestionThemes();
+    this.storage.questionThemes = themes;
+    this.storage.questions = themes.flatMap((theme) => theme.questions);
   }
 
   async findAllQuestionThemes(): Promise<QuestionTheme[]> {
@@ -91,18 +90,14 @@ export class TestsService {
     if (cachedData) {
       return cachedData;
     }
-    let data;
-    if (testType) {
-      data = await this.testRepository.find({
-        where: { user: { user_login: userLogin }, test_type: testType },
-        relations: ['items', 'items.question', 'items.question.theme'],
-      });
-    } else {
-      data = await this.testRepository.find({
-        where: { user: { user_login: userLogin } },
-        relations: ['items', 'items.question'],
-      });
-    }
+    const whereCondition = testType
+      ? { user: { user_login: userLogin }, test_type: testType }
+      : { user: { user_login: userLogin } };
+
+    const data = await this.testRepository.find({
+      where: whereCondition,
+      relations: ['items', 'items.question', 'items.question.theme'],
+    });
     this.setCache(cacheKey, data);
     return data;
   }
@@ -153,15 +148,13 @@ export class TestsService {
     const questions = await this.questionRepository.find({
       where: { theme_id: theme_id },
     });
-    const promises = questions.map(async (question) => {
-      const createTestQuestionDto: CreateTestQuestionDto = {
-        test_id: test.test_id,
-        q_id: question.q_id,
-        theme_id: theme_id,
-      };
-      await this.createTestQuestion(createTestQuestionDto, test, question);
-    });
-    await Promise.all(promises);
+    const createTestQuestionDtos = questions.map((question) => ({
+      test_id: test.test_id,
+      q_id: question.q_id,
+      theme_id: theme_id,
+    }));
+
+    await this.createTestQuestions(createTestQuestionDtos, test);
   }
 
   private async generateExamTestQuestions(test: Test): Promise<void> {
@@ -172,27 +165,23 @@ export class TestsService {
       .limit(20)
       .getMany();
 
-    for (const question of questions) {
-      const createTestQuestionDto: CreateTestQuestionDto = {
-        test_id: test.test_id,
-        q_id: question.q_id,
-        theme_id: question.theme_id,
-      };
-      await this.createTestQuestion(createTestQuestionDto, test, question);
-    }
+    const createTestQuestionDtos = questions.map((question) => ({
+      test_id: test.test_id,
+      q_id: question.q_id,
+      theme_id: question.theme_id,
+    }));
+
+    await this.createTestQuestions(createTestQuestionDtos, test);
   }
 
-  async createTestQuestion(
-    createTestQuestionDto: CreateTestQuestionDto,
+  private async createTestQuestions(
+    createTestQuestionDtos: CreateTestQuestionDto[],
     test: Test,
-    question: Question,
-  ): Promise<TestQuestion> {
-    const testQuestion = this.testQuestionRepository.create({
-      ...createTestQuestionDto,
-      test,
-      question,
-    });
-    return this.testQuestionRepository.save(testQuestion);
+  ): Promise<void> {
+    const testQuestions = createTestQuestionDtos.map((dto) =>
+      this.testQuestionRepository.create({ ...dto, test }),
+    );
+    await this.testQuestionRepository.save(testQuestions);
   }
 
   async findTestsByUserWithPagination(
