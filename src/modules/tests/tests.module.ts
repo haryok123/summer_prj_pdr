@@ -9,6 +9,8 @@ import { TestQuestion } from '../../entities/test-question.entity';
 import { Test } from '../../entities/test.entity';
 import { Comments } from '../../entities/comments.entity';
 import { TestsStorage } from '../../services/tests-storage.service';
+import { CommentsService } from './comments.service';
+import { CommentsController } from './comments.controller';
 
 @Module({
   imports: [
@@ -21,8 +23,8 @@ import { TestsStorage } from '../../services/tests-storage.service';
       Comments,
     ]),
   ],
-  providers: [TestsService, TestsStorage],
-  controllers: [TestsController],
+  providers: [TestsService, TestsStorage, CommentsService],
+  controllers: [TestsController, CommentsController],
   exports: [TestsStorage],
 })
 export class TestsModule {}

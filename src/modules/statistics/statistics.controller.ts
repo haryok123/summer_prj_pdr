@@ -7,7 +7,7 @@ import { Request } from 'express';
 export class StatisticsController {
   constructor(private statisticsService: StatisticsService) {}
 
-  @Get(':userLogin')
+  @Get('user/:userLogin')
   async getStatistics(@Param('userLogin') userLogin: string): Promise<any> {
     return this.statisticsService.getStatistics(userLogin);
   }
