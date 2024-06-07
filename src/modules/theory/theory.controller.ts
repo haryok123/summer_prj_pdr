@@ -36,8 +36,8 @@ export class TheoryController {
   @Get('rules/:chapter_num')
   @Render('chapter')
   async getChapter(
-    @Param('chapter_num') chapter_num: number,
-    @Req() req: Request,
+      @Param('chapter_num') chapter_num: number,
+      @Req() req: Request,
   ) {
     const chapters = await this.theoryService.findAllChapters();
     const chapter = chapters.find((chap) => +chap.chapter_num === +chapter_num);
@@ -49,10 +49,10 @@ export class TheoryController {
     const subchapters = chapter.subchapters;
 
     const prevChapter = chapters.find(
-      (chap) => chap.chapter_num === chapter.chapter_num - 1,
+        (chap) => chap.chapter_num === chapter.chapter_num - 1,
     );
     const nextChapter = chapters.find(
-      (chap) => chap.chapter_num === chapter.chapter_num + 1,
+        (chap) => chap.chapter_num === chapter.chapter_num + 1,
     );
 
     const signs = await this.theoryService.findAllSigns();
@@ -95,14 +95,14 @@ export class TheoryController {
   @Get('road-signs/:type_id/:item_id')
   @Render('item-detail')
   async getSignDetail(
-    @Req() req: Request,
-    @Param('type_id') type_id: number,
-    @Param('item_id') item_id: string,
+      @Req() req: Request,
+      @Param('type_id') type_id: number,
+      @Param('item_id') item_id: string,
   ) {
     const item = await this.theoryService.findOneTheoryItem(
-      item_id,
-      type_id,
-      'sign',
+        item_id,
+        type_id,
+        'sign',
     );
     return { item, title: item.item_name, currentUser: req['user'] };
   }
@@ -111,14 +111,14 @@ export class TheoryController {
   @Get('road-markings/:type_id/:item_id')
   @Render('item-detail')
   async getMarkingDetail(
-    @Req() req: Request,
-    @Param('type_id') type_id: number,
-    @Param('item_id') item_id: string,
+      @Req() req: Request,
+      @Param('type_id') type_id: number,
+      @Param('item_id') item_id: string,
   ): Promise<any> {
     const item = await this.theoryService.findOneTheoryItem(
-      item_id,
-      type_id,
-      'marking',
+        item_id,
+        type_id,
+        'marking',
     );
     return { item, title: item.item_name, currentUser: req['user'] };
   }

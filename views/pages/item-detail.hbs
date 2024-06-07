@@ -1,6 +1,6 @@
 {{#> layout}}
     {{#*inline "pageContent"}}
-        <div style="background-color: #F1F1F1; padding: 20px;">
+        <div class="container-ocean">
             <div class="container mt-3 container-island">
                 <div class="item-container">
                     <img src="data:image/png;base64,{{hexToBase64 item.item_image}}" alt="{{item.item_name}}" width="12%">
@@ -15,27 +15,21 @@
                     <img src="data:image/png;base64,{{hexToBase64 item.item_example_image}}" alt="Example of {{item.item_name}}">
                 {{/if}}
             </div>
-            <div class="navigation-buttons mt-4">
-                {{#if prevChapter}}
-                    <a href="/theory/rules/{{prevChapter}}" class="btn btn-secondary">Попередній знак</a>
-                {{/if}}
-                {{#if nextChapter}}
-                    <a href="/theory/rules/{{nextChapter}}" class="btn btn-secondary">Наступний знак</a>
-                {{/if}}
-            </div>
         </div>
         <style>
+            .container-ocean {
+                background-color: #F1F1F1;
+                padding: 20px;
+            }
             .container-island {
                 background-color: #FFFFFF;
                 border-radius: 5px;
                 padding: 20px;
                 transition: 0.3s;
             }
-
             .container-island:hover {
                 box-shadow: 10px 10px lightgray;
             }
-
             .item-container {
                 display: flex;
                 align-items: center;
