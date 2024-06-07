@@ -96,7 +96,14 @@
       </div>
     </div>
 
-
+    <!-- Academic Integrity Modal -->
+    <div id="integrityModal" class="academic-modal">
+      <div class="academic-modal-content">
+        <span class="academic-close" onclick="closeIntegrityModal()">&times;</span>
+        <h6>Будь ласка, дотримуйтесь академічної доброчесності.</h6>
+        <img src="/images/academic.gif" alt="meow" style="width:100%;">
+      </div>
+    </div>
 
     <section class="gradient-custom">
       <div class="container my-5 py-5">
@@ -335,6 +342,21 @@
 
       async function navigateToNextTheme(nextThemeId) {
         window.location.href = `/tests/themes/test?theme_id=${nextThemeId}`;
+      }
+      document.addEventListener('visibilitychange', function() {
+        if (document.hidden && (!isNavigatingWithinTest && !{{test.is_done}} && (!{{test.is_done}} && !chartIsCreated))) {
+          showIntegrityModal();
+        }
+      });
+
+      function showIntegrityModal() {
+        const modal = document.getElementById('integrityModal');
+        modal.style.display = 'block';
+      }
+
+      function closeIntegrityModal() {
+        const modal = document.getElementById('integrityModal');
+        modal.style.display = 'none';
       }
     </script>
 

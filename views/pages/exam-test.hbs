@@ -37,7 +37,7 @@
     <div class="question-block">
       <div class="question-content">
         <!-- Timer Display -->
-        <div id="timer" style="font-size: 20px; color: red;">20:00</div>
+        <div id="timer" style="font-size: 20px; color: red;"></div>
 
         <h6>{{add 1 currentQuestionIndex}} запитання з теми {{current_theme}}</h6>
         <h5>{{currentQuestion.question.q_content}}</h5>
@@ -87,24 +87,41 @@
       </div>
     </div>
 
+    <!-- Academic Integrity Modal -->
+    <div id="integrityModal" class="academic-modal">
+      <div class="academic-modal-content">
+        <span class="academic-close" onclick="closeIntegrityModal()">&times;</span>
+        <h6>Будь ласка, дотримуйтесь академічної доброчесності.</h6>
+        <img src="/images/academic.gif" alt="meow" style="width:100%;">
+      </div>
+    </div>
     <script>
+      let incorrectAnswers = {{incorrectAnswers}};
+      let remainingTime = {{remainingTime}};
+      let isNavigatingWithinTest = false;
+      let chartIsCreated = false;
+      let timerInterval;
+
       document.addEventListener('DOMContentLoaded', function() {
         const userAnswer = '{{currentQuestion.user_answer}}';
         const correctAnswer = '{{currentQuestion.question.q_correct_answer}}';
-        let incorrectAnswers = {{incorrectAnswers}};
-        let remainingTime = {{remainingTime}};
 
         // Відображення таймера
         function startTimer() {
           const timerElement = document.getElementById('timer');
-          setInterval(() => {
-            remainingTime -= 1000;
-            const minutes = Math.floor(remainingTime / 60000);
-            const seconds = Math.floor((remainingTime % 60000) / 1000);
-            timerElement.textContent = `${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
+          timerInterval = setInterval(() => {
+            if (!{{test.is_done}}) {
+              remainingTime -= 1000;
+              const minutes = Math.floor(remainingTime / 60000);
+              const seconds = Math.floor((remainingTime % 60000) / 1000);
+              timerElement.textContent = `${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
 
-            if (remainingTime <= 0) {
-              endTest({{test.test_id}}, 'Час вичерпано!', true);
+              if (remainingTime <= 0) {
+                endTest({{test.test_id}}, 'Час вичерпано!', true);
+              }
+            } else {
+              clearInterval(timerInterval);
+              timerElement.textContent = `Іспит закінчено.`;
             }
           }, 1000);
         }
@@ -160,30 +177,9 @@
                 btn.disabled = true;
               });
 
-              const paginationButton = document.querySelector(
-                `.pagination-button:nth-child(${parseInt('{{question_index}}') + 1})`,
-              );
-              if (userAnswer === result.correctAnswer) {
-                paginationButton.classList.add('correct');
-                paginationButton.classList.remove('incorrect');
-              } else {
-                paginationButton.classList.add('incorrect');
-                paginationButton.classList.remove('correct');
-              }
-
               if (incorrectAnswers >= 3) {
-                endTest({{test.test_id}}, 'Провал!', true);
-                return;
+                await endTest({{test.test_id}}, 'Провал!', true);
               }
-
-              const testState = {
-                test_id: {{test.test_id}},
-                incorrectAnswers: incorrectAnswers,
-                remainingTime: remainingTime,
-              };
-
-              document.cookie = `test_state=${encodeURIComponent(JSON.stringify(testState))}; path=/`;
-
 
             } catch (error) {
               console.error('There was a problem with the fetch operation:', error);
@@ -192,42 +188,29 @@
         });
       });
 
-      let isNavigatingWithinTest = false;
-      let chartIsCreated = false;
-
-      window.addEventListener('beforeunload', async function(e) {
+      window.addEventListener('beforeunload', function(event) {
         if (!isNavigatingWithinTest && !{{test.is_done}} && (!{{test.is_done}} && !chartIsCreated)) {
-          var confirmationMessage = 'Ви точно хочете цього? Прогрес не збережетсься';
-          const leavePage = confirm(confirmationMessage);
-          if (leavePage) {
-            try {
-              const response = await fetch(`/tests/delete/{{test.test_id}}`, {
-                method: 'DELETE',
-                headers: {
-                  'Content-Type': 'application/json',
-                },
-              });
-
-              if (!response.ok) {
-                throw new Error('Network response was not ok');
-              }
-            } catch (error) {
-              console.error('There was a problem with the fetch operation:', error);
-              return;
-            }
-          }
-          e.returnValue = confirmationMessage; // Gecko, Trident, Chrome 34+
-          return confirmationMessage; // Gecko, WebKit, Chrome <34
+          const confirmationMessage = 'Ви точно хочете цього? Прогрес не збережеться';
+          event.returnValue = confirmationMessage;
+          return confirmationMessage;
         }
       });
 
+      window.addEventListener('unload', async function() {
+        if (!isNavigatingWithinTest && !{{test.is_done}} && (!{{test.is_done}} && !chartIsCreated)) {
+            navigator.sendBeacon(`/tests/delete/{{test.test_id}}`, JSON.stringify({}));
+        }
+      });
+
+
       async function navigateToQuestion(testId, questionIndex) {
         isNavigatingWithinTest = true;
-        window.location.href = `/tests/exam/?test_id=${testId}&question_index=${questionIndex}`;
+        window.location.href = `/tests/exam/?test_id=${testId}&question_index=${questionIndex}&mistakes=${incorrectAnswers}&time=${remainingTime}`;
       }
 
       async function endTest(testId, title, disabled) {
         document.getElementById('end-button').disabled = disabled;
+        clearInterval(timerInterval);
 
         try {
           const response = await fetch(`/tests/finish/${testId}`, {
@@ -321,11 +304,25 @@
 
       }
 
-
       function closeModal() {
         document.getElementById('endTestModal').style.display = 'none';
       }
 
+      document.addEventListener('visibilitychange', function() {
+        if (document.hidden && (!isNavigatingWithinTest && !{{test.is_done}} && (!{{test.is_done}} && !chartIsCreated))) {
+          showIntegrityModal();
+        }
+      });
+
+      function showIntegrityModal() {
+        const modal = document.getElementById('integrityModal');
+        modal.style.display = 'block';
+      }
+
+      function closeIntegrityModal() {
+        const modal = document.getElementById('integrityModal');
+        modal.style.display = 'none';
+      }
     </script>
 
   {{/inline}}
