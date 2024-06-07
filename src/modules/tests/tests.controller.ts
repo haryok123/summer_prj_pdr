@@ -5,8 +5,6 @@ import {
   Get,
   NotFoundException,
   Param,
-  ParseIntPipe,
-  Patch,
   Post,
   Query,
   Render,
@@ -24,10 +22,14 @@ import { UpdateTestDto } from '../../dto/update-test.dto';
 import { AuthGuard } from '../auth/auth.guard';
 import { Request } from 'express';
 import { UserAccount } from '../../entities/user-account.entity';
+import { JwtService } from '@nestjs/jwt';
 
 @Controller('tests')
 export class TestsController {
-  constructor(private readonly testsService: TestsService) {}
+  constructor(
+    private readonly testsService: TestsService,
+    private readonly jwtService: JwtService,
+  ) {}
 
   @Get('themes-list')
   async getAllQuestionThemes(): Promise<QuestionTheme[]> {
@@ -246,6 +248,19 @@ export class TestsController {
       currentQuestion.question.theme_id,
     );
 
+    let incorrectAnswers = 0;
+    let remainingTime = 20 * 60 * 1000;
+    const stateToken = req.cookies['test_state'];
+    if (stateToken) {
+      try {
+        const decoded = this.jwtService.verify(stateToken);
+        if (decoded.test_id === test_id) {
+          incorrectAnswers = decoded.incorrectAnswers || 0;
+          remainingTime = decoded.remainingTime || remainingTime;
+        }
+      } catch (e) {}
+    }
+
     return {
       test: test,
       currentQuestion,
@@ -253,6 +268,8 @@ export class TestsController {
       current_theme: current_theme.theme_chapter,
       title: 'Екзамен з ПДР',
       currentUser: user,
+      incorrectAnswers, // Додати
+      remainingTime, // Додати
     };
   }
 
