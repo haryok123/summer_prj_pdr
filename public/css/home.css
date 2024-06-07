@@ -20,11 +20,14 @@ body, html {
     top: 0;
     left: 0;
     width: 100%;
+    /*width: 50%;*/
     height: 100%;
     background-image: url('/images/background.png');
     background-size: cover;
     opacity: 0;
     animation: fadeIn 10s forwards;
+    /*transform: translateX(50%);*/
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.5);
 }
 
 @keyframes fadeIn {
