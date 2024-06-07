@@ -1,13 +1,49 @@
 {{#> layout}}
-  {{#*inline "pageContent"}}
-    <div class="container mt-5">
-      <h1>{{item.item_id}}. {{item.item_name}}</h1>
-      <img src="data:image/png;base64,{{hexToBase64 item.item_image}}" alt="{{item.item_name}}">
-      <p>{{item.item_description}}</p>
-      {{#if item.item_example_image}}
-        <h4>Приклад:</h4>
-        <img src="data:image/png;base64,{{hexToBase64 item.item_example_image}}" alt="Example of {{item.item_name}}">
-      {{/if}}
-    </div>
-  {{/inline}}
+    {{#*inline "pageContent"}}
+        <div class="container-ocean">
+            <div class="container mt-3 container-island">
+                <div class="item-container">
+                    <img src="data:image/png;base64,{{hexToBase64 item.item_image}}" alt="{{item.item_name}}" width="12%">
+                    &nbsp;&nbsp;
+                    <h3>{{item.item_id}}. {{item.item_name}}</h3>
+                </div>
+                <hr class="stylized_hr">
+                <p>{{item.item_description}}</p>
+                <hr class="stylized_hr">
+                {{#if item.item_example_image}}
+                    <h4>Приклад:</h4>
+                    <img src="data:image/png;base64,{{hexToBase64 item.item_example_image}}" alt="Example of {{item.item_name}}">
+                {{/if}}
+            </div>
+        </div>
+        <style>
+            .container-ocean {
+                background-color: #F1F1F1;
+                padding: 20px;
+            }
+            .container-island {
+                background-color: #FFFFFF;
+                border-radius: 5px;
+                padding: 20px;
+                transition: 0.3s;
+            }
+            .container-island:hover {
+                box-shadow: 10px 10px lightgray;
+            }
+            .item-container {
+                display: flex;
+                align-items: center;
+                border-radius: 6px;
+                margin-bottom: 15px;
+            }
+            .item-container img {
+                margin-right: 15px;
+            }
+            .stylized_hr {
+                margin-top: 20px;
+                margin-bottom: 20px;
+                color: #a0a0a0;
+            }
+        </style>
+    {{/inline}}
 {{/layout}}
