@@ -4,10 +4,13 @@
     <script>
       function toggleDetails(testId) {
         const details = document.getElementById('details-' + testId);
+        const card = document.getElementById('card-' + testId)
         if (details.style.display === 'none' || details.style.display === '') {
           details.style.display = 'block';
+          card.style.borderRadius = "25px 25px 0 0"
         } else {
           details.style.display = 'none';
+            card.style.borderRadius = "25px"
         }
       }
     </script>
@@ -26,7 +29,7 @@
       <h1>{{title}}</h1>
       <div class="test-history">
         {{#each tests}}
-          <div class="test-card" onclick="toggleDetails({{this.test_id}})">
+          <div class="test-card" onclick="toggleDetails({{this.test_id}})" id="card-{{this.test_id}}">
             <img src="{{#if (eq this.test_type "exam")}}/images/isput.png{{else}}/images/book.png{{/if}}" alt="Test Type">
             <p><strong>ID: {{this.test_id}}</strong></p>
             <p style="text-align: center">{{#if (eq this.test_type "exam")}}Іспит{{else}}За темою {{this.theme.theme_chapter}}{{/if}}</p>
