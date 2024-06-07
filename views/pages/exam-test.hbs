@@ -18,31 +18,27 @@
 
     <!-- Pagination -->
     <div class="pagination">
-    {{#each test.items as |item index|}}
-      {{#if (eq (mod index 25) 0)}}
-        <div class="pagination-row">
-      {{/if}}
-        <button
-          class="pagination-button
-            {{#if (eq ../currentQuestionIndex index )}}current
-            {{else}}{{#if (eq item.user_answer item.question.q_correct_answer)}}correct
-            {{else}}{{#if
-            (and (neq item.user_answer null) (neq item.user_answer item.question.q_correct_answer))}}incorrect{{/if}}{{/if}}{{/if}}"
-          onclick="navigateToQuestion({{../test.test_id}}, {{index}})">
-          <span class="pagination-text">{{add index 1}}</span>
-        </button>
-      {{#if (eq (mod (add index 1) 25) 0)}}
-        </div>
-      {{/if}}
-    {{/each}}
-    {{#if (neq (mod test.items.length 25) 0)}}
+      <div class="pagination-row">
+        {{#each test.items as |item index|}}
+          <button
+            class="pagination-button
+          {{#if (eq ../currentQuestionIndex index )}}current
+          {{else}}{{#if (eq item.user_answer item.question.q_correct_answer)}}correct
+          {{else}}{{#if
+              (and (neq item.user_answer null) (neq item.user_answer item.question.q_correct_answer))}}incorrect{{/if}}{{/if}}{{/if}}"
+            onclick="navigateToQuestion({{../test.test_id}}, {{index}})">
+            <span class="pagination-text">{{add index 1}}</span>
+          </button>
+        {{/each}}
       </div>
-    {{/if}}
     </div>
 
     <!-- Question Block -->
     <div class="question-block">
       <div class="question-content">
+        <!-- Timer Display -->
+        <div id="timer" style="font-size: 20px; color: red;">20:00</div>
+
         <h6>{{add 1 currentQuestionIndex}} запитання з теми {{current_theme}}</h6>
         <h5>{{currentQuestion.question.q_content}}</h5>
       </div>
@@ -70,8 +66,8 @@
 
 
         <!-- End Test Button -->
-        <button class="btn btn-success end-test-button" {{#if test.is_done}} onclick="endTest({{test.test_id}}, 'Результати', false, this)">
-          Показати результати {{else}} onclick="endTest({{test.test_id}}, 'Тест завершено!', true, this)"> Закінчити тест{{/if}}</button>
+        <button id="end-button" class="btn btn-success end-test-button" {{#if test.is_done}} onclick="endTest({{test.test_id}}, 'Результати', false)">
+          Показати результати {{else}} onclick="endTest({{test.test_id}}, 'Тест завершено!', true)"> Закінчити тест{{/if}}</button>
       </div>
     </div>
 
@@ -81,7 +77,7 @@
       <div class="modal-content">
         <span class="close" onclick="closeModal()">&times;</span>
         <h6 id="resultsTitle"></h6>
-        <p>Запитань пройдено: <span id="answeredQuestions"></span></span></p>
+        <p>Запитань пройдено: <span id="answeredQuestions"></span></p>
         <div class="chartCard">
           <div class="chartBox">
             <canvas id="resultChart"></canvas>
@@ -95,8 +91,26 @@
       document.addEventListener('DOMContentLoaded', function() {
         const userAnswer = '{{currentQuestion.user_answer}}';
         const correctAnswer = '{{currentQuestion.question.q_correct_answer}}';
+        let incorrectAnswers = {{incorrectAnswers}};
+        let remainingTime = {{remainingTime}};
 
-        // Highlight the answers based on previous selection
+        // Відображення таймера
+        function startTimer() {
+          const timerElement = document.getElementById('timer');
+          setInterval(() => {
+            remainingTime -= 1000;
+            const minutes = Math.floor(remainingTime / 60000);
+            const seconds = Math.floor((remainingTime % 60000) / 1000);
+            timerElement.textContent = `${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
+
+            if (remainingTime <= 0) {
+              endTest({{test.test_id}}, 'Час вичерпано!', true);
+            }
+          }, 1000);
+        }
+
+        startTimer();
+
         if (userAnswer) {
           document.querySelectorAll('.answer-button').forEach((btn) => {
             const answer = btn.getAttribute('data-answer');
@@ -109,7 +123,6 @@
           });
         }
 
-        // Add event listeners to answer buttons
         document.querySelectorAll('.answer-button').forEach((button) => {
           if ({{test.is_done}}) {
             button.disabled = true;
@@ -135,7 +148,6 @@
 
               const result = await response.json();
 
-              // Highlight the buttons based on the correctness of the answer
               document.querySelectorAll('.answer-button').forEach((btn) => {
                 const answer = btn.getAttribute('data-answer');
                 btn.classList.remove('correct', 'incorrect');
@@ -143,11 +155,11 @@
                   btn.classList.add('correct');
                 } else if (answer == userAnswer) {
                   btn.classList.add('incorrect');
+                  incorrectAnswers++;
                 }
                 btn.disabled = true;
               });
 
-              // Update the pagination button color
               const paginationButton = document.querySelector(
                 `.pagination-button:nth-child(${parseInt('{{question_index}}') + 1})`,
               );
@@ -158,6 +170,21 @@
                 paginationButton.classList.add('incorrect');
                 paginationButton.classList.remove('correct');
               }
+
+              if (incorrectAnswers >= 3) {
+                endTest({{test.test_id}}, 'Провал!', true);
+                return;
+              }
+
+              const testState = {
+                test_id: {{test.test_id}},
+                incorrectAnswers: incorrectAnswers,
+                remainingTime: remainingTime,
+              };
+
+              document.cookie = `test_state=${encodeURIComponent(JSON.stringify(testState))}; path=/`;
+
+
             } catch (error) {
               console.error('There was a problem with the fetch operation:', error);
             }
@@ -199,8 +226,8 @@
         window.location.href = `/tests/exam/?test_id=${testId}&question_index=${questionIndex}`;
       }
 
-      async function endTest(testId, title, disabled, button) {
-        button.disabled = false;
+      async function endTest(testId, title, disabled) {
+        document.getElementById('end-button').disabled = disabled;
 
         try {
           const response = await fetch(`/tests/finish/${testId}`, {
@@ -247,7 +274,6 @@
           afterDatasetsDraw(chart, args, pluginOptions) {
             const { ctx, data } = chart;
             ctx.save();
-            console.log('dsradrs');
             const xCoor = 1000;
             const yCoor = 1000;
             ctx.font = 'bold 30px sans-serif';

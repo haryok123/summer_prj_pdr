@@ -148,13 +148,15 @@ export class TestsService {
     const questions = await this.questionRepository.find({
       where: { theme_id: theme_id },
     });
-    const createTestQuestionDtos = questions.map((question) => ({
-      test_id: test.test_id,
-      q_id: question.q_id,
-      theme_id: theme_id,
-    }));
-
-    await this.createTestQuestions(createTestQuestionDtos, test);
+    const promises = questions.map(async (question) => {
+      const createTestQuestionDto: CreateTestQuestionDto = {
+        test_id: test.test_id,
+        q_id: question.q_id,
+        theme_id: theme_id,
+      };
+      await this.createTestQuestion(createTestQuestionDto, test, question);
+    });
+    await Promise.all(promises);
   }
 
   private async generateExamTestQuestions(test: Test): Promise<void> {
@@ -165,23 +167,27 @@ export class TestsService {
       .limit(20)
       .getMany();
 
-    const createTestQuestionDtos = questions.map((question) => ({
-      test_id: test.test_id,
-      q_id: question.q_id,
-      theme_id: question.theme_id,
-    }));
-
-    await this.createTestQuestions(createTestQuestionDtos, test);
+    for (const question of questions) {
+      const createTestQuestionDto: CreateTestQuestionDto = {
+        test_id: test.test_id,
+        q_id: question.q_id,
+        theme_id: question.theme_id,
+      };
+      await this.createTestQuestion(createTestQuestionDto, test, question);
+    }
   }
 
-  private async createTestQuestions(
-    createTestQuestionDtos: CreateTestQuestionDto[],
+  async createTestQuestion(
+    createTestQuestionDto: CreateTestQuestionDto,
     test: Test,
-  ): Promise<void> {
-    const testQuestions = createTestQuestionDtos.map((dto) =>
-      this.testQuestionRepository.create({ ...dto, test }),
-    );
-    await this.testQuestionRepository.save(testQuestions);
+    question: Question,
+  ): Promise<TestQuestion> {
+    const testQuestion = this.testQuestionRepository.create({
+      ...createTestQuestionDto,
+      test,
+      question,
+    });
+    return this.testQuestionRepository.save(testQuestion);
   }
 
   async findTestsByUserWithPagination(
