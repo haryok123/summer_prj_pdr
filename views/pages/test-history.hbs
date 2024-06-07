@@ -29,22 +29,24 @@
       <h1>{{title}}</h1>
       <div class="test-history">
         {{#each tests}}
-          <div class="test-card" onclick="toggleDetails({{this.test_id}})" id="card-{{this.test_id}}">
-            <img src="{{#if (eq this.test_type "exam")}}/images/isput.png{{else}}/images/book.png{{/if}}" alt="Test Type">
-            <p><strong>ID: {{this.test_id}}</strong></p>
-            <p style="text-align: center">{{#if (eq this.test_type "exam")}}Іспит{{else}}За темою {{this.theme.theme_chapter}}{{/if}}</p>
-            <p style="margin-left:auto;"><strong>{{this.percentage}}%</strong></p>
-          </div>
-          <div class="test-details" id="details-{{this.test_id}}">
-            <p>Правильні відповіді: <span style="color: green;">{{this.correctAnswers}}</span></p>
-            <p>Неправильні відповіді: <span style="color: red;">{{this.incorrectAnswers}}</span></p>
-            <p>Без відповідей: <span style="color: grey;">{{this.unansweredQuestions}}</span></p>
-            <p>Всього питань: {{this.totalQuestions}}</p>
-            <p>Дата: {{formatDate this.test_date}}</p>
-            <a href="{{#if (eq this.test_type "exam")}}/tests/exam?test_id={{this.test_id}}{{else}}/tests/themes/test?test_id={{this.test_id}}&theme_id={{this.theme.theme_id}}{{/if}}">
-            Переглянути тест
-            </a>
-          </div>
+            <div class="test-card" onclick="toggleDetails({{this.test_id}})" id="card-{{this.test_id}}">
+                <img src="{{#if (eq this.test_type "exam")}}/images/isput.png{{else}}/images/book.png{{/if}}" alt="Test Type">
+                <p style="margin-right: auto;"><strong>ID: {{this.test_id}}</strong></p>
+                <span style="width: 400px; justify-content: left">
+                    <p>{{#if (eq this.test_type "exam")}}Тест-іспит{{else}}Тест за темою "{{this.theme.theme_chapter}}"{{/if}}</p>
+                </span>
+                <p style="margin-left: auto;"><strong>{{this.percentage}}%</strong></p>
+            </div>
+            <div class="test-details" id="details-{{this.test_id}}">
+                <p>Правильні відповіді: <span style="color: green;">{{this.correctAnswers}}</span></p>
+                <p>Неправильні відповіді: <span style="color: red;">{{this.incorrectAnswers}}</span></p>
+                <p>Без відповідей: <span style="color: grey;">{{this.unansweredQuestions}}</span></p>
+                <p>Всього питань: {{this.totalQuestions}}</p>
+                <p>Дата: {{formatDate this.test_date}}</p>
+                <a href="{{#if (eq this.test_type "exam")}}/tests/exam?test_id={{this.test_id}}{{else}}/tests/themes/test?test_id={{this.test_id}}&theme_id={{this.theme.theme_id}}{{/if}}">
+                Переглянути тест
+                </a>
+            </div>
         {{/each}}
       </div>
 <!--      <div class="pagination">-->
