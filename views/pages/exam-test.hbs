@@ -181,6 +181,13 @@
                 await endTest({{test.test_id}}, 'Провал!', true);
               }
 
+              setTimeout(() => {
+                 const nextQuestionIndex = {{add currentQuestionIndex 1}};
+                 if(nextQuestionIndex < ({{test.items.length}})) {
+                    navigateToQuestion({{test.test_id}}, nextQuestionIndex);
+                 }
+              }, 1200);
+
             } catch (error) {
               console.error('There was a problem with the fetch operation:', error);
             }
