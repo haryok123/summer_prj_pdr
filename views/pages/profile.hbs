@@ -1,80 +1,93 @@
 {{#> layout }}
-  {{#*inline "pageContent"}}
-    <link href="/css/profile.css" rel="stylesheet">
-    <div style="color: #1A1A1A; margin-left: 20px; margin-bottom: 10px; font-size: 17px">
-      <a class="link-without-underline" href="/" style="color: #1A1A1A">Головна</a>
-      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-chevron-right" viewBox="0 0 16 16">
-        <path fill-rule="evenodd" d="M4.646 1.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1 0 .708l-6 6a.5.5 0 0 1-.708-.708L10.293 8 4.646 2.354a.5.5 0 0 1 0-.708"/>
-      </svg>
-      <span style="color: green; font-weight: bold;">Профіль</span>
-    </div>
-    <section class="d-flex flex-column justify-content-center align-items-center h-100" style=" margin: auto">
-      <section class="content-section" style="width: 50%; min-width: 470px;">
-        <div class="row">
-          <div class="col-4">
-            <div class="profile-pic-container my-3" style="margin-left: 10px">
-              <img class="avatar" src="{{ currentUser.avatar }}" alt="You">
-            </div>
-          </div>
+    {{#*inline "pageContent"}}
+        <!-- Include custom CSS for profile page -->
+        <link href="/css/profile.css" rel="stylesheet">
 
-          <div class="col-8 d-flex flex-column justify-content-evenly">
-            <div>
-              <div id="currentUserLogin" class="h2 my-0">{{ currentUser.user_login }}</div>
-              <div class="text-secondary">{{ currentUser.user_email }}</div>
-            </div>
-            <div class="d-flex">
-              <button id="changeProfileImgButton" class="btn btn-outline-success me-2" >Змінити аватарку</button>
-              <form action="auth/logout" method="post">
-                <button type="submit" class="btn btn-success">Вийти</button>
-              </form>
-            </div>
-          </div>
+        <!-- Breadcrumb navigation -->
+        <div style="color: #1A1A1A; margin-left: 20px; margin-bottom: 10px; font-size: 17px">
+            <a class="link-without-underline" href="/" style="color: #1A1A1A">Головна</a>
+            <!-- Arrow between breadcrumb items -->
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-chevron-right" viewBox="0 0 16 16">
+                <path fill-rule="evenodd" d="M4.646 1.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1 0 .708l-6 6a.5.5 0 0 1-.708-.708L10.293 8 4.646 2.354a.5.5 0 0 1 0-.708"/>
+            </svg>
+            <!-- Current page indicator -->
+            <span style="color: green; font-weight: bold;">Профіль</span>
         </div>
-      </section>
 
-      <section class="content-section p-4 my-2" style="width: 50%; min-width: 470px;">
-        <div class="d-flex">
-          <a class="btn btn-success me-2" href="/tests/history">Історія тестів</a>
-          <a id="reset-progress-btn" class="btn btn-danger">Скинути прогрес</a>
+        <!-- Main content section -->
+        <section class="d-flex flex-column justify-content-center align-items-center h-100" style=" margin: auto">
+            <!-- Profile details section -->
+            <section class="content-section" style="width: 50%; min-width: 470px;">
+                <div class="row">
+                    <div class="col-4">
+                        <!-- Profile picture container -->
+                        <div class="profile-pic-container my-3" style="margin-left: 10px">
+                            <img class="avatar" src="{{ currentUser.avatar }}" alt="You">  <!-- User avatar -->
+                        </div>
+                    </div>
 
-        </div>
-      </section>
+                    <div class="col-8 d-flex flex-column justify-content-evenly">
+                        <div>
+                            <!-- User login and email display -->
+                            <div id="currentUserLogin" class="h2 my-0">{{ currentUser.user_login }}</div>
+                            <div class="text-secondary">{{ currentUser.user_email }}</div>
+                        </div>
+                        <!-- Buttons for changing avatar and logging out -->
+                        <div class="d-flex">
+                            <button id="changeProfileImgButton" class="btn btn-outline-success me-2" >Змінити аватарку</button>
+                            <form action="auth/logout" method="post">
+                                <button type="submit" class="btn btn-success">Вийти</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </section>
 
-      <!-- Statistics Card -->
-      <section id="statisticsCard" class="content-section statistics-card my-4">
-        <div id="loading" class="text-center">
-          <img src="/images/avatar7.gif" alt="Loading...">
-        </div>
-      </section>
+            <!-- Additional actions section -->
+            <section class="content-section p-4 my-2" style="width: 50%; min-width: 470px;">
+                <div class="d-flex">
+                    <a class="btn btn-success me-2" href="/tests/history">Історія тестів</a>  <!-- Link to test history -->
+                    <a id="reset-progress-btn" class="btn btn-danger">Скинути прогрес</a>  <!-- Reset progress button -->
+                </div>
+            </section>
 
-    </section>
+            <!-- Statistics Card -->
+            <section id="statisticsCard" class="content-section statistics-card my-4">
+                <div id="loading" class="text-center">
+                    <img src="/images/avatar7.gif" alt="Loading...">  <!-- Loading indicator -->
+                </div>
+            </section>
 
-    <div class="modal fade" id="imageSelectionModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-      <div class="modal-dialog modal-dialog-centered" role="document">
-        <div class="modal-content">
-          <div class="modal-header border-bottom-0">
-            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-          </div>
-          <div class="modal-body">
-            <div class="form-title text-center">
-              <h4>Вибір аватарки</h4>
+        </section>
+
+        <!-- Modal for image selection -->
+        <div class="modal fade" id="imageSelectionModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered" role="document">
+                <div class="modal-content">
+                    <div class="modal-header border-bottom-0">
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="form-title text-center">
+                            <h4>Вибір аватарки</h4>  <!-- Title for avatar selection -->
+                        </div>
+                        <div class="d-flex flex-column text-center" id="imageContainer">
+                            <!-- Container for avatar options (content to be dynamically added) -->
+                        </div>
+                    </div>
+                </div>
             </div>
-            <div class="d-flex flex-column text-center" id="imageContainer">
-            </div>
-          </div>
         </div>
-      </div>
-    </div>
 
-    <!-- Confirmation Modal -->
-    <div id="confirmationModal" class="modal">
-      <div class="modal-content">
-        <span class="close">&times;</span>
-        <p>Ви впевнені, що хочете скинути прогрес? Це дію не можна буде скасувати.</p>
-        <button id="confirm-reset-btn" class="btn btn-danger">Підтвердити</button>
-        <button id="cancel-reset-btn" class="btn btn-secondary">Скасувати</button>
-      </div>
-    </div>
+        <!-- Confirmation Modal -->
+        <div id="confirmationModal" class="modal">
+            <div class="modal-content">
+                <span class="close">&times;</span>  <!-- Close button -->
+                <p>Ви впевнені, що хочете скинути прогрес? Це дію не можна буде скасувати.</p>  <!-- Confirmation message -->
+                <button id="confirm-reset-btn" class="btn btn-danger">Підтвердити</button>  <!-- Confirm button -->
+                <button id="cancel-reset-btn" class="btn btn-secondary">Скасувати</button>  <!-- Cancel button -->
+            </div>
+        </div>
 
-  {{/inline}}
+    {{/inline}}
 {{/layout}}

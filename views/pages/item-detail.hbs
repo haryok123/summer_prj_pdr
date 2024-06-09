@@ -1,64 +1,86 @@
-{{#> layout}}
-    {{#*inline "pageContent"}}
-      <div style="color: #1A1A1A; margin-left: 20px; font-size: 17px">
-        <a class="link-without-underline" href="/" style="color: #1A1A1A">Головна</a>
-        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-chevron-right" viewBox="0 0 16 16">
-          <path fill-rule="evenodd" d="M4.646 1.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1 0 .708l-6 6a.5.5 0 0 1-.708-.708L10.293 8 4.646 2.354a.5.5 0 0 1 0-.708"/>
-        </svg>
-        <a class="link-without-underline" href="/theory" style="color: #1A1A1A">Теорія ПДР</a>
-        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-chevron-right" viewBox="0 0 16 16">
-          <path fill-rule="evenodd" d="M4.646 1.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1 0 .708l-6 6a.5.5 0 0 1-.708-.708L10.293 8 4.646 2.354a.5.5 0 0 1 0-.708"/>
-        </svg>
-        <a class="link-without-underline" href="/theory/road-{{item.theory_type}}s" style="color: #1A1A1A"> {{#if (eq item.theory_type 'sign')}}Дорожні знаки {{else}}Дорожня розмітка{{/if}}</a>
-        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-chevron-right" viewBox="0 0 16 16">
-          <path fill-rule="evenodd" d="M4.646 1.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1 0 .708l-6 6a.5.5 0 0 1-.708-.708L10.293 8 4.646 2.354a.5.5 0 0 1 0-.708"/>
-        </svg>
-        <span style="color: green; font-weight: bold;">{{item.item_name}}</span>
-      </div>
-        <div class="container-ocean">
-            <div class="container mt-3 container-island">
-                <div class="item-container">
-                    <img src="data:image/png;base64,{{hexToBase64 item.item_image}}" alt="{{item.item_name}}" width="12%">
-                    &nbsp;&nbsp;
-                    <h3>{{item.item_id}}. {{item.item_name}}</h3>
-                </div>
-                <hr class="stylized_hr">
-                <p>{{item.item_description}}</p>
-                <hr class="stylized_hr">
-                {{#if item.item_example_image}}
-                    <h4>Приклад:</h4>
-                    <img src="data:image/png;base64,{{hexToBase64 item.item_example_image}}" alt="Example of {{item.item_name}}">
-                {{/if}}
-            </div>
+{{#> layout}}  <!-- Start of the main layout -->
+{{#*inline "pageContent"}}  <!-- Defining the page content -->
+<div style="color: #1A1A1A; margin-left: 20px; font-size: 17px">
+    <!-- Breadcrumb navigation -->
+    <a class="link-without-underline" href="/" style="color: #1A1A1A">Головна</a>  <!-- Link to the homepage -->
+    <!-- Arrow between breadcrumb items -->
+    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-chevron-right" viewBox="0 0 16 16">
+        <path fill-rule="evenodd" d="M4.646 1.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1 0 .708l-6 6a.5.5 0 0 1-.708-.708L10.293 8 4.646 2.354a.5.5 0 0 1 0-.708"/>
+    </svg>
+    <a class="link-without-underline" href="/theory" style="color: #1A1A1A">Теорія ПДР</a>  <!-- Link to the theory section -->
+    <!-- Arrow between breadcrumb items -->
+    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-chevron-right" viewBox="0 0 16 16">
+        <path fill-rule="evenodd" d="M4.646 1.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1 0 .708l-6 6a.5.5 0 0 1-.708-.708L10.293 8 4.646 2.354a.5.5 0 0 1 0-.708"/>
+    </svg>
+    <a class="link-without-underline" href="/theory/road-{{item.theory_type}}s" style="color: #1A1A1A">
+        <!-- Conditional rendering based on the type of item (sign or marking) -->
+        {{#if (eq item.theory_type 'sign')}}
+            Дорожні знаки  <!-- Road signs -->
+        {{else}}
+            Дорожня розмітка  <!-- Road markings -->
+        {{/if}}
+    </a>
+    <!-- Arrow between breadcrumb items -->
+    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-chevron-right" viewBox="0 0 16 16">
+        <path fill-rule="evenodd" d="M4.646 1.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1 0 .708l-6 6a.5.5 0 0 1-.708-.708L10.293 8 4.646 2.354a.5.5 0 0 1 0-.708"/>
+    </svg>
+    <!-- Current item name highlighted in green and bold -->
+    <span style="color: green; font-weight: bold;">{{item.item_name}}</span>
+</div>
+<div class="container-ocean">  <!-- Container with light gray background -->
+    <div class="container mt-3 container-island">  <!-- Inner container with white background and padding -->
+        <div class="item-container">  <!-- Container for item image and name -->
+            <!-- Item image -->
+            <img src="data:image/png;base64,{{hexToBase64 item.item_image}}" alt="{{item.item_name}}" width="12%">
+            &nbsp;&nbsp;
+            <!-- Item ID and name -->
+            <h3>{{item.item_id}}. {{item.item_name}}</h3>
         </div>
-        <style>
-            .container-ocean {
-                background-color: #F1F1F1;
-                padding: 20px;
-            }
-            .container-island {
-                background-color: #FFFFFF;
-                border-radius: 5px;
-                padding: 20px;
-                transition: 0.3s;
-            }
-            .container-island:hover {
-                box-shadow: 10px 10px lightgray;
-            }
-            .item-container {
-                display: flex;
-                align-items: center;
-                border-radius: 6px;
-                margin-bottom: 15px;
-            }
-            .item-container img {
-                margin-right: 15px;
-            }
-            .stylized_hr {
-                margin-top: 20px;
-                margin-bottom: 20px;
-                color: #a0a0a0;
-            }
-        </style>
-    {{/inline}}
-{{/layout}}
+        <hr class="stylized_hr">  <!-- Stylized horizontal rule -->
+        <!-- Item description -->
+        <p>{{item.item_description}}</p>
+        <hr class="stylized_hr">  <!-- Stylized horizontal rule -->
+        {{#if item.item_example_image}}  <!-- Conditional rendering of example image if it exists -->
+            <h4>Приклад:</h4>  <!-- Example heading -->
+            <!-- Example image -->
+            <img src="data:image/png;base64,{{hexToBase64 item.item_example_image}}" alt="Example of {{item.item_name}}">
+        {{/if}}
+    </div>
+</div>
+<style>
+    /* Styling for the outer container */
+    .container-ocean {
+        background-color: #F1F1F1;
+        padding: 20px;
+    }
+    /* Styling for the inner container */
+    .container-island {
+        background-color: #FFFFFF;
+        border-radius: 5px;
+        padding: 20px;
+        transition: 0.3s;
+    }
+    /* Hover effect for the inner container */
+    .container-island:hover {
+        box-shadow: 10px 10px lightgray;
+    }
+    /* Styling for the item container */
+    .item-container {
+        display: flex;
+        align-items: center;
+        border-radius: 6px;
+        margin-bottom: 15px;
+    }
+    /* Margin for the item image */
+    .item-container img {
+        margin-right: 15px;
+    }
+    /* Styling for the horizontal rules */
+    .stylized_hr {
+        margin-top: 20px;
+        margin-bottom: 20px;
+        color: #a0a0a0;
+    }
+</style>
+{{/inline}}  <!-- End of page content definition -->
+{{/layout}}  <!-- End of main layout -->

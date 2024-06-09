@@ -1,57 +1,64 @@
 {{#> layout}}
-  {{#*inline "pageContent"}}
-    <div style="color: #1A1A1A; margin-left: 20px; font-size: 17px">
-      <a class="link-without-underline" href="/" style="color: #1A1A1A">Головна</a>
-      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-chevron-right" viewBox="0 0 16 16">
-        <path fill-rule="evenodd" d="M4.646 1.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1 0 .708l-6 6a.5.5 0 0 1-.708-.708L10.293 8 4.646 2.354a.5.5 0 0 1 0-.708"/>
-      </svg>
-      <a class="link-without-underline" href="/tests" style="color: #1A1A1A">Тести</a>
-      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-chevron-right" viewBox="0 0 16 16">
-        <path fill-rule="evenodd" d="M4.646 1.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1 0 .708l-6 6a.5.5 0 0 1-.708-.708L10.293 8 4.646 2.354a.5.5 0 0 1 0-.708"/>
-      </svg>
-      <span style="color: green; font-weight: bold;">Тести за темами</span>
-    </div>
-    <div class="container mt-5" style="width: 60%;">
-      <h1>{{title}}</h1>
-      <p>Тут ви можете знайти всі необхідні матеріали для вивчення правил дорожнього руху.</p>
-
-      <!-- Overall Progress Block -->
-      <div class="overall-progress">
-        <div>
-          <span style="width: 49%; text-align: left; font-weight: bold">Загальний прогрес по темах:</span>
-          <span style="width: 49%; text-align: right; font-weight: bold">{{overallProgress}}%</span>
+    {{#*inline "pageContent"}}
+        <!-- Breadcrumb navigation for better user experience -->
+        <div style="color: #1A1A1A; margin-left: 20px; font-size: 17px">
+            <a class="link-without-underline" href="/" style="color: #1A1A1A">Головна</a>
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-chevron-right" viewBox="0 0 16 16">
+                <path fill-rule="evenodd" d="M4.646 1.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1 0 .708l-6 6a.5.5 0 0 1-.708-.708L10.293 8 4.646 2.354a.5.5 0 0 1 0-.708"/>
+            </svg>
+            <a class="link-without-underline" href="/tests" style="color: #1A1A1A">Тести</a>
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-chevron-right" viewBox="0 0 16 16">
+                <path fill-rule="evenodd" d="M4.646 1.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1 0 .708l-6 6a.5.5 0 0 1-.708-.708L10.293 8 4.646 2.354a.5.5 0 0 1 0-.708"/>
+            </svg>
+            <span style="color: green; font-weight: bold;">Тести за темами</span>
         </div>
-        <div class="progress-bar-container">
-          <div class="progress-bar" style="width: {{overallProgress}}%;"></div>
+
+        <!-- Main content container -->
+        <div class="container mt-5" style="width: 60%;">
+            <h1>{{title}}</h1> <!-- Page title -->
+            <p>Тут ви можете знайти всі необхідні матеріали для вивчення правил дорожнього руху.</p>
+
+            <!-- Overall Progress Block -->
+            <div class="overall-progress">
+                <div>
+                    <span style="width: 49%; text-align: left; font-weight: bold">Загальний прогрес по темах:</span>
+                    <span style="width: 49%; text-align: right; font-weight: bold">{{overallProgress}}%</span>
+                </div>
+                <div class="progress-bar-container">
+                    <div class="progress-bar" style="width: {{overallProgress}}%;"></div> <!-- Progress bar showing overall progress -->
+                </div>
+            </div>
+
+            <!-- Themes List -->
+            <div class="themes-list">
+                {{#each themes}}
+                    <!-- Theme button for each theme, onclick event starts the test for the theme -->
+                    <div class="theme-button" onclick="startTest({{theme_id}})">
+                        <div class="theme-number">{{theme_id}}</div> <!-- Theme number -->
+                        <div class="theme-details">
+                            <div class="theme-name">{{theme_chapter}}</div> <!-- Theme chapter name -->
+                            <div class="question-count">{{questionCount}} питань</div> <!-- Number of questions in the theme -->
+                        </div>
+                        <div class="best-result">
+                            <span>Найкращий результат: {{bestResult}}%</span> <!-- Best result for the theme -->
+                        </div>
+                    </div>
+                {{/each}}
+            </div>
         </div>
-      </div>
 
-      <!-- Themes List -->
-      <div class="themes-list">
-        {{#each themes}}
-          <div class="theme-button" onclick="startTest({{theme_id}})">
-            <div class="theme-number">{{theme_id}}</div>
-            <div class="theme-details">
-              <div class="theme-name">{{theme_chapter}}</div>
-              <div class="question-count">{{questionCount}} питань</div>
-            </div>
-            <div class="best-result">
-              <span>Найкращий результат: {{bestResult}}%</span>
-            </div>
-          </div>
-        {{/each}}
-      </div>
-    </div>
+        <!-- Linking custom CSS for themes -->
+        <link href="/css/themes.css" rel="stylesheet">
+        <link rel="stylesheet" href="/css/themes.css">
 
-    <link href="/css/themes.css" rel="stylesheet">
-    <link rel="stylesheet" href="/css/themes.css">
-    <script>
-      document.addEventListener('DOMContentLoaded', function() {
-          window.startTest = function(themeId) {
-          window.location.href = `/tests/themes/test?theme_id=${themeId}`;
-        };
-      });
-    </script>
+        <!-- JavaScript to handle theme button clicks -->
+        <script>
+            document.addEventListener('DOMContentLoaded', function() {
+                window.startTest = function(themeId) {
+                    window.location.href = `/tests/themes/test?theme_id=${themeId}`; <!-- Redirect to the test page for the selected theme -->
+                };
+            });
+        </script>
 
-  {{/inline}}
+    {{/inline}}
 {{/layout}}
