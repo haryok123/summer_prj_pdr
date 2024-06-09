@@ -41,6 +41,21 @@ export class TestsService {
     this.storage.questions = themes.flatMap((theme) => theme.questions);
   }
 
+  async deleteAllTestsByUser(userLogin: string): Promise<void> {
+    const user = await this.userAccountRepository.findOne({
+      where: { user_login: userLogin },
+    });
+
+    if (!user) {
+      throw new NotFoundException('User not found');
+    }
+
+    const tests = await this.testRepository.find({ where: { user } });
+    for (const test of tests) {
+      await this.testRepository.delete(test.test_id);
+    }
+  }
+
   async findAllQuestionThemes(): Promise<QuestionTheme[]> {
     if (this.storage.questionThemes.length === 0) {
       return await this.questionThemeRepository.find({
@@ -206,7 +221,8 @@ export class TestsService {
     page: number,
     limit: number,
   ): Promise<[Test[], number]> {
-    const [tests, totalTests] = await this.testRepository.findAndCount({
+    // eslint-disable-next-line prefer-const
+    let [tests, totalTests] = await this.testRepository.findAndCount({
       where: { user: { user_login: userLogin } },
       relations: ['items', 'items.question', 'items.question.theme'],
       order: { test_date: 'DESC' },

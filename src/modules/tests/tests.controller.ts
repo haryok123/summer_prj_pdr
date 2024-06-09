@@ -31,6 +31,13 @@ export class TestsController {
     private readonly jwtService: JwtService,
   ) {}
 
+  @UseGuards(AuthGuard)
+  @Delete('delete/all')
+  async deleteAllUserTests(@Req() req: Request): Promise<void> {
+    const user: UserAccount = req['user'];
+    await this.testsService.deleteAllTestsByUser(user.user_login);
+  }
+
   @Get('themes-list')
   async getAllQuestionThemes(): Promise<QuestionTheme[]> {
     return this.testsService.findAllQuestionThemes();
