@@ -13,7 +13,7 @@
         <div class="row">
           <div class="col-4">
             <div class="profile-pic-container my-3" style="margin-left: 10px">
-              <img class="avatar" src="{{currentUser.avatar}}" alt="You">
+              <img class="avatar" src="{{ currentUser.avatar }}" alt="You">
             </div>
           </div>
 
@@ -35,73 +35,15 @@
       <section class="content-section p-4 my-2" style="width: 50%; min-width: 470px;">
         <div class="d-flex">
           <a class="btn btn-success me-2" href="/tests/history">Історія тестів</a>
-          <!--            <a class="btn btn-success" href="/auth/registration">Статистика</a>-->
+          <a id="reset-progress-btn" class="btn btn-danger">Скинути прогрес</a>
+
         </div>
       </section>
 
       <!-- Statistics Card -->
-      <section class="content-section statistics-card my-4">
-        <div class="title">Загальний прогрес по темах:</div>
-        <div class="stat-value
-        {{#if (less overallProgress 10)}} bad-result
-          {{else}} {{#if (less overallProgress 20)}} poor-result
-            {{else}} {{#if (less overallProgress 40)}} medium-result
-              {{else}} {{#if (less overallProgress 70)}} good-result
-                {{else}} great-result
-              {{/if}}
-            {{/if}}
-          {{/if}}
-        {{/if}}">{{overallProgress}}%</div>
-        <div class="progress-bar">
-          <div class="progress {{#if (less overallProgress 10)}} bad-result
-          {{else}} {{#if (less overallProgress 20)}} poor-result
-            {{else}} {{#if (less overallProgress 40)}} medium-result
-              {{else}} {{#if (less overallProgress 70)}} good-result
-                {{else}} great-result
-              {{/if}}
-          {{/if}}
-          {{/if}}
-          {{/if}}" style="width: {{overallProgress}}%;"></div>
-        </div>
-        <div class="stat-row">
-          <div class="stat-item">
-            <div class="stat-value {{#if (more (subtract examsTotal examsPassed) 10)}} bad-result
-          {{else}} {{#if (more (subtract examsTotal examsPassed) 8)}} poor-result
-            {{else}} {{#if (more (subtract examsTotal examsPassed) 6)}} medium-result
-              {{else}} {{#if (more (subtract examsTotal examsPassed) 4)}} good-result
-                {{else}} great-result
-              {{/if}}
-            {{/if}}
-            {{/if}}
-            {{/if}}">{{examsPassed}}/{{examsTotal}}</div>
-            <div class="stat-description">Зданих іспитів</div>
-          </div>
-          <div class="stat-item">
-            <div class="stat-value {{#if (less averageScore 4)}} bad-result
-          {{else}} {{#if (less averageScore 8)}} poor-result
-            {{else}} {{#if (less averageScore 12)}} medium-result
-              {{else}} {{#if (less averageScore 17)}} good-result
-                {{else}} great-result
-              {{/if}}
-            {{/if}}
-            {{/if}}
-            {{/if}}">{{averageScore}}/20</div>
-            <div class="stat-description">Середній рахунок іспиту</div>
-          </div>
-        </div>
-        <div class="stat-row">
-          <div class="stat-item">
-            <div class="stat-value">{{totalQuestions}}</div>
-            <div class="stat-description">Запитань пройдено</div>
-          </div>
-          <div class="stat-item">
-            <div class="stat-value" style="color: #ff4d4f;">{{incorrectAnswers}}</div>
-            <div class="stat-description">Невірних відповідей</div>
-          </div>
-          <div class="stat-item">
-            <div class="stat-value" style="color: #4CAF50;">{{correctAnswers}}</div>
-            <div class="stat-description">Правильних відповідей</div>
-          </div>
+      <section id="statisticsCard" class="content-section statistics-card my-4">
+        <div id="loading" class="text-center">
+          <img src="/images/avatar7.gif" alt="Loading...">
         </div>
       </section>
 
@@ -118,10 +60,19 @@
               <h4>Вибір аватарки</h4>
             </div>
             <div class="d-flex flex-column text-center" id="imageContainer">
-              <!-- Images will be loaded here -->
             </div>
           </div>
         </div>
+      </div>
+    </div>
+
+    <!-- Confirmation Modal -->
+    <div id="confirmationModal" class="modal">
+      <div class="modal-content">
+        <span class="close">&times;</span>
+        <p>Ви впевнені, що хочете скинути прогрес? Це дію не можна буде скасувати.</p>
+        <button id="confirm-reset-btn" class="btn btn-danger">Підтвердити</button>
+        <button id="cancel-reset-btn" class="btn btn-secondary">Скасувати</button>
       </div>
     </div>
 

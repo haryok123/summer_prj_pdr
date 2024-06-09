@@ -19,44 +19,30 @@ export class ProfileController {
   @UseGuards(AuthGuard)
   @Get()
   @Render('profile')
-  async profile(@Req() req: Request) {
-    async function fetchStatistics(userLogin: string) {
-      try {
-        const response = await axios.get(
-          `http://localhost:19429/statistics/user/${userLogin}`,
-        );
-        return response.data;
-      } catch (error) {
-        console.error('Error fetching statistics', error);
-        throw error;
-      }
-    }
-
-    const statistics = await fetchStatistics(req['user'].user_login);
-    const overallProgress = statistics.overallProgress;
-    const correctAnswers = statistics.correctAnswers;
-    const incorrectAnswers = statistics.incorrectAnswers;
-    const totalQuestions = statistics.totalQuestions;
-    const averageScore = statistics.averageScore;
-    const examsPassed = statistics.examsPassed;
-    const examsTotal = statistics.examsTotal;
+  profile(@Req() req: Request) {
     return {
       title: 'Профіль користувача',
       currentUser: req['user'],
       script: 'profile',
-      overallProgress,
-      correctAnswers,
-      incorrectAnswers,
-      totalQuestions,
-      averageScore,
-      examsPassed,
-      examsTotal,
     };
+  }
+
+  @UseGuards(AuthGuard)
+  @Get('statistics')
+  async fetchStatistics(@Req() req: Request) {
+    try {
+      const statistics = await axios.get(
+        `http://localhost:19429/statistics/user/${req['user'].user_login}`,
+      );
+      return statistics.data;
+    } catch (error) {
+      console.error('Error fetching statistics', error);
+      throw new Error('Error fetching statistics');
+    }
   }
 
   @Post('updateProfileImgNumber')
   updateProfileImgNumber(@Body() updateImgDto: UpdateProfileImgNumberDto) {
-    console.log(updateImgDto);
     this.profileService.updateProfileImgNumber(updateImgDto);
   }
 }

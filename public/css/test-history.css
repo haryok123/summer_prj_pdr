@@ -72,16 +72,20 @@ h1 {
     text-align: center;
     margin-top: 20px;
 }
+.pagination span {
+    padding: 2.5% 0 0 0;
+}
 .pagination a {
     display: inline-block;
     margin: 0 5px;
-    padding: 10px 15px;
-    background: #007bff;
+    padding: 15px 15px;
+    background: #4CAF50;
     color: white;
     text-decoration: none;
     border-radius: 4px;
     transition: background 0.3s;
+    width: 12.5%;
 }
 .pagination a:hover {
-    background: #0056b3;
+    background: #2a783b;
 }

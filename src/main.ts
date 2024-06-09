@@ -9,6 +9,7 @@ import * as cookieParser from 'cookie-parser';
 import { ValidationPipe } from '@nestjs/common';
 import * as express from 'express';
 import * as moment from 'moment';
+import * as bcrypt from 'bcrypt';
 
 dotenv.config();
 
