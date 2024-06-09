@@ -187,17 +187,13 @@
                 btn.disabled = true;
               });
 
-              // Update the pagination button color
-              const paginationButton = document.querySelector(
-                `.pagination-button:nth-child(${parseInt('{{question_index}}') + 1})`,
-              );
-              if (userAnswer === result.correctAnswer) {
-                paginationButton.classList.add('correct');
-                paginationButton.classList.remove('incorrect');
-              } else {
-                paginationButton.classList.add('incorrect');
-                paginationButton.classList.remove('correct');
-              }
+              setTimeout(() => {
+                  const nextQuestionIndex = {{add currentQuestionIndex 1}};
+                  if(nextQuestionIndex < ({{test.items.length}})) {
+                      navigateToQuestion({{theme_id}}, {{test.test_id}}, nextQuestionIndex);
+                  }
+              }, 1200);
+
             } catch (error) {
               console.error('There was a problem with the fetch operation:', error);
             }
