@@ -51,6 +51,12 @@ export class TestsService {
   }
 
   async findQuestionThemeById(id: number): Promise<QuestionTheme> {
+    if (this.storage.questionThemes.length === 0) {
+      return await this.questionThemeRepository.findOne({
+        where: { theme_id: id },
+        relations: ['questions'],
+      });
+    }
     return this.storage.questionThemes.find((theme) => theme.theme_id == id);
   }
 
@@ -84,6 +90,7 @@ export class TestsService {
   async findAllTestsByUser(
     userLogin: string,
     testType: 'theme' | 'exam' = null,
+    isDone: boolean = true,
   ): Promise<Test[]> {
     const cacheKey = `tests-${userLogin}-${testType}`;
     const cachedData = this.getFromCache(cacheKey);
@@ -91,8 +98,12 @@ export class TestsService {
       return cachedData;
     }
     const whereCondition = testType
-      ? { user: { user_login: userLogin }, test_type: testType }
-      : { user: { user_login: userLogin } };
+      ? {
+          user: { user_login: userLogin },
+          test_type: testType,
+          is_done: isDone,
+        }
+      : { user: { user_login: userLogin }, is_done: isDone };
 
     const data = await this.testRepository.find({
       where: whereCondition,

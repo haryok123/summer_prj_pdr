@@ -19,6 +19,7 @@ h1 {
 }
 .test-card {
     display: flex;
+    justify-content: space-between;
     align-items: center;
     background: #f9f9f9;
     border: 1px solid #ddd;

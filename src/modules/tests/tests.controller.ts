@@ -115,12 +115,12 @@ export class TestsController {
     return { correctAnswer };
   }
 
-  @Delete('delete/:id')
+  @Post('delete/:id')
   async deleteTest(@Param('id') test_id: number): Promise<void> {
     await this.testsService.deleteTest(test_id);
   }
 
-  @Delete('delete/questions/:id')
+  @Post('delete/questions/:id')
   async removeTestQuestion(@Param('id') id: number): Promise<void> {
     return this.testsService.removeTestQuestion(id);
   }
@@ -220,6 +220,8 @@ export class TestsController {
     @Req() req: Request,
     @Query('test_id') test_id: number,
     @Query('question_index') question_index: number = 0,
+    @Query('mistakes') mistakes: number = null,
+    @Query('time') time: number = null,
   ): Promise<any> {
     const user: UserAccount = req['user'];
 
@@ -247,18 +249,11 @@ export class TestsController {
     const current_theme = await this.testsService.findQuestionThemeById(
       currentQuestion.question.theme_id,
     );
-
     let incorrectAnswers = 0;
     let remainingTime = 20 * 60 * 1000;
-    const stateToken = req.cookies['test_state'];
-    if (stateToken) {
-      try {
-        const decoded = this.jwtService.verify(stateToken);
-        if (decoded.test_id === test_id) {
-          incorrectAnswers = decoded.incorrectAnswers || 0;
-          remainingTime = decoded.remainingTime || remainingTime;
-        }
-      } catch (e) {}
+    if (mistakes) {
+      incorrectAnswers = mistakes;
+      remainingTime = time;
     }
 
     return {
@@ -268,8 +263,8 @@ export class TestsController {
       current_theme: current_theme.theme_chapter,
       title: 'Екзамен з ПДР',
       currentUser: user,
-      incorrectAnswers, // Додати
-      remainingTime, // Додати
+      incorrectAnswers,
+      remainingTime,
     };
   }
 
