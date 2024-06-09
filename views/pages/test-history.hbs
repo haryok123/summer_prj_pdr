@@ -44,20 +44,20 @@
                 <p>Всього питань: {{this.totalQuestions}}</p>
                 <p>Дата: {{formatDate this.test_date}}</p>
                 <a href="{{#if (eq this.test_type "exam")}}/tests/exam?test_id={{this.test_id}}{{else}}/tests/themes/test?test_id={{this.test_id}}&theme_id={{this.theme.theme_id}}{{/if}}">
-                Переглянути тест
+                {{#if this.is_done}}Переглянути тест{{else}}Продовжити тест{{/if}}
                 </a>
             </div>
         {{/each}}
       </div>
-<!--      <div class="pagination">-->
-<!--        {{#if (gt currentPage 1)}}-->
-<!--          <a href="?page={{subtract currentPage 1}}&limit={{limit}}">Previous</a>-->
-<!--        {{/if}}-->
-<!--        <span>Page {{currentPage}} of {{totalPages}}</span>-->
-<!--        {{#if (lt currentPage totalPages)}}-->
-<!--          <a href="?page={{add currentPage 1}}&limit={{limit}}">Next</a>-->
-<!--        {{/if}}-->
-<!--      </div>-->
+      <div class="pagination">
+        {{#if (gt currentPage 1)}}
+          <a href="?page={{subtract currentPage 1}}">Previous</a>
+        {{/if}}
+        <span>Page {{currentPage}} of {{totalPages}}</span>
+        {{#if (lt currentPage totalPages)}}
+          <a href="?page={{add currentPage 1}}">Next</a>
+        {{/if}}
+      </div>
     </div>
   {{/inline}}
 {{/layout}}
