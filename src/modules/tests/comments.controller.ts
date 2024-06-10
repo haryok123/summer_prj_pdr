@@ -6,7 +6,9 @@ import {
   Param,
   Body,
   Query,
-  InternalServerErrorException, Req, UseGuards,
+  InternalServerErrorException,
+  Req,
+  UseGuards,
 } from '@nestjs/common';
 import { CommentsService } from './comments.service';
 import { Comments } from '../../entities/comments.entity';
@@ -23,7 +25,6 @@ export class CommentsController {
     @Query('qId') qId: number,
   ): Promise<Comments[]> {
     try {
-      console.log('Received request for theme:', themeId, 'and question:', qId);
       return await this.commentsService.getAllCommentsByThemeAndQuestion(
         themeId,
         qId,

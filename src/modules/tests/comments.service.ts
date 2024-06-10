@@ -40,6 +40,7 @@ export class CommentsService {
           'replies',
           'replies.user',
         ],
+        order: { comment_date: 'DESC' },
       });
       return comments;
     } catch (error) {
@@ -85,7 +86,6 @@ export class CommentsService {
       parent_comment: parent,
       comment_text: createCommentDto.comment_text,
     });
-    console.log(comment);
     return await this.commentsRepository.save(comment);
   }
 

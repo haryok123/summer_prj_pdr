@@ -1,124 +1,124 @@
 {{#> layout}}
-    {{#*inline "pageContent"}}
-        <!-- Breadcrumb Navigation -->
-        <div style="color: #1A1A1A; margin-left: 20px; font-size: 17px">
-            <a class="link-without-underline" href="/" style="color: #1A1A1A">Головна</a>
-            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-chevron-right" viewBox="0 0 16 16">
-                <path fill-rule="evenodd" d="M4.646 1.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1 0 .708l-6 6a.5.5 0 0 1-.708-.708L10.293 8 4.646 2.354a.5.5 0 0 1 0-.708"/>
-            </svg>
-            <a class="link-without-underline" href="/tests" style="color: #1A1A1A">Тести</a>
-            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-chevron-right" viewBox="0 0 16 16">
-                <path fill-rule="evenodd" d="M4.646 1.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1 0 .708l-6 6a.5.5 0 0 1-.708-.708L10.293 8 4.646 2.354a.5.5 0 0 1 0-.708"/>
-            </svg>
-            <a class="link-without-underline" href="/tests/themes" style="color: #1A1A1A">Тести за темами</a>
-            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-chevron-right" viewBox="0 0 16 16">
-                <path fill-rule="evenodd" d="M4.646 1.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1 0 .708l-6 6a.5.5 0 0 1-.708-.708L10.293 8 4.646 2.354a.5.5 0 0 1 0-.708"/>
-            </svg>
-            <span style="color: green; font-weight: bold;">Тест за темою {{theme_name}}</span>
-        </div>
+  {{#*inline "pageContent"}}
+    <!-- Breadcrumb Navigation -->
+    <div style="color: #1A1A1A; margin-left: 20px; font-size: 17px">
+      <a class="link-without-underline" href="/" style="color: #1A1A1A">Головна</a>
+      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-chevron-right" viewBox="0 0 16 16">
+        <path fill-rule="evenodd" d="M4.646 1.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1 0 .708l-6 6a.5.5 0 0 1-.708-.708L10.293 8 4.646 2.354a.5.5 0 0 1 0-.708"/>
+      </svg>
+      <a class="link-without-underline" href="/tests" style="color: #1A1A1A">Тести</a>
+      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-chevron-right" viewBox="0 0 16 16">
+        <path fill-rule="evenodd" d="M4.646 1.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1 0 .708l-6 6a.5.5 0 0 1-.708-.708L10.293 8 4.646 2.354a.5.5 0 0 1 0-.708"/>
+      </svg>
+      <a class="link-without-underline" href="/tests/themes" style="color: #1A1A1A">Тести за темами</a>
+      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-chevron-right" viewBox="0 0 16 16">
+        <path fill-rule="evenodd" d="M4.646 1.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1 0 .708l-6 6a.5.5 0 0 1-.708-.708L10.293 8 4.646 2.354a.5.5 0 0 1 0-.708"/>
+      </svg>
+      <span style="color: green; font-weight: bold;">Тест за темою {{theme_name}}</span>
+    </div>
 
-        <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-        <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels"></script>
-        <link href="/css/test.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels"></script>
+    <link href="/css/test.css" rel="stylesheet">
 
-        <!-- Test Title -->
-        <h2>Тест за темою {{theme_name}}</h2>
+    <!-- Test Title -->
+    <h2>Тест за темою {{theme_name}}</h2>
 
-        <!-- Pagination -->
-        <div class="pagination">
-        {{#each test.items as |item index|}}
-            {{#if (eq (mod index 25) 0)}}
-                <div class="pagination-row">
-            {{/if}}
-                <button
-                        class="pagination-button
+    <!-- Pagination -->
+    <div class="pagination">
+    {{#each test.items as |item index|}}
+      {{#if (eq (mod index 25) 0)}}
+        <div class="pagination-row">
+      {{/if}}
+        <button
+          class="pagination-button
             {{#if (eq ../currentQuestionIndex index )}}current
             {{else}}{{#if (eq item.user_answer item.question.q_correct_answer)}}correct
             {{else}}{{#if (and (neq item.user_answer null) (neq item.user_answer item.question.q_correct_answer))}}incorrect{{/if}}{{/if}}{{/if}}"
-                        onclick="navigateToQuestion({{../theme_id}}, {{../test.test_id}}, {{index}})">
-                    <span class="pagination-text">{{add index 1}}</span>
-                </button>
-            {{#if (eq (mod (add index 1) 25) 0)}}
-                </div>
-            {{/if}}
-        {{/each}}
-        {{#if (neq (mod test.items.length 25) 0)}}
-            </div>
+          onclick="navigateToQuestion({{../theme_id}}, {{../test.test_id}}, {{index}})">
+          <span class="pagination-text">{{add index 1}}</span>
+        </button>
+      {{#if (eq (mod (add index 1) 25) 0)}}
+        </div>
+      {{/if}}
+    {{/each}}
+    {{#if (neq (mod test.items.length 25) 0)}}
+      </div>
+    {{/if}}
+    </div>
+
+    <!-- Question Block -->
+    <div class="question-block">
+      <div class="question-content">
+        <h6>{{add 1 currentQuestionIndex}} запитання</h6>
+        <h5>{{currentQuestion.question.q_content}}</h5>
+      </div>
+      {{#if currentQuestion.question.q_image}}
+        <div class="question-image">
+          <img src="data:image/png;base64,{{hexToBase64 currentQuestion.question.q_image}}" alt="Question Image">
+        </div>
+      {{/if}}
+      <div class="question-answers">
+        {{#if currentQuestion.question.q_answer1}}
+          <button class="answer-button" data-answer="1">{{currentQuestion.question.q_answer1}}</button>
         {{/if}}
-        </div>
+        {{#if currentQuestion.question.q_answer2}}
+          <button class="answer-button" data-answer="2">{{currentQuestion.question.q_answer2}}</button>
+        {{/if}}
+        {{#if currentQuestion.question.q_answer3}}
+          <button class="answer-button" data-answer="3">{{currentQuestion.question.q_answer3}}</button>
+        {{/if}}
+        {{#if currentQuestion.question.q_answer4}}
+          <button class="answer-button" data-answer="4">{{currentQuestion.question.q_answer4}}</button>
+        {{/if}}
+        {{#if currentQuestion.question.q_answer5}}
+          <button class="answer-button" data-answer="5">{{currentQuestion.question.q_answer5}}</button>
+        {{/if}}
 
-        <!-- Question Block -->
-        <div class="question-block">
-            <div class="question-content">
-                <h6>{{add 1 currentQuestionIndex}} запитання</h6>
-                <h5>{{currentQuestion.question.q_content}}</h5>
-            </div>
-            {{#if currentQuestion.question.q_image}}
-                <div class="question-image">
-                    <img src="data:image/png;base64,{{hexToBase64 currentQuestion.question.q_image}}" alt="Question Image">
+        <!-- End Test Button -->
+        <button class="btn btn-success end-test-button" {{#if test.is_done}} onclick="endTest({{test.test_id}}, 'Результати', false, this)">
+          Показати результати {{else}} onclick="endTest({{test.test_id}}, 'Тест завершено!', true, this)"> Закінчити тест{{/if}}</button>
+      </div>
+    </div>
+
+    <!-- End Test Modal -->
+    <div id="endTestModal" class="modal">
+      <div class="modal-content">
+        <span class="close" onclick="closeModal()">&times;</span>
+        <h6 id="resultsTitle"></h6>
+        <p>Запитань пройдено: <span id="answeredQuestions"></span></p>
+        <div class="chartCard">
+          <div class="chartBox">
+            <canvas id="resultChart"></canvas>
+          </div>
+        </div>
+        <button style="margin-top: 10px" class="btn btn-success" onclick="navigateToNextTheme({{add theme_id 1}})">Наступна тема</button>
+      </div>
+    </div>
+
+    <!-- Academic Integrity Modal -->
+    <div id="integrityModal" class="academic-modal">
+      <div class="academic-modal-content">
+        <span class="academic-close" onclick="closeIntegrityModal()">&times;</span>
+        <h6>Будь ласка, дотримуйтесь академічної доброчесності.</h6>
+        <img src="/images/academic.gif" alt="meow" style="width:100%;">
+      </div>
+    </div>
+
+    <!-- Comments Section -->
+    <section class="gradient-custom">
+      <div class="container my-5 py-5">
+        <div class="row d-flex justify-content-center">
+          <div class="col-md-12 col-lg-10 col-xl-8">
+            <div class="card">
+              <div class="card-body p-4">
+                <h4 class="text-center mb-4 pb-2">Коментарі до питання</h4>
+
+                <!-- Comment Input Field -->
+                <div class="mb-4">
+                  <textarea class="form-control" id="newComment" rows="3" placeholder="Write a comment..."></textarea>
+                  <button class="btn btn-primary mt-2" id="postCommentButton">Прокоментувати</button>
                 </div>
-            {{/if}}
-            <div class="question-answers">
-                {{#if currentQuestion.question.q_answer1}}
-                    <button class="answer-button" data-answer="1">{{currentQuestion.question.q_answer1}}</button>
-                {{/if}}
-                {{#if currentQuestion.question.q_answer2}}
-                    <button class="answer-button" data-answer="2">{{currentQuestion.question.q_answer2}}</button>
-                {{/if}}
-                {{#if currentQuestion.question.q_answer3}}
-                    <button class="answer-button" data-answer="3">{{currentQuestion.question.q_answer3}}</button>
-                {{/if}}
-                {{#if currentQuestion.question.q_answer4}}
-                    <button class="answer-button" data-answer="4">{{currentQuestion.question.q_answer4}}</button>
-                {{/if}}
-                {{#if currentQuestion.question.q_answer5}}
-                    <button class="answer-button" data-answer="5">{{currentQuestion.question.q_answer5}}</button>
-                {{/if}}
-
-                <!-- End Test Button -->
-                <button class="btn btn-success end-test-button" {{#if test.is_done}} onclick="endTest({{test.test_id}}, 'Результати', false, this)">
-                    Показати результати {{else}} onclick="endTest({{test.test_id}}, 'Тест завершено!', true, this)"> Закінчити тест{{/if}}</button>
-            </div>
-        </div>
-
-        <!-- End Test Modal -->
-        <div id="endTestModal" class="modal">
-            <div class="modal-content">
-                <span class="close" onclick="closeModal()">&times;</span>
-                <h6 id="resultsTitle"></h6>
-                <p>Запитань пройдено: <span id="answeredQuestions"></span></p>
-                <div class="chartCard">
-                    <div class="chartBox">
-                        <canvas id="resultChart"></canvas>
-                    </div>
-                </div>
-                <button style="margin-top: 10px" class="btn btn-success" onclick="navigateToNextTheme({{add theme_id 1}})">Наступна тема</button>
-            </div>
-        </div>
-
-        <!-- Academic Integrity Modal -->
-        <div id="integrityModal" class="academic-modal">
-            <div class="academic-modal-content">
-                <span class="academic-close" onclick="closeIntegrityModal()">&times;</span>
-                <h6>Будь ласка, дотримуйтесь академічної доброчесності.</h6>
-                <img src="/images/academic.gif" alt="meow" style="width:100%;">
-            </div>
-        </div>
-
-        <!-- Comments Section -->
-        <section class="gradient-custom">
-            <div class="container my-5 py-5">
-                <div class="row d-flex justify-content-center">
-                    <div class="col-md-12 col-lg-10 col-xl-8">
-                        <div class="card">
-                            <div class="card-body p-4">
-                                <h4 class="text-center mb-4 pb-2">Коментарі до питання</h4>
-
-                                <!-- Comment Input Field -->
-                                <div class="mb-4">
-                                    <textarea class="form-control" id="newComment" rows="3" placeholder="Ваша відповідь на цей шедевр..."></textarea>
-                                    <button class="btn btn-primary mt-2" id="postCommentButton">Прокоментувати</button>
-                                </div>
 
                 <div class="row">
                   <div class="col" id="commentsContainer">
@@ -135,23 +135,23 @@
       </div>
     </section>
 
-        <script>
-            document.addEventListener('DOMContentLoaded', function() {
-                const userAnswer = '{{currentQuestion.user_answer}}';
-                const correctAnswer = '{{currentQuestion.question.q_correct_answer}}';
+    <script>
+      document.addEventListener('DOMContentLoaded', function() {
+        const userAnswer = '{{currentQuestion.user_answer}}';
+        const correctAnswer = '{{currentQuestion.question.q_correct_answer}}';
 
-                // Highlight the answers based on previous selection
-                if (userAnswer) {
-                    document.querySelectorAll('.answer-button').forEach((btn) => {
-                        const answer = btn.getAttribute('data-answer');
-                        if (answer === correctAnswer) {
-                            btn.classList.add('correct');
-                        } else if (answer === userAnswer) {
-                            btn.classList.add('incorrect');
-                        }
-                        btn.disabled = true;
-                    });
-                }
+        // Highlight the answers based on previous selection
+        if (userAnswer) {
+          document.querySelectorAll('.answer-button').forEach((btn) => {
+            const answer = btn.getAttribute('data-answer');
+            if (answer === correctAnswer) {
+              btn.classList.add('correct');
+            } else if (answer === userAnswer) {
+              btn.classList.add('incorrect');
+            }
+            btn.disabled = true;
+          });
+        }
 
         // Add event listeners to answer buttons
         document.querySelectorAll('.answer-button').forEach((button) => {
@@ -192,10 +192,10 @@
               });
 
               setTimeout(() => {
-                  const nextQuestionIndex = {{add currentQuestionIndex 1}};
-                  if(nextQuestionIndex < ({{test.items.length}})) {
-                      navigateToQuestion({{theme_id}}, {{test.test_id}}, nextQuestionIndex);
-                  }
+                const nextQuestionIndex = {{add currentQuestionIndex 1}};
+                if(nextQuestionIndex < ({{test.items.length}})) {
+                  navigateToQuestion({{theme_id}}, {{test.test_id}}, nextQuestionIndex);
+                }
               }, 1200);
 
             } catch (error) {
@@ -486,7 +486,7 @@
         const replyInput = document.createElement('div');
         replyInput.className = 'reply-input mt-2';
         replyInput.innerHTML = `
-    <textarea class="form-control" rows="2" placeholder="Ваша відповідь на цей шедевр..."></textarea>
+    <textarea class="form-control" rows="2" placeholder="Write a reply..."></textarea>
     <button class="btn btn-sm btn-primary mt-2 post-reply-button">Reply</button>
   `;
         content.appendChild(replyInput);
