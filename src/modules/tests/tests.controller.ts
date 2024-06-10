@@ -211,7 +211,6 @@ export class TestsController {
       theme_id,
       title: 'Тести з ' + theme.theme_chapter,
       currentUser: user,
-      script: 'theme-test',
     };
   }
 

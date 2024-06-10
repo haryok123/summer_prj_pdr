@@ -116,22 +116,24 @@
 
                                 <!-- Comment Input Field -->
                                 <div class="mb-4">
-                                    <textarea class="form-control" id="newComment" rows="3" placeholder="Write a comment..."></textarea>
+                                    <textarea class="form-control" id="newComment" rows="3" placeholder="Ваша відповідь на цей шедевр..."></textarea>
                                     <button class="btn btn-primary mt-2" id="postCommentButton">Прокоментувати</button>
                                 </div>
 
-                                <!-- Comments Container -->
-                                <div class="row">
-                                    <div class="col" id="commentsContainer">
-                                        <!-- Comments will be loaded here -->
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
+                <div class="row">
+                  <div class="col" id="commentsContainer">
+                    <!-- Comments here-->
+                    <div id="loading" class="text-center">
+                      <img src="/images/avatar7.gif" alt="Loading...">
                     </div>
+                  </div>
                 </div>
+              </div>
             </div>
-        </section>
+          </div>
+        </div>
+      </div>
+    </section>
 
         <script>
             document.addEventListener('DOMContentLoaded', function() {
@@ -151,6 +153,427 @@
                     });
                 }
 
-                // Add event listeners to answer buttons
-                document.querySelectorAll('.answer-button').forEach((button) => {
-                    if ({{test
+        // Add event listeners to answer buttons
+        document.querySelectorAll('.answer-button').forEach((button) => {
+          if ({{test.is_done}}) {
+            button.disabled = true;
+            return;
+          }
+
+          button.addEventListener('click', async function() {
+            const userAnswer = this.getAttribute('data-answer');
+            const questionId = '{{currentQuestion.test_question_id}}';
+            try {
+              const response = await fetch(`/tests/update/questions/${questionId}`, {
+                method: 'POST',
+                headers: {
+                  'Content-Type': 'application/json',
+                  'X-Requested-With': 'XMLHttpRequest',
+                },
+                body: JSON.stringify({ user_answer: userAnswer }),
+              });
+
+              if (!response.ok) {
+                throw new Error('Network response was not ok');
+              }
+
+              const result = await response.json();
+
+              // Highlight the buttons based on the correctness of the answer
+              document.querySelectorAll('.answer-button').forEach((btn) => {
+                const answer = btn.getAttribute('data-answer');
+                btn.classList.remove('correct', 'incorrect');
+                if (answer == result.correctAnswer) {
+                  btn.classList.add('correct');
+                } else if (answer == userAnswer) {
+                  btn.classList.add('incorrect');
+                }
+                btn.disabled = true;
+              });
+
+              setTimeout(() => {
+                  const nextQuestionIndex = {{add currentQuestionIndex 1}};
+                  if(nextQuestionIndex < ({{test.items.length}})) {
+                      navigateToQuestion({{theme_id}}, {{test.test_id}}, nextQuestionIndex);
+                  }
+              }, 1200);
+
+            } catch (error) {
+              console.error('There was a problem with the fetch operation:', error);
+            }
+          });
+        });
+      });
+
+      let isNavigatingWithinTest = false;
+      let chartIsCreated = false;
+
+      window.addEventListener('beforeunload', async function(e) {
+        if (!isNavigatingWithinTest && !{{test.is_done}} && (!{{test.is_done}} && !chartIsCreated)) {
+          var confirmationMessage = 'Ви точно хочете цього? Прогрес не збережетсься';
+          e.returnValue = confirmationMessage; // Gecko, Trident, Chrome 34+
+          return confirmationMessage; // Gecko, WebKit, Chrome <34
+        }
+      });
+
+      window.addEventListener('unload', async function() {
+        if (!isNavigatingWithinTest) {
+          localStorage.clear();
+        }
+      });
+
+      async function navigateToQuestion(themeId, testId, questionIndex) {
+        isNavigatingWithinTest = true;
+        window.location.href = `/tests/themes/test?theme_id=${themeId}&test_id=${testId}&question_index=${questionIndex}`;
+      }
+
+      async function endTest(testId, title, disabled, button) {
+        button.disabled = false;
+
+        try {
+          const response = await fetch(`/tests/finish/${testId}`, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+          });
+
+          if (!response.ok) {
+            throw new Error('Network response was not ok');
+          }
+
+          const result = await response.json();
+          document.getElementById('answeredQuestions').textContent = `${result.answeredQuestions}/${result.answeredQuestions+result.unansweredQuestions}`;
+          document.getElementById('resultsTitle').textContent = title;
+
+          if(!chartIsCreated) {
+            renderDoughnutChart(result.correctAnswers, result.incorrectAnswers, result.unansweredQuestions);
+            chartIsCreated = true;
+          }
+
+          document.getElementById('endTestModal').style.display = 'flex';
+        } catch (error) {
+          console.error('There was a problem with the fetch operation:', error);
+        }
+      }
+
+      function renderDoughnutChart(correctAnswers, incorrectAnswers, unansweredQuestions) {
+        const totalQuestions = correctAnswers + incorrectAnswers + unansweredQuestions;
+        const correctPercentage = ((correctAnswers / totalQuestions) * 100).toFixed(2);
+
+        const data = {
+          labels: ['Правильні', 'Неправильні', 'Без відповіді'],
+          datasets: [{
+            data: [correctAnswers, incorrectAnswers, unansweredQuestions],
+            backgroundColor: ['#4CAF50', '#F44336', '#9E9E9E'],
+          }],
+        };
+
+
+        const doughnutLabel = {
+          id: 'doughnutLabel',
+          afterDatasetsDraw(chart, args, pluginOptions) {
+            const { ctx, data } = chart;
+            ctx.save();
+            const xCoor = 1000;
+            const yCoor = 1000;
+            ctx.font = 'bold 30px sans-serif';
+            ctx.fillStyle = '#4CAF50';
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            ctx.fillText(correctPercentage + '%', xCoor, yCoor);
+          },
+        };
+
+        // config
+        const config = {
+          type: 'doughnut',
+          data,
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+              datalabels: {
+                formatter: function(value, context) {
+                  return context.chart.data.labels[context.dataIndex] + '\n' + value;
+                },
+                color: '#fff',
+                font: {
+                  weight: 'bold',
+                },
+              },
+              tooltip: {
+                callbacks: {
+                  label: function(tooltipItem) {
+                    return '\t\t\t\t\t\t' + tooltipItem.raw;
+                  },
+                },
+              },
+              doughnutLabel,
+            },
+          },
+        };
+
+        // render init block
+        const ctx = new Chart(
+          document.getElementById('resultChart').getContext('2d'),
+          config,
+        );
+
+      }
+
+
+      function closeModal() {
+        document.getElementById('endTestModal').style.display = 'none';
+      }
+
+      async function navigateToNextTheme(nextThemeId) {
+        window.location.href = `/tests/themes/test?theme_id=${nextThemeId}`;
+      }
+      document.addEventListener('visibilitychange', function() {
+        if (document.hidden && (!isNavigatingWithinTest && !{{test.is_done}} && (!{{test.is_done}} && !chartIsCreated))) {
+          showIntegrityModal();
+        }
+      });
+
+      function showIntegrityModal() {
+        const modal = document.getElementById('integrityModal');
+        modal.style.display = 'block';
+      }
+
+      function closeIntegrityModal() {
+        const modal = document.getElementById('integrityModal');
+        modal.style.display = 'none';
+      }
+    </script>
+
+    <script>
+      let replyButtonClicked = false;
+      const commentsContainer = document.getElementById('commentsContainer');
+      window.onload = async function () {
+        const comments = await getInitialComments();
+
+        renderComments(comments, commentsContainer);
+        setupPostCommentButton();
+        // $('#loading').hide();
+      };
+
+      async function getInitialComments() {
+        let comments = await fetchComments();
+        return comments ? comments : [];
+      }
+
+      async function fetchComments() {
+        return fetch('/comments/{{theme_id}}/{{currentQuestion.question.q_id}}')
+          .then((response) => response.json());
+      }
+
+      function renderComments(comments, container) {
+        container.innerHTML = '';
+        comments.filter((comment) => JSON.parse(JSON.stringify(comment)).parent_comment == null).forEach((comment) => {
+          const commentElement = createCommentElement(comment);
+          container.appendChild(commentElement);
+        });
+      }
+
+      function setupPostCommentButton() {
+        document.getElementById('postCommentButton').onclick = function () {
+          const newCommentText = document.getElementById('newComment').value;
+          if (newCommentText.trim() !== '') {
+            postComment(newCommentText);
+          }
+        };
+      }
+
+      async function postComment(commentText) {
+        try {
+          const response = await fetch(
+            'http://localhost:19429/comments/createComment',
+            {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+              },
+              body: JSON.stringify({
+                comment_text: commentText,
+                q_id: {{currentQuestion.question.q_id}},
+                theme_id: {{currentQuestion.question.theme_id}},
+                user_login: '{{currentUser.user_login}}',
+                parent_comment_id: null,
+              }),
+            },
+          );
+
+          if (!response.ok) {
+            throw new Error('Network response was not ok');
+          }
+
+          const savedComment = await response.json()
+          const comments = await getInitialComments();
+          document.getElementById('newComment').value = '';
+          renderComments(comments, commentsContainer);
+        } catch (error) {
+          console.error('Failed to post comment:', error);
+        }
+      }
+
+      function createCommentElement(comment, isReply = false) {
+        const div = document.createElement('div');
+        div.className = 'd-flex flex-start mt-4';
+        div.setAttribute('data-comment-id', comment.comment_id);
+        if (isReply) {
+          div.className += ' ms-5';
+        }
+
+        const avatar = document.createElement('img');
+        avatar.className = 'rounded-circle shadow-1-strong me-3';
+        avatar.src = `/images/avatar${comment.user.user_photo}.gif`; // Use number to load avatar
+        avatar.alt = 'avatar';
+        avatar.width = 65;
+        avatar.height = 65;
+
+        const content = document.createElement('div');
+        content.className = 'flex-grow-1 flex-shrink-1';
+
+        const contentDiv = document.createElement('div');
+
+        const header = document.createElement('div');
+        header.className = 'd-flex justify-content-between align-items-center';
+
+        const nameTime = document.createElement('p');
+        nameTime.className = 'mb-1';
+        nameTime.textContent = `${comment.user.user_login} - ${formatDate(comment.comment_date)}`;
+
+        const replyLink = document.createElement('a');
+        if (!isReply) {
+          replyLink.href = '#!';
+          replyLink.setAttribute('data-username', comment.user.user_login);
+          replyLink.innerHTML =
+            '<i class="fas fa-reply fa-xs"></i><span class="small"> reply</span>';
+          replyLink.onclick = function () {
+            if (!replyButtonClicked)
+              handleReplyClick(replyLink, contentDiv, content, comment.comment_id);
+          };
+        }
+
+        const message = document.createElement('p');
+        message.className = 'small mb-0';
+        message.textContent = comment.comment_text;
+
+        header.appendChild(nameTime);
+        if (!isReply) {
+          header.appendChild(replyLink);
+        }
+        contentDiv.appendChild(header);
+        contentDiv.appendChild(message);
+
+        div.appendChild(avatar);
+        div.appendChild(content);
+
+        // Render replies
+        if (comment.replies && comment.replies.length > 0) {
+          comment.replies.forEach((reply) => {
+            const replyElement = createCommentElement(reply, true);
+            contentDiv.appendChild(replyElement);
+          });
+        }
+
+        content.appendChild(contentDiv);
+        return div;
+      }
+
+      function handleReplyClick(replyLink, content, parentDiv, comment_id) {
+        const replyInput = document.createElement('div');
+        replyInput.className = 'reply-input mt-2';
+        replyInput.innerHTML = `
+    <textarea class="form-control" rows="2" placeholder="Ваша відповідь на цей шедевр..."></textarea>
+    <button class="btn btn-sm btn-primary mt-2 post-reply-button">Reply</button>
+  `;
+        content.appendChild(replyInput);
+        replyInput.querySelector('.post-reply-button').onclick = function () {
+          handlePostReply(replyLink, replyInput, parentDiv, comment_id);
+        };
+        replyButtonClicked = true;
+      }
+
+      async function handlePostReply(replyLink, replyInput, parentDiv, comment_id) {
+        const reply = replyInput.querySelector('textarea').value;
+        if (reply.trim() !== '') {
+          const comments = await getInitialComments();
+          const parentCommentId = parseInt(comment_id, 10);
+          const parentComment = findCommentById(comments, parentCommentId);
+          const replyText = `@${replyLink.getAttribute('data-username')}: ${reply}`; // Mention the user being replied to
+          if (parentComment) {
+
+            const newReply = {
+              question: { q_id: {{currentQuestion.question.q_id}}, theme_id: {{currentQuestion.question.theme_id}} },
+              user: { user_login: '{{currentUser.user_login}}', user_photo: {{currentUser.user_photo}} },
+              parent_comment_id: parentCommentId,
+              comment_text: replyText,
+              comment_date: new Date(),
+              replies: [],
+            };
+            try {
+              const response = await fetch(
+                'http://localhost:19429/comments/createComment',
+                {
+                  method: 'POST',
+                  headers: {
+                    'Content-Type': 'application/json',
+                  },
+                  body: JSON.stringify({
+                    comment_text: replyText,
+                    q_id: {{currentQuestion.question.q_id}},
+                    theme_id: {{currentQuestion.question.theme_id}},
+                    user_login: '{{currentUser.user_login}}',
+                    parent_comment_id: parentCommentId,
+                  }),
+                },
+              );
+
+              parentComment.replies.push(newReply);
+              renderComments(comments, commentsContainer);
+              replyButtonClicked = false;
+              replyInput.remove();
+            } catch (error) {
+              console.error('Failed to reply comment:', error);
+            }
+          } else {
+            console.error(`Parent comment with ID ${parentCommentId} not found`);
+          }
+        } else {
+          replyButtonClicked = false;
+          replyInput.remove();
+        }
+      }
+
+      function findCommentById(comments, id) {
+        for (let comment of comments) {
+          if (comment.comment_id === id) {
+            return comment;
+          }
+          for (let reply of comment.replies) {
+            if (reply.comment_id === id) {
+              return reply;
+            }
+          }
+        }
+        return null;
+      }
+
+      function formatDate(date) {
+        function toUTC(date) {
+          return new Date(date.getTime() + date.getTimezoneOffset() * 60000);
+        }
+        date = new Date(date);
+        const now = toUTC(new Date());
+        const diff = Math.floor((now - date) / 1000);
+
+        if (diff < 60) return `${diff} seconds ago`;
+        if (diff < 3600) return `${Math.floor(diff / 60)} minutes ago`;
+        if (diff < 86400) return `${Math.floor(diff / 3600)} hours ago`;
+        return `${Math.floor(diff / 86400)} days ago`;
+      }
+    </script>
+  {{/inline}}
+{{/layout}}

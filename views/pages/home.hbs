@@ -1,72 +1,56 @@
 {{#> layout }}
-    {{#*inline "pageContent"}}
-        <!-- Meta viewport for responsiveness -->
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <!-- First screen -->
-        <div class="first-screen">
-            <div class="background"></div>
-            <img class="note" src="/images/notebook.png">
+  {{#*inline "pageContent"}}
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <div class=" first-screen">
+      <div class="background"></div>
+      <img class="note" src="/images/notebook.png">
+    </div>
+    <div class="container mt-2"  style="width: 50%; padding-top:0px; margin-top: 0px">
+      <div class="row">
+        <div class="col d-flex align-items-center justify-content-center" style="min-width: 250px">
+          <h3>Готуєшся до теоретичного іспиту та хочеш <a class="link-success link-offset-2 link-underline-opacity-25 link-underline-opacity-100-hover" style="display:inline" href="/tests">перевірити</a> свої знання.</h3>
         </div>
-        <!-- Main content container -->
-        <div class="container mt-2" style="width: 50%; padding-top: 0px; margin-top: 0px">
-            <!-- First row -->
-            <div class="row">
-                <!-- Left column with text -->
-                <div class="col d-flex align-items-center justify-content-center" style="min-width: 250px">
-                    <h3>Preparing for the theoretical exam and want to <a class="link-success link-offset-2 link-underline-opacity-25 link-underline-opacity-100-hover" style="display: inline" href="/tests">check</a> your knowledge?</h3>
-                </div>
-                <!-- Right column with image -->
-                <div class="col">
-                    <img src="/images/tests.jpg" class="img-thumbnail" style="min-width: 250px" alt="Speed Limit">
-                </div>
-            </div>
-            <!-- Second row -->
-            <div class="row second">
-                <!-- Left column with image -->
-                <div class="col">
-                    <img src="/images/getLicense.jpg" class="img-thumbnail" style="min-width: 250px" alt="Get License">
-                </div>
-                <!-- Right column with text -->
-                <div class="col d-flex align-items-center justify-content-center" style="min-width: 250px">
-                    <h3>Want to get a driver's license? Start learning the theory <a class="link-success link-offset-2 link-underline-opacity-25 link-underline-opacity-100-hover" style="display: inline" href="/theory">now</a>.</h3>
-                </div>
-            </div>
-            <!-- Third row -->
-            <div class="row">
-                <!-- Left column with text -->
-                <div class="col d-flex align-items-center justify-content-center" style="min-width: 250px">
-                    <h3>Are you a responsible driver and want to update your knowledge? Then familiarize yourself with the <a class="link-success link-offset-2 link-underline-opacity-25 link-underline-opacity-100-hover" style="display: inline" href="/theory">new rules</a>.</h3>
-                </div>
-                <!-- Right column with image -->
-                <div class="col">
-                    <img src="/images/speedLimit.jpg" class="img-thumbnail" style="min-width: 250px" alt="Speed Limit">
-                </div>
-            </div>
-            <!-- Fourth row -->
-            <div class="row second">
-                <!-- Left column with image -->
-                <div class="col">
-                    <img src="/images/pedestrian.jpg" class="img-thumbnail" style="min-width: 250px" alt="Pedestrian">
-                </div>
-                <!-- Right column with text -->
-                <div class="col d-flex align-items-center justify-content-center" style="min-width: 250px">
-                    <h3>Want to be a conscious participant in road traffic? Learn the <a class="link-success link-offset-2 link-underline-opacity-25 link-underline-opacity-100-hover" style="display: inline" href="/theory">rules</a>.</h3>
-                </div>
-            </div>
+        <div class="col">
+          <img src="/images/tests.jpg" class="img-thumbnail"style="min-width: 250px"  alt="Speed Limit">
         </div>
-        <!-- JavaScript for scrolling animation -->
-        <script>
-            document.addEventListener('scroll', function() {
-                const rows = document.querySelectorAll('.row');
-                const windowHeight = window.innerHeight;
+      </div>
+      <div class="row second">
+        <div class="col">
+          <img src="/images/getLicense.jpg" class="img-thumbnail" style="min-width: 250px" alt="Get License">
+        </div>
+        <div class="col d-flex align-items-center justify-content-center" style="min-width: 250px">
+          <h3>Хочеш отримати водійське посвідчення, тоді починай вивчення теорії просто <a class="link-success link-offset-2 link-underline-opacity-25 link-underline-opacity-100-hover" style="display:inline" href="/theory">зараз</a>.</h3>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col d-flex align-items-center justify-content-center" style="min-width: 250px">
+          <h3>Ти відповідальний водій і бажаєш оновити свої знання, тоді <a class="link-success link-offset-2 link-underline-opacity-25 link-underline-opacity-100-hover" style="display:inline" href="/theory">ознайомся</a> з новими правилами.</h3>
+        </div>
+        <div class="col">
+          <img src="/images/speedLimit.jpg" class="img-thumbnail"  style="min-width: 250px" alt="Speed Limit">
+        </div>
+      </div>
+      <div class="row second">
+        <div class="col">
+          <img src="/images/pedestrian.jpg" class="img-thumbnail" style="min-width: 250px" alt="Pedestrian">
+        </div>
+        <div class="col d-flex align-items-center justify-content-center" style="min-width: 250px">
+          <h3>Хочеш бути свідомим учасником дорожнього руху, тоді вивчи <a class="link-success link-offset-2 link-underline-opacity-25 link-underline-opacity-100-hover" style="display:inline" href="/theory">правила</a>.</h3>
+        </div>
+      </div>
+    </div>
+    <script>
+      document.addEventListener('scroll', function() {
+        const rows = document.querySelectorAll('.row');
+        const windowHeight = window.innerHeight;
 
-                rows.forEach(row => {
-                    const rowTop = row.getBoundingClientRect().top;
-                    if (rowTop < windowHeight - 50) {
-                        row.classList.add('visible');
-                    }
-                });
-            });
-        </script>
-    {{/inline}}
+        rows.forEach(row => {
+          const rowTop = row.getBoundingClientRect().top;
+          if (rowTop < windowHeight - 50) {
+            row.classList.add('visible');
+          }
+        });
+      });
+    </script>
+  {{/inline}}
 {{/layout}}

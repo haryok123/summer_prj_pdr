@@ -92,6 +92,9 @@ function loadHelpers() {
 
   hbs.registerHelper('gt', (a, b) => a > b);
   hbs.registerHelper('lt', (a, b) => a < b);
+  hbs.registerHelper('json', function(context) {
+    return JSON.stringify(context);
+  });
 
   hbs.registerHelper(
     'formatContent',
