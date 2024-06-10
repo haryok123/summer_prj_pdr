@@ -27,7 +27,7 @@
     <!-- Pagination -->
     <div class="pagination">
     {{#each test.items as |item index|}}
-      {{#if (eq (mod index 25) 0)}}
+      {{#if (eq (mod index 20) 0)}}
         <div class="pagination-row">
       {{/if}}
         <button
