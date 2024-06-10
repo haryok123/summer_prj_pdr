@@ -128,21 +128,6 @@ export class TestsService {
     return data;
   }
 
-  async findAllQuestions(): Promise<Question[]> {
-    return this.storage.questions;
-  }
-
-  async findAllComments(): Promise<Comments[]> {
-    return this.commentsRepository.find();
-  }
-
-  async findCommentById(id: number): Promise<Comments> {
-    return this.commentsRepository.findOne({
-      where: { comment_id: id },
-      relations: ['question', 'user', 'parent_comment'],
-    });
-  }
-
   async createTest(createTestDto: CreateTestDto): Promise<Test> {
     const user = await this.userAccountRepository.findOne({
       where: { user_login: createTestDto.user_login },

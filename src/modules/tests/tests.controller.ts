@@ -43,11 +43,6 @@ export class TestsController {
     return this.testsService.findAllQuestionThemes();
   }
 
-  @Get('comments')
-  async getAllComments(): Promise<Comments[]> {
-    return this.testsService.findAllComments();
-  }
-
   @Post()
   async createTest(@Body() createTestDto: CreateTestDto): Promise<Test> {
     return this.testsService.createTest(createTestDto);

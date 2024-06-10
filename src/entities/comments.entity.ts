@@ -1,3 +1,4 @@
+// comments.entity.ts
 import {
   Entity,
   Column,
@@ -5,6 +6,7 @@ import {
   ManyToOne,
   JoinColumn,
   CreateDateColumn,
+  OneToMany,
 } from 'typeorm';
 import { UserAccount } from './user-account.entity';
 import { Question } from './question.entity';
@@ -31,6 +33,9 @@ export class Comments {
     referencedColumnName: 'comment_id',
   })
   parent_comment: Comments;
+
+  @OneToMany(() => Comments, (comment) => comment.parent_comment)
+  replies: Comments[];
 
   @Column()
   comment_text: string;

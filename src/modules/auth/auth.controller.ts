@@ -78,6 +78,7 @@ export class AuthController {
     const cookieOptions: CookieOptions = {
       sameSite: 'strict',
       httpOnly: true,
+      secure: false,
     };
 
     res.cookie('access_token', result.access_token, cookieOptions);
