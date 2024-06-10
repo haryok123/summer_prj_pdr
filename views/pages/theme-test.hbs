@@ -38,11 +38,11 @@
           onclick="navigateToQuestion({{../theme_id}}, {{../test.test_id}}, {{index}})">
           <span class="pagination-text">{{add index 1}}</span>
         </button>
-      {{#if (eq (mod (add index 1) 25) 0)}}
+      {{#if (eq (mod (add index 1) 20) 0)}}
         </div>
       {{/if}}
     {{/each}}
-    {{#if (neq (mod test.items.length 25) 0)}}
+    {{#if (neq (mod test.items.length 20) 0)}}
       </div>
     {{/if}}
     </div>
