@@ -1,10 +1,12 @@
 {{#> layout }}
   {{#*inline "pageContent"}}
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!--First Banner-->
     <div class=" first-screen">
       <div class="background"></div>
       <img class="note" src="/images/notebook.png">
     </div>
+    <!--Dynamic section-->
     <div class="container mt-2"  style="width: 50%; padding-top:0px; margin-top: 0px">
       <div class="row">
         <div class="col d-flex align-items-center justify-content-center" style="min-width: 250px">
@@ -39,6 +41,7 @@
         </div>
       </div>
     </div>
+    <!--Scripts for dynamic section-->
     <script>
       document.addEventListener('scroll', function() {
         const rows = document.querySelectorAll('.row');

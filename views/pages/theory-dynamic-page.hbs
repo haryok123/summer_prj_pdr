@@ -1,21 +1,26 @@
 {{#> layout}}
     {{#*inline "title"}}{{title}}{{/inline}}
     {{#*inline "pageContent"}}
+      <!-- Navigation section -->
       <div style="color: #1A1A1A; margin-left: 20px; font-size: 17px">
+        <!-- Home link -->
         <a class="link-without-underline" href="/" style="color: #1A1A1A">Головна</a>
         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-chevron-right" viewBox="0 0 16 16">
           <path fill-rule="evenodd" d="M4.646 1.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1 0 .708l-6 6a.5.5 0 0 1-.708-.708L10.293 8 4.646 2.354a.5.5 0 0 1 0-.708"/>
         </svg>
+        <!-- Theory of Road Traffic link -->
         <a class="link-without-underline" href="/theory" style="color: #1A1A1A">Теорія ПДР</a>
         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-chevron-right" viewBox="0 0 16 16">
           <path fill-rule="evenodd" d="M4.646 1.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1 0 .708l-6 6a.5.5 0 0 1-.708-.708L10.293 8 4.646 2.354a.5.5 0 0 1 0-.708"/>
         </svg>
+        <!--Page name-->
         <span style="color: green; font-weight: bold;">
       {{#if (eq contentType 'trafficLightsContent.hbs')}}Світлофор
       {{else if (eq contentType 'finesContent')}}Штрафи
       {{else if (eq contentType 'regulatorsContent')}}Регулювальник
       {{/if}}
         </span>
+        <!--Content section -->
       </div>
         {{#if (eq contentType 'trafficLightsContent.hbs')}}
             <div class="container mt-5 mx-5" style="padding-top: 0px">
