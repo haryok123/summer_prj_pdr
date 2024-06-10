@@ -1,63 +1,80 @@
 {{#> layout}}
-  {{#*inline "pageContent"}}
-    <link rel="stylesheet" href="/css/test-history.css">
-    <script>
-      function toggleDetails(testId) {
-        const details = document.getElementById('details-' + testId);
-        const card = document.getElementById('card-' + testId)
-        if (details.style.display === 'none' || details.style.display === '') {
-          details.style.display = 'block';
-          card.style.borderRadius = "25px 25px 0 0"
-        } else {
-          details.style.display = 'none';
-            card.style.borderRadius = "25px"
-        }
-      }
-    </script>
-    <div style="color: #1A1A1A; margin-left: 20px; font-size: 17px; margin-bottom: 10px">
-      <a class="link-without-underline" href="/" style="color: #1A1A1A">Головна</a>
-      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-chevron-right" viewBox="0 0 16 16">
-        <path fill-rule="evenodd" d="M4.646 1.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1 0 .708l-6 6a.5.5 0 0 1-.708-.708L10.293 8 4.646 2.354a.5.5 0 0 1 0-.708"/>
-      </svg>
-      <a class="link-without-underline" href="/profile" style="color: #1A1A1A">Профіль</a>
-      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-chevron-right" viewBox="0 0 16 16">
-        <path fill-rule="evenodd" d="M4.646 1.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1 0 .708l-6 6a.5.5 0 0 1-.708-.708L10.293 8 4.646 2.354a.5.5 0 0 1 0-.708"/>
-      </svg>
-      <span style="color: green; font-weight: bold;">Історія тестів</span>
-    </div>
-    <div class="history-container">
-      <h1>{{title}}</h1>
-      <div class="test-history">
-        {{#each tests}}
-            <div class="test-card" onclick="toggleDetails({{this.test_id}})" id="card-{{this.test_id}}">
-                <img src="{{#if (eq this.test_type "exam")}}/images/isput.png{{else}}/images/book.png{{/if}}" alt="Test Type">
-                <p style="margin-right: auto;"><strong>ID: {{this.test_id}}</strong></p>
-                <span style="width: 400px; justify-content: left">
-                    <p>{{#if (eq this.test_type "exam")}}Тест-іспит{{else}}Тест за темою "{{this.theme.theme_chapter}}"{{/if}}</p>
-                </span>
-                <p style="margin-left: auto;"><strong>{{this.percentage}}%</strong></p>
+    {{#*inline "pageContent"}}
+        <!-- Link to custom CSS for test history page -->
+        <link rel="stylesheet" href="/css/test-history.css">
+
+        <!-- Inline JavaScript function to toggle the display of test details -->
+        <script>
+            function toggleDetails(testId) {
+                const details = document.getElementById('details-' + testId);
+                const card = document.getElementById('card-' + testId)
+                if (details.style.display === 'none' || details.style.display === '') {
+                    details.style.display = 'block';
+                    card.style.borderRadius = "25px 25px 0 0"
+                } else {
+                    details.style.display = 'none';
+                    card.style.borderRadius = "25px"
+                }
+            }
+        </script>
+
+        <!-- Breadcrumb navigation for better user experience -->
+        <div style="color: #1A1A1A; margin-left: 20px; font-size: 17px; margin-bottom: 10px">
+            <a class="link-without-underline" href="/" style="color: #1A1A1A">Головна</a>
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-chevron-right" viewBox="0 0 16 16">
+                <path fill-rule="evenodd" d="M4.646 1.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1 0 .708l-6 6a.5.5 0 0 1-.708-.708L10.293 8 4.646 2.354a.5.5 0 0 1 0-.708"/>
+            </svg>
+            <a class="link-without-underline" href="/profile" style="color: #1A1A1A">Профіль</a>
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-chevron-right" viewBox="0 0 16 16">
+                <path fill-rule="evenodd" d="M4.646 1.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1 0 .708l-6 6a.5.5 0 0 1-.708-.708L10.293 8 4.646 2.354a.5.5 0 0 1 0-.708"/>
+            </svg>
+            <span style="color: green; font-weight: bold;">Історія тестів</span>
+        </div>
+
+        <!-- Container for the test history -->
+        <div class="history-container">
+            <h1>{{title}}</h1>  <!-- Title of the page -->
+
+            <div class="test-history">
+                <!-- Loop through each test object in the tests array -->
+                {{#each tests}}
+                    <!-- Test card with onclick event to toggle details display -->
+                    <div class="test-card" onclick="toggleDetails({{this.test_id}})" id="card-{{this.test_id}}">
+                        <!-- Display different images based on the test type -->
+                        <img src="{{#if (eq this.test_type "exam")}}/images/isput.png{{else}}/images/book.png{{/if}}" alt="Test Type">
+                        <p style="margin-right: auto;"><strong>ID: {{this.test_id}}</strong></p>
+                        <span style="width: 400px; justify-content: left">
+              <!-- Display test type and theme chapter if applicable -->
+              <p>{{#if (eq this.test_type "exam")}}Тест-іспит{{else}}Тест за темою "{{this.theme.theme_chapter}}"{{/if}}</p>
+            </span>
+                        <p style="margin-left: auto;"><strong>{{this.percentage}}%</strong></p>  <!-- Display test percentage -->
+                    </div>
+
+                    <!-- Details section for each test, initially hidden -->
+                    <div class="test-details" id="details-{{this.test_id}}">
+                        <p>Правильні відповіді: <span style="color: green;">{{this.correctAnswers}}</span></p>  <!-- Number of correct answers -->
+                        <p>Неправильні відповіді: <span style="color: red;">{{this.incorrectAnswers}}</span></p>  <!-- Number of incorrect answers -->
+                        <p>Без відповідей: <span style="color: grey;">{{this.unansweredQuestions}}</span></p>  <!-- Number of unanswered questions -->
+                        <p>Всього питань: {{this.totalQuestions}}</p>  <!-- Total number of questions -->
+                        <p>Дата: {{formatDate this.test_date}}</p>  <!-- Date of the test -->
+                        <!-- Link to view or continue the test based on the test type and completion status -->
+                            <a href="{{#if (eq this.test_type "exam")}}/tests/exam?test_id={{this.test_id}}{{else}}/tests/themes/test?test_id={{this.test_id}}&theme_id={{this.theme.theme_id}}{{/if}}">
+                        {{#if this.is_done}}Переглянути тест{{else}}Продовжити тест{{/if}}
+                        </a>
+                    </div>
+                {{/each}}
             </div>
-            <div class="test-details" id="details-{{this.test_id}}">
-                <p>Правильні відповіді: <span style="color: green;">{{this.correctAnswers}}</span></p>
-                <p>Неправильні відповіді: <span style="color: red;">{{this.incorrectAnswers}}</span></p>
-                <p>Без відповідей: <span style="color: grey;">{{this.unansweredQuestions}}</span></p>
-                <p>Всього питань: {{this.totalQuestions}}</p>
-                <p>Дата: {{formatDate this.test_date}}</p>
-                <a href="{{#if (eq this.test_type "exam")}}/tests/exam?test_id={{this.test_id}}{{else}}/tests/themes/test?test_id={{this.test_id}}&theme_id={{this.theme.theme_id}}{{/if}}">
-                {{#if this.is_done}}Переглянути тест{{else}}Продовжити тест{{/if}}
-                </a>
+
+            <!-- Pagination controls -->
+            <div class="pagination">
+                {{#if (gt currentPage 1)}}
+                    <a href="?page={{subtract currentPage 1}}">Previous</a>  <!-- Link to the previous page if applicable -->
+                {{/if}}
+                <span>Page {{currentPage}} of {{totalPages}}</span>  <!-- Display current page and total pages -->
+                {{#if (lt currentPage totalPages)}}
+                    <a href="?page={{add currentPage 1}}">Next</a>  <!-- Link to the next page if applicable -->
+                {{/if}}
             </div>
-        {{/each}}
-      </div>
-      <div class="pagination">
-        {{#if (gt currentPage 1)}}
-          <a href="?page={{subtract currentPage 1}}">Previous</a>
-        {{/if}}
-        <span>Page {{currentPage}} of {{totalPages}}</span>
-        {{#if (lt currentPage totalPages)}}
-          <a href="?page={{add currentPage 1}}">Next</a>
-        {{/if}}
-      </div>
-    </div>
-  {{/inline}}
+        </div>
+    {{/inline}}
 {{/layout}}

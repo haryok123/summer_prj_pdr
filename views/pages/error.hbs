@@ -1,13 +1,19 @@
 {{#> layout}}
-  {{#*inline "pageContent"}}
-    <div class="container mt-5">
-      <h1>Сталася помилка</h1>
-      <h2>{{statusCode}} - {{error}}</h2>
-      <p>{{message}}</p>
-      {{#if stack}}
-        <pre>{{stack}}</pre>
-      {{/if}}
-      <a href="/" class="btn">На головну</a>
-    </div>
-  {{/inline}}
+    {{#*inline "pageContent"}}
+        <!-- Error message section -->
+        <div class="container mt-5">
+            <!-- Error title -->
+            <h1>An Error Occurred</h1>
+            <!-- Error details -->
+            <h2>{{statusCode}} - {{error}}</h2>
+            <!-- Error message -->
+            <p>{{message}}</p>
+            <!-- Display stack trace if available -->
+            {{#if stack}}
+                <pre>{{stack}}</pre>
+            {{/if}}
+            <!-- Link to home page -->
+            <a href="/" class="btn">Back to Home</a>
+        </div>
+    {{/inline}}
 {{/layout}}

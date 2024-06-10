@@ -1,41 +1,55 @@
 {{#> layout}}
-  {{#*inline "pageContent"}}
-    <div style="color: #1A1A1A; margin-left: 20px; font-size: 17px">
-      <a class="link-without-underline" href="/" style="color: #1A1A1A">Головна</a>
-      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-chevron-right" viewBox="0 0 16 16">
-        <path fill-rule="evenodd" d="M4.646 1.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1 0 .708l-6 6a.5.5 0 0 1-.708-.708L10.293 8 4.646 2.354a.5.5 0 0 1 0-.708"/>
-      </svg>
-      <a class="link-without-underline" href="/theory" style="color: #1A1A1A">Теорія ПДР</a>
-      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-chevron-right" viewBox="0 0 16 16">
-        <path fill-rule="evenodd" d="M4.646 1.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1 0 .708l-6 6a.5.5 0 0 1-.708-.708L10.293 8 4.646 2.354a.5.5 0 0 1 0-.708"/>
-      </svg>
-      <a class="link-without-underline" href="/theory/rules" style="color: #1A1A1A">Правила дорожнього руху</a>
-      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-chevron-right" viewBox="0 0 16 16">
-        <path fill-rule="evenodd" d="M4.646 1.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1 0 .708l-6 6a.5.5 0 0 1-.708-.708L10.293 8 4.646 2.354a.5.5 0 0 1 0-.708"/>
-      </svg>
-      <span style="color: green; font-weight: bold;">{{chapter.chapter_name}}</span>
-    </div>
-    <div class="container mt-5" style="padding-top: 0px">
-      <h1>Розділ {{chapter.chapter_num}}: {{chapter.chapter_name}}</h1>
-      <div class="subchapters-list mt-4">
-        {{#each subchapters}}
-          <div class="subchapter">
-            <h3><strong>{{this.chapter_num}}.{{this.subchapter_num}}</strong></h3>
-            <div>{{{formatContent this.subchapter_content ../signs ../markings ../chapters}}}</div>
-            {{#if this.subchapter_video_link}}
-              <iframe width="500px" height="275px" scrolling="no" title="Video" src="{{this.subchapter_video_link}}" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen=""></iframe>
-            {{/if}}
-          </div>
-        {{/each}}
-      </div>
-      <div class="navigation-buttons mt-4">
-        {{#if prevChapter}}
-          <a href="/theory/rules/{{prevChapter}}" class="btn btn-secondary">Попередній розділ</a>
-        {{/if}}
-        {{#if nextChapter}}
-          <a href="/theory/rules/{{nextChapter}}" class="btn btn-secondary">Наступний розділ</a>
-        {{/if}}
-      </div>
-    </div>
-  {{/inline}}
+    {{#*inline "pageContent"}}
+        <!-- Navigation section -->
+        <div style="color: #1A1A1A; margin-left: 20px; font-size: 17px">
+            <!-- Home link -->
+            <a class="link-without-underline" href="/" style="color: #1A1A1A">Home</a>
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-chevron-right" viewBox="0 0 16 16">
+                <path fill-rule="evenodd" d="M4.646 1.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1 0 .708l-6 6a.5.5 0 0 1-.708-.708L10.293 8 4.646 2.354a.5.5 0 0 1 0-.708"/>
+            </svg>
+            <!-- Theory of Road Traffic link -->
+            <a class="link-without-underline" href="/theory" style="color: #1A1A1A">Theory of Road Traffic</a>
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-chevron-right" viewBox="0 0 16 16">
+                <path fill-rule="evenodd" d="M4.646 1.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1 0 .708l-6 6a.5.5 0 0 1-.708-.708L10.293 8 4.646 2.354a.5.5 0 0 1 0-.708"/>
+            </svg>
+            <!-- Rules of the Road link -->
+            <a class="link-without-underline" href="/theory/rules" style="color: #1A1A1A">Rules of the Road</a>
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-chevron-right" viewBox="0 0 16 16">
+                <path fill-rule="evenodd" d="M4.646 1.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1 0 .708l-6 6a.5.5 0 0 1-.708-.708L10.293 8 4.646 2.354a.5.5 0 0 1 0-.708"/>
+            </svg>
+            <!-- Chapter name -->
+            <span style="color: green; font-weight: bold;">{{chapter.chapter_name}}</span>
+        </div>
+        <!-- Chapter content -->
+        <div class="container mt-5" style="padding-top: 0px">
+            <!-- Chapter title -->
+            <h1>Chapter {{chapter.chapter_num}}: {{chapter.chapter_name}}</h1>
+            <!-- Subchapters list -->
+            <div class="subchapters-list mt-4">
+                {{#each subchapters}}
+                    <div class="subchapter">
+                        <!-- Subchapter number -->
+                        <h3><strong>{{this.chapter_num}}.{{this.subchapter_num}}</strong></h3>
+                        <!-- Subchapter content -->
+                        <div>{{{formatContent this.subchapter_content ../signs ../markings ../chapters}}}</div>
+                        <!-- If subchapter has a video link, display iframe -->
+                        {{#if this.subchapter_video_link}}
+                            <iframe width="500px" height="275px" scrolling="no" title="Video" src="{{this.subchapter_video_link}}" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen=""></iframe>
+                        {{/if}}
+                    </div>
+                {{/each}}
+            </div>
+            <!-- Navigation buttons -->
+            <div class="navigation-buttons mt-4">
+                <!-- Link to previous chapter if available -->
+                {{#if prevChapter}}
+                    <a href="/theory/rules/{{prevChapter}}" class="btn btn-secondary">Previous Chapter</a>
+                {{/if}}
+                <!-- Link to next chapter if available -->
+                {{#if nextChapter}}
+                    <a href="/theory/rules/{{nextChapter}}" class="btn btn-secondary">Next Chapter</a>
+                {{/if}}
+            </div>
+        </div>
+    {{/inline}}
 {{/layout}}

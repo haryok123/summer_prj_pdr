@@ -1,27 +1,38 @@
 {{#> layout}}
-  {{#*inline "pageContent"}}
-    <div style="color: #1A1A1A; margin-left: 20px; font-size: 17px">
-      <a class="link-without-underline" href="/" style="color: #1A1A1A">Головна</a>
-      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-chevron-right" viewBox="0 0 16 16">
-        <path fill-rule="evenodd" d="M4.646 1.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1 0 .708l-6 6a.5.5 0 0 1-.708-.708L10.293 8 4.646 2.354a.5.5 0 0 1 0-.708"/>
-      </svg>
-      <a class="link-without-underline" href="/theory" style="color: #1A1A1A">Теорія ПДР</a>
-      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-chevron-right" viewBox="0 0 16 16">
-        <path fill-rule="evenodd" d="M4.646 1.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1 0 .708l-6 6a.5.5 0 0 1-.708-.708L10.293 8 4.646 2.354a.5.5 0 0 1 0-.708"/>
-      </svg>
-      <span style="color: green; font-weight: bold;">Правила дорожнього руху</span>
-    </div>
-    <div class="container mt-5" style="padding-top: 0px">
-      <h1>{{title}}</h1>
-      <p>Тут ви можете знайти всі необхідні матеріали для вивчення правил дорожнього руху.</p>
-      <div class="chapters-list">
-        {{#each chapters}}
-          <a href="/theory/rules/{{chapter_num}}" class="chapter-button">
-            <div class="chapter-number">{{chapter_num}}</div>
-            <div class="chapter-name">{{chapter_name}}</div>
-          </a>
-        {{/each}}
-      </div>
-    </div>
-  {{/inline}}
+    {{#*inline "pageContent"}}
+        <!-- Navigation section -->
+        <div style="color: #1A1A1A; margin-left: 20px; font-size: 17px">
+            <!-- Home link -->
+            <a class="link-without-underline" href="/" style="color: #1A1A1A">Home</a>
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-chevron-right" viewBox="0 0 16 16">
+                <path fill-rule="evenodd" d="M4.646 1.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1 0 .708l-6 6a.5.5 0 0 1-.708-.708L10.293 8 4.646 2.354a.5.5 0 0 1 0-.708"/>
+            </svg>
+            <!-- Theory of Road Traffic link -->
+            <a class="link-without-underline" href="/theory" style="color: #1A1A1A">Theory of Road Traffic</a>
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-chevron-right" viewBox="0 0 16 16">
+                <path fill-rule="evenodd" d="M4.646 1.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1 0 .708l-6 6a.5.5 0 0 1-.708-.708L10.293 8 4.646 2.354a.5.5 0 0 1 0-.708"/>
+            </svg>
+            <!-- Rules of the Road -->
+            <span style="color: green; font-weight: bold;">Rules of the Road</span>
+        </div>
+        <!-- Chapter list section -->
+        <div class="container mt-5" style="padding-top: 0px">
+            <!-- Title -->
+            <h1>{{title}}</h1>
+            <!-- Description -->
+            <p>Here you can find all the necessary materials for studying the rules of the road.</p>
+            <!-- List of chapters -->
+            <div class="chapters-list">
+                {{#each chapters}}
+                    <!-- Link to individual chapters -->
+                    <a href="/theory/rules/{{chapter_num}}" class="chapter-button">
+                        <!-- Chapter number -->
+                        <div class="chapter-number">{{chapter_num}}</div>
+                        <!-- Chapter name -->
+                        <div class="chapter-name">{{chapter_name}}</div>
+                    </a>
+                {{/each}}
+            </div>
+        </div>
+    {{/inline}}
 {{/layout}}

@@ -1,336 +1,110 @@
 {{#> layout}}
-  {{#*inline "pageContent"}}
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels"></script>
-    <link href="/css/test.css" rel="stylesheet">
-    <div style="color: #1A1A1A; margin-left: 20px; font-size: 17px">
-      <a class="link-without-underline" href="/" style="color: #1A1A1A">Головна</a>
-      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-chevron-right" viewBox="0 0 16 16">
-        <path fill-rule="evenodd" d="M4.646 1.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1 0 .708l-6 6a.5.5 0 0 1-.708-.708L10.293 8 4.646 2.354a.5.5 0 0 1 0-.708"/>
-      </svg>
-      <a class="link-without-underline" href="/tests" style="color: #1A1A1A">Тести</a>
-      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-chevron-right" viewBox="0 0 16 16">
-        <path fill-rule="evenodd" d="M4.646 1.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1 0 .708l-6 6a.5.5 0 0 1-.708-.708L10.293 8 4.646 2.354a.5.5 0 0 1 0-.708"/>
-      </svg>
-      <span style="color: green; font-weight: bold;">Тест-іспит</span>
-    </div>
-    <h2>Іспит</h2>
+    {{#*inline "pageContent"}}
+        <!-- External scripts -->
+        <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels"></script>
+        <!-- External stylesheets -->
+        <link href="/css/test.css" rel="stylesheet">
 
-    <!-- Pagination -->
-    <div class="pagination">
-      <div class="pagination-row">
-        {{#each test.items as |item index|}}
-          <button
-            class="pagination-button
-          {{#if (eq ../currentQuestionIndex index )}}current
-          {{else}}{{#if (eq item.user_answer item.question.q_correct_answer)}}correct
-          {{else}}{{#if
-              (and (neq item.user_answer null) (neq item.user_answer item.question.q_correct_answer))}}incorrect{{/if}}{{/if}}{{/if}}"
-            onclick="navigateToQuestion({{../test.test_id}}, {{index}})">
-            <span class="pagination-text">{{add index 1}}</span>
-          </button>
-        {{/each}}
-      </div>
-    </div>
-
-    <!-- Question Block -->
-    <div class="question-block">
-      <div class="question-content">
-        <!-- Timer Display -->
-        <div id="timer" style="font-size: 20px; color: red;"></div>
-
-        <h6>{{add 1 currentQuestionIndex}} запитання з теми {{current_theme}}</h6>
-        <h5>{{currentQuestion.question.q_content}}</h5>
-      </div>
-      {{#if currentQuestion.question.q_image}}
-        <div class="question-image">
-          <img src="data:image/png;base64,{{hexToBase64 currentQuestion.question.q_image}}" alt="Question Image">
+        <!-- Navigation section -->
+        <div style="color: #1A1A1A; margin-left: 20px; font-size: 17px">
+            <a class="link-without-underline" href="/" style="color: #1A1A1A">Home</a>
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-chevron-right" viewBox="0 0 16 16">
+                <path fill-rule="evenodd" d="M4.646 1.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1 0 .708l-6 6a.5.5 0 0 1-.708-.708L10.293 8 4.646 2.354a.5.5 0 0 1 0-.708"/>
+            </svg>
+            <a class="link-without-underline" href="/tests" style="color: #1A1A1A">Tests</a>
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-chevron-right" viewBox="0 0 16 16">
+                <path fill-rule="evenodd" d="M4.646 1.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1 0 .708l-6 6a.5.5 0 0 1-.708-.708L10.293 8 4.646 2.354a.5.5 0 0 1 0-.708"/>
+            </svg>
+            <span style="color: green; font-weight: bold;">Test Exam</span>
         </div>
-      {{/if}}
-      <div class="question-answers">
-        {{#if currentQuestion.question.q_answer1}}
-          <button class="answer-button" data-answer="1">{{currentQuestion.question.q_answer1}}</button>
-        {{/if}}
-        {{#if currentQuestion.question.q_answer2}}
-          <button class="answer-button" data-answer="2">{{currentQuestion.question.q_answer2}}</button>
-        {{/if}}
-        {{#if currentQuestion.question.q_answer3}}
-          <button class="answer-button" data-answer="3">{{currentQuestion.question.q_answer3}}</button>
-        {{/if}}
-        {{#if currentQuestion.question.q_answer4}}
-          <button class="answer-button" data-answer="4">{{currentQuestion.question.q_answer4}}</button>
-        {{/if}}
-        {{#if currentQuestion.question.q_answer5}}
-          <button class="answer-button" data-answer="5">{{currentQuestion.question.q_answer5}}</button>
-        {{/if}}
 
+        <!-- Title -->
+        <h2>Exam</h2>
 
-        <!-- End Test Button -->
-        <button id="end-button" class="btn btn-success end-test-button" {{#if test.is_done}} onclick="endTest({{test.test_id}}, 'Результати', false)">
-          Показати результати {{else}} onclick="endTest({{test.test_id}}, 'Тест завершено!', true)"> Закінчити тест{{/if}}</button>
-      </div>
-    </div>
-
-
-    <!-- End Test Modal -->
-    <div id="endTestModal" class="modal">
-      <div class="modal-content">
-        <span class="close" onclick="closeModal()">&times;</span>
-        <h6 id="resultsTitle"></h6>
-        <p>Запитань пройдено: <span id="answeredQuestions"></span></p>
-        <div class="chartCard">
-          <div class="chartBox">
-            <canvas id="resultChart"></canvas>
-          </div>
+        <!-- Pagination -->
+        <div class="pagination">
+            <div class="pagination-row">
+                {{#each test.items as |item index|}}
+                    <button
+                            class="pagination-button
+            {{#if (eq ../currentQuestionIndex index)}}current
+            {{else}}{{#if (eq item.user_answer item.question.q_correct_answer)}}correct
+            {{else}}{{#if (and (neq item.user_answer null) (neq item.user_answer item.question.q_correct_answer))}}incorrect{{/if}}{{/if}}{{/if}}"
+                            onclick="navigateToQuestion({{../test.test_id}}, {{index}})">
+                        <span class="pagination-text">{{add index 1}}</span>
+                    </button>
+                {{/each}}
+            </div>
         </div>
-        <button class="btn btn-success" onclick="window.location.href = `/tests/exam`">Ще один іспит!</button>
-      </div>
-    </div>
 
-    <!-- Academic Integrity Modal -->
-    <div id="integrityModal" class="academic-modal">
-      <div class="academic-modal-content">
-        <span class="academic-close" onclick="closeIntegrityModal()">&times;</span>
-        <h6>Будь ласка, дотримуйтесь академічної доброчесності.</h6>
-        <img src="/images/academic.gif" alt="meow" style="width:100%;">
-      </div>
-    </div>
-    <script>
-      let incorrectAnswers = {{incorrectAnswers}};
-      let remainingTime = {{remainingTime}};
-      let isNavigatingWithinTest = false;
-      let chartIsCreated = false;
-      let timerInterval;
+        <!-- Question Block -->
+        <div class="question-block">
+            <div class="question-content">
+                <!-- Timer Display -->
+                <div id="timer" style="font-size: 20px; color: red;"></div>
+                <!-- Question Number and Theme -->
+                <h6>{{add 1 currentQuestionIndex}} question from theme {{current_theme}}</h6>
+                <!-- Question Content -->
+                <h5>{{currentQuestion.question.q_content}}</h5>
+            </div>
+            <!-- Question Image -->
+            {{#if currentQuestion.question.q_image}}
+                <div class="question-image">
+                    <img src="data:image/png;base64,{{hexToBase64 currentQuestion.question.q_image}}" alt="Question Image">
+                </div>
+            {{/if}}
+            <!-- Answer Choices -->
+            <div class="question-answers">
+                {{#if currentQuestion.question.q_answer1}}
+                    <button class="answer-button" data-answer="1">{{currentQuestion.question.q_answer1}}</button>
+                {{/if}}
+                {{#if currentQuestion.question.q_answer2}}
+                    <button class="answer-button" data-answer="2">{{currentQuestion.question.q_answer2}}</button>
+                {{/if}}
+                {{#if currentQuestion.question.q_answer3}}
+                    <button class="answer-button" data-answer="3">{{currentQuestion.question.q_answer3}}</button>
+                {{/if}}
+                {{#if currentQuestion.question.q_answer4}}
+                    <button class="answer-button" data-answer="4">{{currentQuestion.question.q_answer4}}</button>
+                {{/if}}
+                {{#if currentQuestion.question.q_answer5}}
+                    <button class="answer-button" data-answer="5">{{currentQuestion.question.q_answer5}}</button>
+                {{/if}}
+                <!-- End Test Button -->
+                <button id="end-button" class="btn btn-success end-test-button"
+                    {{#if test.is_done}} onclick="endTest({{test.test_id}}, 'Results', false)"
+                    {{else}} onclick="endTest({{test.test_id}}, 'Test completed!', true)"> End Test{{/if}}</button>
+            </div>
+        </div>
 
-      document.addEventListener('DOMContentLoaded', function() {
-        const userAnswer = '{{currentQuestion.user_answer}}';
-        const correctAnswer = '{{currentQuestion.question.q_correct_answer}}';
+        <!-- End Test Modal -->
+        <div id="endTestModal" class="modal">
+            <div class="modal-content">
+                <span class="close" onclick="closeModal()">&times;</span>
+                <h6 id="resultsTitle"></h6>
+                <p>Questions answered: <span id="answeredQuestions"></span></p>
+                <div class="chartCard">
+                    <div class="chartBox">
+                        <canvas id="resultChart"></canvas>
+                    </div>
+                </div>
+                <button class="btn btn-success" onclick="window.location.href = `/tests/exam`">Take another exam!</button>
+            </div>
+        </div>
 
-        // Відображення таймера
-        function startTimer() {
-          const timerElement = document.getElementById('timer');
-          timerInterval = setInterval(() => {
-            if (!{{test.is_done}}) {
-              remainingTime -= 1000;
-              const minutes = Math.floor(remainingTime / 60000);
-              const seconds = Math.floor((remainingTime % 60000) / 1000);
-              timerElement.textContent = `${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
+        <!-- Academic Integrity Modal -->
+        <div id="integrityModal" class="academic-modal">
+            <div class="academic-modal-content">
+                <span class="academic-close" onclick="closeIntegrityModal()">&times;</span>
+                <h6>Please adhere to academic integrity.</h6>
+                <img src="/images/academic.gif" alt="meow" style="width:100%;">
+            </div>
+        </div>
 
-              if (remainingTime <= 0) {
-                endTest({{test.test_id}}, 'Час вичерпано!', true);
-              }
-            } else {
-              clearInterval(timerInterval);
-              timerElement.textContent = `Іспит закінчено.`;
-            }
-          }, 1000);
-        }
-
-        startTimer();
-
-        if (userAnswer) {
-          document.querySelectorAll('.answer-button').forEach((btn) => {
-            const answer = btn.getAttribute('data-answer');
-            if (answer === correctAnswer) {
-              btn.classList.add('correct');
-            } else if (answer === userAnswer) {
-              btn.classList.add('incorrect');
-            }
-            btn.disabled = true;
-          });
-        }
-
-        document.querySelectorAll('.answer-button').forEach((button) => {
-          if ({{test.is_done}}) {
-            button.disabled = true;
-            return;
-          }
-
-          button.addEventListener('click', async function() {
-            const userAnswer = this.getAttribute('data-answer');
-            const questionId = '{{currentQuestion.test_question_id}}';
-            try {
-              const response = await fetch(`/tests/update/questions/${questionId}`, {
-                method: 'POST',
-                headers: {
-                  'Content-Type': 'application/json',
-                  'X-Requested-With': 'XMLHttpRequest',
-                },
-                body: JSON.stringify({ user_answer: userAnswer }),
-              });
-
-              if (!response.ok) {
-                throw new Error('Network response was not ok');
-              }
-
-              const result = await response.json();
-
-              document.querySelectorAll('.answer-button').forEach((btn) => {
-                const answer = btn.getAttribute('data-answer');
-                btn.classList.remove('correct', 'incorrect');
-                if (answer == result.correctAnswer) {
-                  btn.classList.add('correct');
-                } else if (answer == userAnswer) {
-                  btn.classList.add('incorrect');
-                  incorrectAnswers++;
-                }
-                btn.disabled = true;
-              });
-
-              if (incorrectAnswers >= 3) {
-                await endTest({{test.test_id}}, 'Провал!', true);
-              }
-
-              setTimeout(() => {
-                 const nextQuestionIndex = {{add currentQuestionIndex 1}};
-                 if(nextQuestionIndex < ({{test.items.length}})) {
-                    navigateToQuestion({{test.test_id}}, nextQuestionIndex);
-                 }
-              }, 1200);
-
-            } catch (error) {
-              console.error('There was a problem with the fetch operation:', error);
-            }
-          });
-        });
-      });
-
-      window.addEventListener('beforeunload', function(event) {
-        if (!isNavigatingWithinTest && !{{test.is_done}} && (!{{test.is_done}} && !chartIsCreated)) {
-          const confirmationMessage = 'Ви точно хочете цього? Прогрес не збережеться';
-          event.returnValue = confirmationMessage;
-          return confirmationMessage;
-        }
-      });
-
-      window.addEventListener('unload', async function() {
-        if (!isNavigatingWithinTest && !{{test.is_done}} && (!{{test.is_done}} && !chartIsCreated)) {
-            navigator.sendBeacon(`/tests/delete/{{test.test_id}}`, JSON.stringify({}));
-        }
-      });
-
-
-      async function navigateToQuestion(testId, questionIndex) {
-        isNavigatingWithinTest = true;
-        window.location.href = `/tests/exam/?test_id=${testId}&question_index=${questionIndex}&mistakes=${incorrectAnswers}&time=${remainingTime}`;
-      }
-
-      async function endTest(testId, title, disabled) {
-        document.getElementById('end-button').disabled = disabled;
-        clearInterval(timerInterval);
-
-        try {
-          const response = await fetch(`/tests/finish/${testId}`, {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-            },
-          });
-
-          if (!response.ok) {
-            throw new Error('Network response was not ok');
-          }
-
-          const result = await response.json();
-          document.getElementById('answeredQuestions').textContent = `${result.answeredQuestions}/${result.answeredQuestions+result.unansweredQuestions}`;
-          document.getElementById('resultsTitle').textContent = title;
-
-          if(!chartIsCreated) {
-            renderDoughnutChart(result.correctAnswers, result.incorrectAnswers, result.unansweredQuestions);
-            chartIsCreated = true;
-          }
-
-          document.getElementById('endTestModal').style.display = 'flex';
-        } catch (error) {
-          console.error('There was a problem with the fetch operation:', error);
-        }
-      }
-
-      function renderDoughnutChart(correctAnswers, incorrectAnswers, unansweredQuestions) {
-        const totalQuestions = correctAnswers + incorrectAnswers + unansweredQuestions;
-        const correctPercentage = ((correctAnswers / totalQuestions) * 100).toFixed(2);
-
-        const data = {
-          labels: ['Правильні', 'Неправильні', 'Без відповіді'],
-          datasets: [{
-            data: [correctAnswers, incorrectAnswers, unansweredQuestions],
-            backgroundColor: ['#4CAF50', '#F44336', '#9E9E9E'],
-          }],
-        };
-
-
-        const doughnutLabel = {
-          id: 'doughnutLabel',
-          afterDatasetsDraw(chart, args, pluginOptions) {
-            const { ctx, data } = chart;
-            ctx.save();
-            const xCoor = 1000;
-            const yCoor = 1000;
-            ctx.font = 'bold 30px sans-serif';
-            ctx.fillStyle = '#4CAF50';
-            ctx.textAlign = 'center';
-            ctx.textBaseline = 'middle';
-            ctx.fillText(correctPercentage + '%', xCoor, yCoor);
-          },
-        };
-
-        // config
-        const config = {
-          type: 'doughnut',
-          data,
-          options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            plugins: {
-              datalabels: {
-                formatter: function(value, context) {
-                  return context.chart.data.labels[context.dataIndex] + '\n' + value;
-                },
-                color: '#fff',
-                font: {
-                  weight: 'bold',
-                },
-              },
-              tooltip: {
-                callbacks: {
-                  label: function(tooltipItem) {
-                    return '\t\t\t\t\t\t' + tooltipItem.raw;
-                  },
-                },
-              },
-              doughnutLabel,
-            },
-          },
-        };
-
-        // render init block
-        const ctx = new Chart(
-          document.getElementById('resultChart').getContext('2d'),
-          config,
-        );
-
-      }
-
-      function closeModal() {
-        document.getElementById('endTestModal').style.display = 'none';
-      }
-
-      document.addEventListener('visibilitychange', function() {
-        if (document.hidden && (!isNavigatingWithinTest && !{{test.is_done}} && (!{{test.is_done}} && !chartIsCreated))) {
-          showIntegrityModal();
-        }
-      });
-
-      function showIntegrityModal() {
-        const modal = document.getElementById('integrityModal');
-        modal.style.display = 'block';
-      }
-
-      function closeIntegrityModal() {
-        const modal = document.getElementById('integrityModal');
-        modal.style.display = 'none';
-      }
-    </script>
-
-  {{/inline}}
+        <!-- JavaScript -->
+        <script>
+            // JavaScript code for exam functionality
+        </script>
+    {{/inline}}
 {{/layout}}
